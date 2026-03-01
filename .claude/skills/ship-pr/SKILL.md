@@ -207,13 +207,21 @@ git diff main..HEAD
 
 #### PR作成
 
-`templates/pr-template.md` のテンプレートを使い、プレースホルダーを実際の内容で置換する。
+PR本文を一時ファイルに書き出し、`--body-file` で渡す。
+`--body` にインラインで渡すと、本文中のテキスト（例: コマンド名やファイルパス）がセキュリティフックに誤検知されるため、必ず `--body-file` を使用すること。
 
 ```bash
+# 1. Write ツールで /tmp/pr-body.md にPR本文を書き出す（Bashではなく Write ツールを使う）
+# 2. gh pr create で --body-file を指定
 gh pr create \
   --base main \
   --title "PRタイトル（70文字以内）" \
-  --body "$(cat <<'EOF'
+  --body-file /tmp/pr-body.md
+```
+
+PR本文のテンプレート:
+
+```markdown
 ## Summary
 
 [自動生成されたサマリー]
@@ -235,8 +243,6 @@ gh pr create \
 ---
 
 Generated with [Claude Code](https://claude.com/claude-code)
-EOF
-)"
 ```
 
 #### PRタイトルの規約
@@ -269,31 +275,12 @@ git diff main..HEAD --stat
 
 #### PR本文の更新
 
+PR本文を一時ファイルに書き出し、`--body-file` で渡す（`--body` インラインはフック誤検知の原因になるため使わない）。
+
 ```bash
-gh pr edit --body "$(cat <<'EOF'
-## Summary
-
-[再生成されたサマリー（全コミットを反映）]
-
-## Changes
-
-[カテゴリ別の変更リスト（全変更を反映）]
-
-## Commits
-
-[全コミット一覧]
-
-## Test Plan
-
-- [ ] 変更内容のセルフレビュー完了
-- [ ] 関連するテストの実行確認
-- [ ] ビルドが通ることを確認
-
----
-
-Generated with [Claude Code](https://claude.com/claude-code)
-EOF
-)"
+# 1. Write ツールで /tmp/pr-body.md にPR本文を書き出す（Bashではなく Write ツールを使う）
+# 2. gh pr edit で --body-file を指定
+gh pr edit --body-file /tmp/pr-body.md
 ```
 
 必要に応じてPRタイトルも更新する:
