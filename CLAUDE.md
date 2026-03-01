@@ -11,6 +11,44 @@
 
 外部ライブラリやAPIの使い方・仕様について質問された場合、または実装中にライブラリのドキュメントを参照する必要がある場合は、Context7 MCP（`mcp__context7__resolve-library-id` → `mcp__context7__query-docs`）を自動的に使用して最新ドキュメントを取得すること。ユーザーが「use context7」と明示しなくても適用する。
 
+## MCP・スキルの自動使用ルール
+
+以下のルールに従い、関連するMCPサーバーやスキルを**明示的な指示がなくても自動的に使用する**こと。一般知識での回答よりMCP/スキル経由の公式ドキュメントを優先する。
+
+### AWS関連
+
+AWSサービスに関する質問・設計・トラブルシューティング・実装時は、以下のMCPを自動的に使用する:
+
+| 用途 | 使用するMCP |
+|---|---|
+| AWSサービスのベストプラクティス・アーキテクチャ・概念 | `aws-knowledge-mcp-server` の `search_documentation`（topic: `general`） |
+| APIリファレンス・SDK・CLI仕様 | `aws-knowledge-mcp-server` の `search_documentation`（topic: `reference_documentation`） |
+| エラー・トラブルシューティング | `aws-knowledge-mcp-server` の `search_documentation`（topic: `troubleshooting`） |
+| 特定ドキュメントページの詳細読み込み | `aws-knowledge-mcp-server` の `read_documentation` |
+| AWS APIの実行・確認（読み取りのみ） | `awslabs.aws-api-mcp-server` の `call_aws` / `suggest_aws_commands` |
+| セキュリティレビュー・Well-Architected | Well-Architected Security MCP |
+
+### Terraform / IaC関連
+
+Terraform や Terragrunt によるインフラ構築・設計時は `awslabs.terraform-mcp-server` を自動的に使用する:
+
+- まず `terraform_development_workflow` リソースと `terraform_aws_best_practices` リソースを参照
+- AWS-IA 専用モジュールを `SearchSpecificAwsIaModules` で確認
+- AWSCC プロバイダを優先（`SearchAwsccProviderDocs`）、なければ AWS プロバイダ（`SearchAwsProviderDocs`）にフォールバック
+- コードの検証には `ExecuteTerraformCommand`（validate → init → plan）と `RunCheckovScan` を使用
+
+### TiDB関連
+
+TiDB に関する質問・実装時は、対応するスキルを自動的に使用する:
+
+| トリガー条件 | 使用するスキル |
+|---|---|
+| TiDB Cloudクラスタの作成・削除・一覧・管理 | `tidb-cloud` |
+| サーバーレス/エッジ環境でのTiDB接続 | `tidb-serverless-driver` |
+| Kysely ORM + TiDB Cloud | `tidb-kysely` |
+| Python (pytidb) でのTiDB操作・検索・AI機能 | `tidb-python` |
+| TiDB向けSQL作成・MySQL互換性・パフォーマンス診断 | `tidb-sql` |
+
 ## スペック駆動開発の基本原則
 
 ### 基本フロー
@@ -77,6 +115,49 @@
 - 調査、探索、並列分析などはサブエージェントに任せること。
 - 複雑な問題に対しては、サブエージェントを通じて計算リソースを惜しみなく投入すること。
 - 集中して実行できるよう、1つのサブエージェントにつき1つのタスクを割り当てること。
+
+### 2.5. Agent Teamsの活用戦略
+
+Agent Teamsは複数のエージェントがチームとして協調作業する機能。サブエージェントとの使い分けが重要。
+
+#### いつTeamsを使うか
+
+| シナリオ | Teams | サブエージェント |
+|---------|-------|---------------|
+| 3ファイル以上の並行変更 | **推奨** | - |
+| 実装 + テスト作成の同時進行 | **推奨** | - |
+| 複数観点からのコードレビュー | **推奨** | - |
+| 調査・情報収集のみ | - | **推奨** |
+| 単一ファイルの変更 | - | **推奨** |
+| 結果の要約が欲しいだけ | - | **推奨** |
+
+#### 標準チーム構成パターン
+
+**機能実装チーム（3人）:**
+- リード: 設計判断・タスク分割・統合
+- `frontend-developer`: コンポーネント実装
+- `test-writer`: テスト作成
+
+**コードレビューチーム（2-3人）:**
+- `code-reviewer`: コード品質・パターン準拠
+- `implementation-validator`: スペック整合性
+- （必要に応じて）セキュリティ観点レビュアー
+
+#### 運用ルール
+
+- **ファイル競合の回避**: 各チームメイトが担当するファイルを明確に分離する
+- **タスク粒度**: チームメイト1人あたり5-6タスクを目安にする
+- **コンテキスト共有**: チームメイトにはスペックファイルのパスと担当範囲を明示する
+- **完了基準**: 全チームメイトの作業が完了し、lint・テストが通ることを確認してから完了とする
+
+#### カスタムエージェント（`.claude/agents/`）
+
+チームメイト用のロール定義:
+- `frontend-developer.md` — フロントエンド実装担当
+- `test-writer.md` — テスト作成担当
+- `code-reviewer.md` — コードレビュー担当
+- `doc-reviewer.md` — ドキュメントレビュー担当（既存）
+- `implementation-validator.md` — 実装検証担当（既存）
 
 ### 3. 自己改善ループ
 
@@ -177,6 +258,11 @@
 
 # 詳細レビュー(詳細なレポートが必要なとき)
 > /review-docs docs/product-requirements.md
+
+# コードレビュー(多角的な3軸レビュー)
+> /review-codes src/hooks/useCashFlow.ts
+> /review-codes src/components/
+> /review-codes changed
 ```
 
 **ポイント**: スペック駆動開発の詳細を意識する必要はありません。Claude Codeが適切なスキルを判断してロードします。
