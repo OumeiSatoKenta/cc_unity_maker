@@ -1,0 +1,190 @@
+# 開発環境セットアップ手順
+
+## 前提条件
+
+- Docker Desktop がインストール済みであること
+- VS Code + Dev Containers 拡張機能がインストール済みであること
+- GitHub アカウントがあり、リポジトリへのアクセス権があること
+
+## 1. devcontainer の起動
+
+```bash
+# リポジトリをクローン
+git clone <repository-url>
+cd cc_base
+
+# VS Code で開く
+code .
+```
+
+VS Code が `.devcontainer/devcontainer.json` を検出し、「Reopen in Container」を提案する。承認するとコンテナがビルドされ、以下が自動的にセットアップされる:
+
+### devcontainer features（自動インストール）
+
+| ツール | 用途 |
+|--------|------|
+| Node.js (LTS) | アプリケーションランタイム |
+| GitHub CLI (`gh`) | PR作成・Issue管理 |
+| AWS CLI | AWSリソース操作 |
+| Docker outside of Docker | コンテナ操作 |
+
+### install-tools.sh（自動実行）
+
+| ツール | 用途 |
+|--------|------|
+| Claude Code | AI コーディングアシスタント |
+| OpenAI Codex CLI | セカンドオピニオン用AI |
+| uv / uvx | Python パッケージマネージャー（MCP サーバー実行用） |
+| aws-vault | AWS 認証情報の安全な管理 |
+| AWS SSM Session Manager Plugin | EC2 インスタンスへのセッション接続 |
+| Draw.io MCP (`@drawio/mcp`) | 図表生成用 MCP サーバー |
+
+コンテナ起動後、`package.json` が存在すれば `npm install` も自動実行される。
+
+## 2. GitHub CLI 認証
+
+PR作成やリポジトリ操作に必要。
+
+```bash
+# 認証（ブラウザ認証フローが開始される）
+gh auth login
+
+# git の credential helper として gh を設定
+gh auth setup-git
+
+# 確認
+gh auth status
+```
+
+`Token scopes` に `repo` が含まれていることを確認する。不足している場合:
+
+```bash
+gh auth refresh -s repo
+```
+
+## 3. AWS 認証の設定
+
+AWS 認証情報は以下の用途で使用される:
+
+- **AWS 系 MCP サーバー**: Claude Code が AWS API を呼び出してリソース情報を取得する（`aws-api-mcp-server` 等）
+- **Terraform / IaC 操作**: `terraform plan` / `apply` 等のインフラ操作コマンドの実行
+- **AWS CLI 直接操作**: S3、CloudFormation、SSM 等の手動操作
+
+これらが不要であればこのセクションはスキップできる。
+
+### 3-1. AWS CLI の基本設定
+
+```bash
+aws configure
+```
+
+以下を入力する:
+- **AWS Access Key ID**: IAM ユーザーのアクセスキー
+- **AWS Secret Access Key**: IAM ユーザーのシークレットキー
+- **Default region name**: `ap-northeast-1`
+- **Default output format**: `json`
+
+### 3-2. 名前付きプロファイルの設定
+
+`.mcp.json` の `awslabs.aws-api-mcp-server` は `AWS_PROFILE=satoken-readonly` を参照する。このプロファイルを設定する:
+
+```bash
+aws configure --profile satoken-readonly
+```
+
+または `~/.aws/credentials` を直接編集:
+
+```ini
+[satoken-readonly]
+aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY
+```
+
+```ini
+# ~/.aws/config
+[profile satoken-readonly]
+region = ap-northeast-1
+output = json
+```
+
+### 3-3. aws-vault を使う場合（推奨）
+
+認証情報を OS のキーチェーンで安全に管理できる:
+
+```bash
+# プロファイルを追加
+aws-vault add satoken-readonly
+
+# 認証が通るか確認
+aws-vault exec satoken-readonly -- aws sts get-caller-identity
+```
+
+### 3-4. 認証の確認
+
+```bash
+# デフォルトプロファイル
+aws sts get-caller-identity
+
+# 名前付きプロファイル
+aws sts get-caller-identity --profile satoken-readonly
+```
+
+## 4. MCP サーバーの確認
+
+`.mcp.json` に定義されている MCP サーバーは、Claude Code 起動時に自動的に接続される。手動での起動は不要。
+
+### MCP サーバー一覧
+
+| サーバー名 | 実行方式 | 用途 |
+|-----------|---------|------|
+| **serena** | `uvx` (stdio) | セマンティックコード解析・シンボル操作 |
+| **context7** | `npx` (stdio) | 外部ライブラリの最新ドキュメント取得 |
+| **codex** | `codex` (stdio) | セカンドオピニオン取得 |
+| **drawio** | `npx` (stdio) | Draw.io 図表の生成・編集 |
+| **aws-knowledge-mcp-server** | HTTP | AWS ドキュメント検索（リモートサービス） |
+| **awslabs.aws-documentation-mcp-server** | `uvx` (stdio) | AWS 公式ドキュメント読み取り |
+| **awslabs.aws-api-mcp-server** | `uvx` (stdio) | AWS API 呼び出し（読み取り専用） |
+| **awslabs.terraform-mcp-server** | `uvx` (stdio) | Terraform プロバイダードキュメント検索 |
+| **awslabs.well-architected-security-mcp-server** | `uvx` (stdio) | Well-Architected セキュリティレビュー |
+
+### 依存関係
+
+- **npx 系**（context7, drawio）: Node.js があれば動作する（devcontainer で自動インストール済み）
+- **uvx 系**（serena, aws-documentation, aws-api, terraform, well-architected-security）: uv が必要（install-tools.sh で自動インストール済み）
+- **codex**: OpenAI Codex CLI が必要（install-tools.sh で自動インストール済み）
+- **aws-knowledge-mcp-server**: HTTP接続のため、インターネット接続のみ必要
+- **AWS 系 MCP サーバー**: AWS 認証情報の設定が必要（セクション3を参照）
+
+## 5. 開発サーバーの起動
+
+```bash
+npm run dev
+```
+
+## トラブルシューティング
+
+### MCP サーバーが接続できない
+
+```bash
+# uvx が使えるか確認
+uvx --version
+
+# パスが通っていない場合
+source ~/.local/bin/env
+```
+
+### AWS 系 MCP でエラーが出る
+
+1. `aws sts get-caller-identity` で認証が通るか確認
+2. `~/.aws/credentials` にプロファイルが正しく設定されているか確認
+3. `AWS_PROFILE=satoken-readonly` のプロファイルが存在するか確認
+
+### draw.io MCP が見つからない
+
+```bash
+# グローバルにインストールされているか確認
+npm list -g @drawio/mcp
+
+# 再インストール
+npm i -g @drawio/mcp
+```

@@ -1,0 +1,75 @@
+{
+  "mcpServers": {
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "/workspaces/cc_base"
+      ],
+      "env": {}
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "--yes",
+        "@upstash/context7-mcp"
+      ],
+      "env": {}
+    },
+    "codex": {
+      "type": "stdio",
+      "command": "codex",
+      "args": [
+        "mcp-server"
+      ],
+      "env": {}
+    },
+    "drawio": {
+      "command": "npx",
+      "args": ["@drawio/mcp"]
+    },
+    "aws-knowledge-mcp-server": {
+      "url": "https://knowledge-mcp.global.api.aws",
+      "type": "http"
+    },
+    "awslabs.aws-documentation-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "AWS_DOCUMENTATION_PARTITION": "aws"
+      }
+    },
+    "awslabs.aws-api-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "env": {
+        "AWS_REGION": "ap-northeast-1",
+        "AWS_PROFILE": "satoken-readonly",
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "READ_OPERATIONS_ONLY": "true"
+      }
+    },
+    "awslabs.terraform-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.terraform-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "awslabs.well-architected-security-mcp-server": {
+      "command": "uvx",
+      "args": ["--from", "awslabs.well-architected-security-mcp-server", "well-architected-security-mcp-server"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    }
+  }
+}

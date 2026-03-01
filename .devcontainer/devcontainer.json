@@ -1,0 +1,14 @@
+{
+  "name": "cc_base",
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "workspaceFolder": "/workspaces/cc_base",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "postCreateCommand": "bash .devcontainer/install-tools.sh && if [ -f package.json ]; then npm install; fi"
+}
