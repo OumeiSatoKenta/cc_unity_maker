@@ -63,7 +63,7 @@ for file in "${TARGET_FILES[@]}"; do
   fi
 
   if grep -q "$CURRENT_NAME" "$filepath"; then
-    sed -i "s|$CURRENT_NAME|$NEW_NAME|g" "$filepath"
+    sed -i '' "s|$CURRENT_NAME|$NEW_NAME|g" "$filepath"
     echo "  置換完了: $file"
     CHANGED=$((CHANGED + 1))
   else
