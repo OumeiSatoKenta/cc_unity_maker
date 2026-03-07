@@ -19,16 +19,26 @@ sudo ln -sf "$HOME/.local/bin/uv" /usr/local/bin/uv
 sudo ln -sf "$HOME/.local/bin/uvx" /usr/local/bin/uvx
 echo "[3/7] uv installed."
 
+# Detect architecture
+ARCH=$(dpkg --print-architecture)
+if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
+  VAULT_ARCH="linux-arm64"
+  SSM_ARCH="ubuntu_arm64"
+else
+  VAULT_ARCH="linux-amd64"
+  SSM_ARCH="ubuntu_64bit"
+fi
+
 # aws-vault
 echo "[4/7] Installing aws-vault..."
 sudo curl -L -o /usr/local/bin/aws-vault \
-  "https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-linux-amd64"
+  "https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-${VAULT_ARCH}"
 sudo chmod +x /usr/local/bin/aws-vault
 echo "[4/7] aws-vault installed."
 
 # AWS SSM Session Manager Plugin
 echo "[5/7] Installing AWS SSM Session Manager Plugin..."
-curl -fsSL "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" \
+curl -fsSL "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/${SSM_ARCH}/session-manager-plugin.deb" \
   -o /tmp/session-manager-plugin.deb
 sudo dpkg -i /tmp/session-manager-plugin.deb
 rm /tmp/session-manager-plugin.deb
