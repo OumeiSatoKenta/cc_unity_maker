@@ -12,7 +12,7 @@ type: project
 **How to apply:** 実装の判断はすべて「非エンジニアが迷わず使えるか」を基準にする。
 
 ## 設計の核心
-- Unity は 1 プロジェクト（`unity/`）のみ。新ゲーム = シーン追加
+- Unity は 1 プロジェクト（`MiniGameCollection/`）のみ。新ゲーム = シーン追加
 - TopMenu にカテゴリ別タブ（ミニゲーム集スタイル）
 - Claude Code が仕様展開 → C# 生成 → SceneSetup → push まで全自動
 - ステータス管理は GitHub Projects（テーブルビュー）

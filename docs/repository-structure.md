@@ -4,7 +4,7 @@
 
 ```
 cc_unity_maker/                         # リポジトリルート
-├── unity/                              # 単一Unityプロジェクト（全ゲーム共通）
+├── MiniGameCollection/                 # 単一Unityプロジェクト（全ゲーム共通）
 │   ├── Assets/
 │   │   ├── Scenes/                     # 全シーン
 │   │   ├── Scripts/                    # 全C#スクリプト
@@ -44,7 +44,7 @@ cc_unity_maker/                         # リポジトリルート
 ## Unityプロジェクト詳細構造
 
 ```
-unity/Assets/
+MiniGameCollection/Assets/
 ├── Scenes/
 │   ├── TopMenu.unity                   # ゲーム選択画面（カテゴリタブ）
 │   ├── 001_BlockFlow.unity
@@ -81,7 +81,7 @@ unity/Assets/
 
 ## ディレクトリ詳細
 
-### unity/Assets/Scenes/
+### MiniGameCollection/Assets/Scenes/
 
 **役割**: 全シーンファイルを管理
 
@@ -100,7 +100,7 @@ unity/Assets/
 
 ---
 
-### unity/Assets/Scripts/Common/
+### MiniGameCollection/Assets/Scripts/Common/
 
 **役割**: 全ゲームから利用する共通スクリプト
 
@@ -115,7 +115,7 @@ unity/Assets/
 
 ---
 
-### unity/Assets/Scripts/Game\<ID\>_\<Title\>/
+### MiniGameCollection/Assets/Scripts/Game\<ID\>_\<Title\>/
 
 **役割**: 各ゲームのロジックを独立したフォルダで管理
 
@@ -138,7 +138,7 @@ unity/Assets/
 
 ---
 
-### unity/Assets/Editor/SceneSetup/
+### MiniGameCollection/Assets/Editor/SceneSetup/
 
 **役割**: 各ゲームのシーンを自動構成するEditorスクリプト
 
@@ -159,7 +159,7 @@ unity/Assets/
 
 ---
 
-### unity/Assets/Resources/
+### MiniGameCollection/Assets/Resources/
 
 **役割**: 実行時に `Resources.Load()` で読み込むデータ
 
@@ -267,20 +267,20 @@ Game<ID>_<Title>（各ゲーム）
 
 ```gitignore
 # Unity生成ファイル
-unity/Library/
-unity/Temp/
-unity/Obj/
-unity/Build/
-unity/Builds/
-unity/UserSettings/
-unity/*.pidb
-unity/*.booproj
-unity/*.suo
-unity/*.user
-unity/*.userprefs
-unity/*.unityproj
-unity/*.sln
-unity/*.csproj
+MiniGameCollection/Library/
+MiniGameCollection/Temp/
+MiniGameCollection/Obj/
+MiniGameCollection/Build/
+MiniGameCollection/Builds/
+MiniGameCollection/UserSettings/
+MiniGameCollection/*.pidb
+MiniGameCollection/*.booproj
+MiniGameCollection/*.suo
+MiniGameCollection/*.user
+MiniGameCollection/*.userprefs
+MiniGameCollection/*.unityproj
+MiniGameCollection/*.sln
+MiniGameCollection/*.csproj
 
 # OS
 .DS_Store

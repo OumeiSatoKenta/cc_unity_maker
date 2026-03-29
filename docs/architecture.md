@@ -33,7 +33,7 @@ TopMenuシーンがミニゲーム集のハブとなる。
 
 ```
 cc_unity_maker/
-└── unity/                              ← 単一Unityプロジェクト
+└── MiniGameCollection/                 ← 単一Unityプロジェクト
     ├── Assets/
     │   ├── Scenes/
     │   │   ├── TopMenu.unity           ← カテゴリ別タブのゲーム選択画面

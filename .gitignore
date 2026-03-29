@@ -44,3 +44,6 @@ coverage/
 # yarn.lock
 
 .claude/settings.local.json
+
+# AWS CLI installer
+AWSCLIV2.pkg
