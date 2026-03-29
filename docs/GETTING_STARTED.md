@@ -110,7 +110,16 @@ Claude Code が以下を自動で行います:
 - GameRegistry.json の更新
 - Git へのコミット・プッシュ
 
-### 7-3. Unity Editor でシーンを構成する
+### 7-3. ゲームアセット（画像）を生成する（オプション）
+
+```
+ゲーム001のアセットを生成して
+```
+
+Claude Code が Gemini CLI を使ってブロックや背景のスプライト画像を自動生成します。
+（このステップはスキップしても、仮のグラフィックでゲームは動作します）
+
+### 7-4. Unity Editor でシーンを構成する
 
 1. **Play を停止** する（再生中は実行できません）
 2. 上部メニュー **Assets** → **Setup** → **001 BlockFlow** を選択
@@ -170,13 +179,15 @@ git status
       ↓
 2. Claude Code に「ゲームXXX を作って」と依頼
       ↓
-3. Unity Editor で Assets > Setup > XXX を実行
+3. 「ゲームXXXのアセットを生成して」で画像を作成（オプション）
       ↓
-4. Play ボタンで動作確認
+4. Unity Editor で Assets > Setup > XXX を実行
       ↓
-5. 問題があれば Claude Code に伝えて修正
+5. Play ボタンで動作確認
       ↓
-6. 完成！Issue をクローズして次のゲームへ
+6. 問題があれば Claude Code に伝えて修正
+      ↓
+7. 完成！Issue をクローズして次のゲームへ
 ```
 
 ---
