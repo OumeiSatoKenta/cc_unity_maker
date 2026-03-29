@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ゲームアイデア一覧
+    url: https://github.com/OumeiSatoKenta/cc_game_ideas/blob/main/ideas/ideas.md
+    about: 実装するゲームのアイデア一覧はこちら
