@@ -61,8 +61,7 @@ public class manager : MonoBehaviour
 各ゲームのスクリプトは他のゲームのスクリプトに依存してはいけない。
 
 ```csharp
-// ✅ 良い例: Common のみに依存
-using Common; // SceneLoader 等
+// ✅ 良い例: Common のみに依存（Common は namespace なし、using 不要）
 using UnityEngine;
 
 namespace Game001_BlockFlow
