@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using TMPro;
@@ -128,7 +129,7 @@ public static class SetupTopMenu
         {
             var eventObj = new GameObject("EventSystem");
             eventObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
-            eventObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            eventObj.AddComponent<InputSystemUIInputModule>();
         }
 
         // --- カメラ背景色を暗めに設定 ---
