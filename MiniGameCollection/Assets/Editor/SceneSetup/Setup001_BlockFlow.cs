@@ -35,35 +35,50 @@ public static class Setup001_BlockFlow
             camera.orthographicSize = 5f;
         }
 
-        // --- 共用スプライトをアセットとして作成 ---
-        string bgTexPath = "Assets/Scripts/Game001_BlockFlow/WhiteSquare.png";
-        if (!System.IO.File.Exists(bgTexPath))
-        {
-            var bgTex = new Texture2D(4, 4);
-            var bgPixels = new Color[16];
-            for (int i = 0; i < 16; i++) bgPixels[i] = Color.white;
-            bgTex.SetPixels(bgPixels);
-            bgTex.Apply();
-            System.IO.File.WriteAllBytes(bgTexPath, bgTex.EncodeToPNG());
-            Object.DestroyImmediate(bgTex);
-            AssetDatabase.ImportAsset(bgTexPath);
+        // --- 共用スプライト読み込み ---
+        // 盤面背景（アセット画像）
+        string boardBgPath = "Assets/Resources/Sprites/Game001_BlockFlow/board_background.png";
+        var boardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(boardBgPath);
 
-            var bgImporter = AssetImporter.GetAtPath(bgTexPath) as TextureImporter;
-            if (bgImporter != null)
+        // グリッド線用の白スプライト
+        string whiteTexPath = "Assets/Scripts/Game001_BlockFlow/WhiteSquare.png";
+        if (!System.IO.File.Exists(whiteTexPath))
+        {
+            var wTex = new Texture2D(4, 4);
+            var wPixels = new Color[16];
+            for (int i = 0; i < 16; i++) wPixels[i] = Color.white;
+            wTex.SetPixels(wPixels);
+            wTex.Apply();
+            System.IO.File.WriteAllBytes(whiteTexPath, wTex.EncodeToPNG());
+            Object.DestroyImmediate(wTex);
+            AssetDatabase.ImportAsset(whiteTexPath);
+            var wImporter = AssetImporter.GetAtPath(whiteTexPath) as TextureImporter;
+            if (wImporter != null)
             {
-                bgImporter.textureType = TextureImporterType.Sprite;
-                bgImporter.spritePixelsPerUnit = 1;
-                bgImporter.SaveAndReimport();
+                wImporter.textureType = TextureImporterType.Sprite;
+                wImporter.spritePixelsPerUnit = 1;
+                wImporter.SaveAndReimport();
             }
         }
-        var bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(bgTexPath);
+        var whiteSprite = AssetDatabase.LoadAssetAtPath<Sprite>(whiteTexPath);
 
         // --- 盤面背景 ---
         var boardBgObj = new GameObject("BoardBackground");
         var boardBgSr = boardBgObj.AddComponent<SpriteRenderer>();
-        boardBgSr.sprite = bgSprite;
-        boardBgSr.color = new Color(0.12f, 0.14f, 0.2f, 1f);
-        boardBgObj.transform.localScale = new Vector3(7.5f, 7.5f, 1f);
+        if (boardBgSprite != null)
+        {
+            boardBgSr.sprite = boardBgSprite;
+            boardBgSr.color = Color.white;
+            // board_background.png は 256x256, pixelsPerUnit=100 → 約2.56ワールド単位
+            // 5x5盤面 * cellSize 1.2 = 6.0 → スケール約 2.4
+            boardBgObj.transform.localScale = new Vector3(2.5f, 2.5f, 1f);
+        }
+        else
+        {
+            boardBgSr.sprite = whiteSprite;
+            boardBgSr.color = new Color(0.12f, 0.14f, 0.2f, 1f);
+            boardBgObj.transform.localScale = new Vector3(7.5f, 7.5f, 1f);
+        }
         boardBgSr.sortingOrder = -10;
 
         // --- グリッド線 ---
@@ -74,7 +89,7 @@ public static class Setup001_BlockFlow
             // 縦線
             var vLine = new GameObject($"VLine_{i}");
             var vSr = vLine.AddComponent<SpriteRenderer>();
-            vSr.sprite = bgSprite;
+            vSr.sprite = whiteSprite;
             vSr.color = new Color(0.25f, 0.28f, 0.35f, 0.5f);
             vLine.transform.position = new Vector3(pos + 0.6f, 0, 0);
             vLine.transform.localScale = new Vector3(0.03f, 7f, 1f);
@@ -83,7 +98,7 @@ public static class Setup001_BlockFlow
             // 横線
             var hLine = new GameObject($"HLine_{i}");
             var hSr = hLine.AddComponent<SpriteRenderer>();
-            hSr.sprite = bgSprite;
+            hSr.sprite = whiteSprite;
             hSr.color = new Color(0.25f, 0.28f, 0.35f, 0.5f);
             hLine.transform.position = new Vector3(0, pos + 0.6f, 0);
             hLine.transform.localScale = new Vector3(7f, 0.03f, 1f);

@@ -13,13 +13,13 @@ namespace Game001_BlockFlow
 
         private SpriteRenderer _spriteRenderer;
 
-        private static readonly Color[] BlockColors =
+        private static readonly string[] SpriteNames =
         {
-            new Color(0.95f, 0.3f, 0.3f),  // 赤
-            new Color(0.3f, 0.55f, 0.95f),  // 青
-            new Color(0.3f, 0.85f, 0.4f),   // 緑
-            new Color(0.95f, 0.85f, 0.2f),  // 黄
-            new Color(0.85f, 0.4f, 0.85f),  // 紫
+            "Sprites/Game001_BlockFlow/block_red",
+            "Sprites/Game001_BlockFlow/block_blue",
+            "Sprites/Game001_BlockFlow/block_green",
+            "Sprites/Game001_BlockFlow/block_yellow",
+            "Sprites/Game001_BlockFlow/block_purple",
         };
 
         public int ColorId => _colorId;
@@ -31,10 +31,35 @@ namespace Game001_BlockFlow
             GridPosition = gridPos;
 
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            if (_spriteRenderer != null && colorId >= 0 && colorId < BlockColors.Length)
+            if (_spriteRenderer == null) return;
+
+            if (colorId >= 0 && colorId < SpriteNames.Length)
             {
-                _spriteRenderer.color = BlockColors[colorId];
+                var sprite = Resources.Load<Sprite>(SpriteNames[colorId]);
+                if (sprite != null)
+                {
+                    _spriteRenderer.sprite = sprite;
+                    _spriteRenderer.color = Color.white;
+                }
+                else
+                {
+                    Debug.LogWarning($"[BlockController] スプライト '{SpriteNames[colorId]}' が見つかりません。フォールバック色を使用します");
+                    _spriteRenderer.color = GetFallbackColor(colorId);
+                }
             }
+        }
+
+        private static Color GetFallbackColor(int colorId)
+        {
+            return colorId switch
+            {
+                0 => new Color(0.95f, 0.3f, 0.3f),
+                1 => new Color(0.3f, 0.55f, 0.95f),
+                2 => new Color(0.3f, 0.85f, 0.4f),
+                3 => new Color(0.95f, 0.85f, 0.2f),
+                4 => new Color(0.85f, 0.4f, 0.85f),
+                _ => Color.white,
+            };
         }
 
         public void SetGridPosition(Vector2Int newPos)
