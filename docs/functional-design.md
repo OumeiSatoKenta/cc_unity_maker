@@ -156,7 +156,7 @@ interface Task {
 
 **生成ファイル構造（新ゲーム追加時）**:
 ```
-unity/Assets/
+MiniGameCollection/Assets/
 ├── Scenes/
 │   └── Game001_BlockFlow.unity        # ← 新規追加
 ├── Scripts/
@@ -169,7 +169,7 @@ unity/Assets/
         └── Setup001_BlockFlow.cs      # ← 新規追加（シーン自動構成）
 ```
 
-※ Unityプロジェクト本体（`unity/`）は初回のみ作成。以降は追加のみ。
+※ Unityプロジェクト本体（`MiniGameCollection/`）は初回のみ作成。以降は追加のみ。
 
 **SceneSetup.cs の役割**:
 Unity Editor メニューから実行するEditorスクリプト。

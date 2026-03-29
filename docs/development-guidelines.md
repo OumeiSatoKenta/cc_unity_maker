@@ -320,7 +320,7 @@ gh auth login
 claude
 
 # 4. Unity Hub でプロジェクトを開く
-# Unity Hub > Add project > cc_unity_maker/unity/ を選択
+# Unity Hub > Add project > cc_unity_maker/MiniGameCollection/ を選択
 
 # 5. 最初のゲームを作る
 # Claude Code に「ゲーム001 BlockFlow を作って」と伝える

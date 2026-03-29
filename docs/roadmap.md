@@ -49,11 +49,11 @@
 
 ### 1-3. Unityプロジェクト初期構築
 
-**目的**: `unity/` フォルダにUnity 6プロジェクトの骨格を作る
+**目的**: `MiniGameCollection/` フォルダにUnity 6プロジェクトの骨格を作る
 
 **作成物**:
 ```
-unity/
+MiniGameCollection/
 ├── Assets/
 │   ├── Scenes/           # 空フォルダ
 │   ├── Scripts/
