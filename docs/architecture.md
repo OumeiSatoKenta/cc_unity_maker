@@ -51,6 +51,10 @@ cc_unity_maker/
     │   │   ├── Game001_BlockFlow/      ← ゲームごとに独立したフォルダ
     │   │   ├── Game002_MirrorMaze/
     │   │   └── ...
+    │   ├── Sprites/                         ← ゲームアセット画像（Gemini CLIで生成）
+    │   │   ├── Common/                     ← 共通UIアセット
+    │   │   ├── Game001_BlockFlow/          ← ゲーム固有スプライト
+    │   │   └── ...
     │   ├── Fonts/
     │   │   ├── NotoSansJP-Regular.ttf      ← 日本語フォント（Google Fonts）
     │   │   └── NotoSansJP-Regular SDF.asset ← TMP用フォントアセット

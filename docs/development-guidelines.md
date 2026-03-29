@@ -181,16 +181,22 @@ Step 2: Claude Code に依頼する
   > 「ゲーム001 BlockFlow を作って」
   → 自動でプロジェクト生成・push まで完了
 
-Step 3: Unity Editor で確認する
+Step 3: ゲームアセット（画像）を生成する
+  > 「ゲーム001のアセットを生成して」
+  → Gemini CLI で各スプライト画像を自動生成
+  → MiniGameCollection/Assets/Sprites/Game001_BlockFlow/ に保存
+
+Step 4: Unity Editor で確認する
   → Unity Hub でプロジェクトを開く（初回のみ）
   → Assets > Setup > 001 BlockFlow を実行
   → Play ボタンを押して動作確認
 
-Step 4: 問題があれば Claude Code に伝える
+Step 5: 問題があれば Claude Code に伝える
   > 「ブロックが消えないバグを直して」
   > 「スコアをもっと大きく表示して」
+  > 「ブロックの画像をもっとキラキラさせて」
 
-Step 5: 完成したら GitHub Projects を更新
+Step 6: 完成したら GitHub Projects を更新
   → ステータスを「完成」に変更
   → Issue をクローズ
 ```
