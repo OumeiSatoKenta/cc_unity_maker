@@ -7,7 +7,7 @@
       "size": "S",
       "sceneName": "001_BlockFlow",
       "description": "色付きブロックをスワイプして同色を全て繋げる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "002",
