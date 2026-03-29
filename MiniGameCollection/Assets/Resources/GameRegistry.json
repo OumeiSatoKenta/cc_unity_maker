@@ -1,0 +1,904 @@
+{
+  "games": [
+    {
+      "id": "001",
+      "title": "BlockFlow",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "001_BlockFlow",
+      "description": "色付きブロックをスワイプして同色を全て繋げる",
+      "implemented": false
+    },
+    {
+      "id": "002",
+      "title": "MirrorMaze",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "002_MirrorMaze",
+      "description": "鏡を配置してレーザーをゴールへ誘導する",
+      "implemented": false
+    },
+    {
+      "id": "003",
+      "title": "GravitySwitch",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "003_GravitySwitch",
+      "description": "重力方向を4方向に切り替えてボールをゴールへ導く",
+      "implemented": false
+    },
+    {
+      "id": "004",
+      "title": "WordCrystal",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "004_WordCrystal",
+      "description": "クリスタルを砕くと文字が出て英単語を作る",
+      "implemented": false
+    },
+    {
+      "id": "005",
+      "title": "PipeConnect",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "005_PipeConnect",
+      "description": "水道管パーツを回転させて水源から出口まで繋げる",
+      "implemented": false
+    },
+    {
+      "id": "006",
+      "title": "ShadowMatch",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "006_ShadowMatch",
+      "description": "3Dオブジェクトの影が指定のシルエットと一致するよう回転させる",
+      "implemented": false
+    },
+    {
+      "id": "007",
+      "title": "NumberFlow",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "007_NumberFlow",
+      "description": "数字を1から順に繋げて盤面を全マス埋める",
+      "implemented": false
+    },
+    {
+      "id": "008",
+      "title": "IcePath",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "008_IcePath",
+      "description": "氷の上を滑って一筆書きで全マスを通過する",
+      "implemented": false
+    },
+    {
+      "id": "009",
+      "title": "ColorMix",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "009_ColorMix",
+      "description": "絵の具を混ぜて指定の色を正確に再現する",
+      "implemented": false
+    },
+    {
+      "id": "010",
+      "title": "GearSync",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "010_GearSync",
+      "description": "歯車の向きを合わせて機械を起動させる",
+      "implemented": false
+    },
+    {
+      "id": "011",
+      "title": "FoldPaper",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "011_FoldPaper",
+      "description": "紙を折り畳んで指定の形を作る折り紙パズル",
+      "implemented": false
+    },
+    {
+      "id": "012",
+      "title": "BridgeBuilder",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "012_BridgeBuilder",
+      "description": "橋のパーツを配置して車が安全に渡れる橋を作る",
+      "implemented": false
+    },
+    {
+      "id": "013",
+      "title": "SymmetryDraw",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "013_SymmetryDraw",
+      "description": "線を引くと左右対称にも描かれ、指定の絵を完成させる",
+      "implemented": false
+    },
+    {
+      "id": "014",
+      "title": "MagnetPath",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "014_MagnetPath",
+      "description": "磁石の極性（N/S）を切り替えて鉄球を誘導する",
+      "implemented": false
+    },
+    {
+      "id": "015",
+      "title": "TileTurn",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "015_TileTurn",
+      "description": "タイルを回転させて全体の絵柄を完成させる",
+      "implemented": false
+    },
+    {
+      "id": "016",
+      "title": "LightSwitch",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "016_LightSwitch",
+      "description": "電球のオンオフパターンで暗号を解読する",
+      "implemented": false
+    },
+    {
+      "id": "017",
+      "title": "CrystalSort",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "017_CrystalSort",
+      "description": "色のついたクリスタルを同色の瓶に正しく分類する",
+      "implemented": false
+    },
+    {
+      "id": "018",
+      "title": "TimeRewind",
+      "category": "puzzle",
+      "size": "L",
+      "sceneName": "018_TimeRewind",
+      "description": "コマを動かした後に時間を巻き戻してゴールを達成する逆算パズル",
+      "implemented": false
+    },
+    {
+      "id": "019",
+      "title": "PathCut",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "019_PathCut",
+      "description": "最小手数でロープをカットしてボールを星に当てて落とす",
+      "implemented": false
+    },
+    {
+      "id": "020",
+      "title": "EchoMaze",
+      "category": "puzzle",
+      "size": "L",
+      "sceneName": "020_EchoMaze",
+      "description": "音のエコーと反響だけを頼りに見えない迷路を進む",
+      "implemented": false
+    },
+    {
+      "id": "021",
+      "title": "BladeDash",
+      "category": "action",
+      "size": "S",
+      "sceneName": "021_BladeDash",
+      "description": "迫りくる刃を避けながらコインを集めるエンドレスラン",
+      "implemented": false
+    },
+    {
+      "id": "022",
+      "title": "GravityBall",
+      "category": "action",
+      "size": "S",
+      "sceneName": "022_GravityBall",
+      "description": "上下反転を繰り返しながら障害物をよける反射アクション",
+      "implemented": false
+    },
+    {
+      "id": "023",
+      "title": "ChainSlash",
+      "category": "action",
+      "size": "M",
+      "sceneName": "023_ChainSlash",
+      "description": "敵を鎖で繋いで一気に倒すコンボスラッシュ",
+      "implemented": false
+    },
+    {
+      "id": "024",
+      "title": "BubblePop",
+      "category": "action",
+      "size": "S",
+      "sceneName": "024_BubblePop",
+      "description": "迫ってくるバブルをタップで破裂させるアーケード",
+      "implemented": false
+    },
+    {
+      "id": "025",
+      "title": "TowerDefend",
+      "category": "action",
+      "size": "M",
+      "sceneName": "025_TowerDefend",
+      "description": "指でドラッグして壁を描き敵の進行を止めるタワーディフェンス",
+      "implemented": false
+    },
+    {
+      "id": "026",
+      "title": "SliceNinja",
+      "category": "action",
+      "size": "S",
+      "sceneName": "026_SliceNinja",
+      "description": "飛んでくる物体をスワイプで切り爆弾は避ける忍者ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "027",
+      "title": "DotDodge",
+      "category": "action",
+      "size": "S",
+      "sceneName": "027_DotDodge",
+      "description": "画面を埋め尽くす無数のドットを避け生き延びるサバイバル",
+      "implemented": false
+    },
+    {
+      "id": "028",
+      "title": "RopeSwing",
+      "category": "action",
+      "size": "M",
+      "sceneName": "028_RopeSwing",
+      "description": "ロープを掴んで振り子運動でステージを渡り歩く",
+      "implemented": false
+    },
+    {
+      "id": "029",
+      "title": "MeteorShield",
+      "category": "action",
+      "size": "S",
+      "sceneName": "029_MeteorShield",
+      "description": "落下する隕石をシールドで弾いて星を守るディフェンス",
+      "implemented": false
+    },
+    {
+      "id": "030",
+      "title": "FingerRacer",
+      "category": "action",
+      "size": "M",
+      "sceneName": "030_FingerRacer",
+      "description": "指でなぞったコースを車が走るフィンガーレース",
+      "implemented": false
+    },
+    {
+      "id": "031",
+      "title": "BounceKing",
+      "category": "action",
+      "size": "S",
+      "sceneName": "031_BounceKing",
+      "description": "ボールをバウンドさせてブロックを全破壊するブレイクアウト",
+      "implemented": false
+    },
+    {
+      "id": "032",
+      "title": "SpinCutter",
+      "category": "action",
+      "size": "M",
+      "sceneName": "032_SpinCutter",
+      "description": "回転する刃の軌道をコントロールして敵を一掃する",
+      "implemented": false
+    },
+    {
+      "id": "033",
+      "title": "AimSniper",
+      "category": "action",
+      "size": "S",
+      "sceneName": "033_AimSniper",
+      "description": "揺れるスコープでタイミングよくタップして動くターゲットを撃つ",
+      "implemented": false
+    },
+    {
+      "id": "034",
+      "title": "DropZone",
+      "category": "action",
+      "size": "S",
+      "sceneName": "034_DropZone",
+      "description": "落下するアイテムをドラッグして正しいゾーンに分類する",
+      "implemented": false
+    },
+    {
+      "id": "035",
+      "title": "WaveRider",
+      "category": "action",
+      "size": "M",
+      "sceneName": "035_WaveRider",
+      "description": "波に乗ってサーフィンし岩を避けながらトリックでスコアを稼ぐ",
+      "implemented": false
+    },
+    {
+      "id": "036",
+      "title": "CoinStack",
+      "category": "action",
+      "size": "S",
+      "sceneName": "036_CoinStack",
+      "description": "落下するコインをタイミングよく積み上げ崩れないタワーを作る",
+      "implemented": false
+    },
+    {
+      "id": "037",
+      "title": "ZapChain",
+      "category": "action",
+      "size": "M",
+      "sceneName": "037_ZapChain",
+      "description": "敵に触れると電撃が連鎖して多数をまとめて倒す",
+      "implemented": false
+    },
+    {
+      "id": "038",
+      "title": "FlyBird",
+      "category": "action",
+      "size": "S",
+      "sceneName": "038_FlyBird",
+      "description": "ワンタップ操作で障害物の隙間をすり抜けて飛び続ける",
+      "implemented": false
+    },
+    {
+      "id": "039",
+      "title": "BoomerangHero",
+      "category": "action",
+      "size": "M",
+      "sceneName": "039_BoomerangHero",
+      "description": "ブーメランを投げ軌道を指でなぞり操作して敵を倒す",
+      "implemented": false
+    },
+    {
+      "id": "040",
+      "title": "DashDungeon",
+      "category": "action",
+      "size": "M",
+      "sceneName": "040_DashDungeon",
+      "description": "ワンタップでダッシュ方向を切り替えながらダンジョンを突破",
+      "implemented": false
+    },
+    {
+      "id": "041",
+      "title": "StackJump",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "041_StackJump",
+      "description": "タイミングよくタップしてプラットフォームを積み上げ高さを競う",
+      "implemented": false
+    },
+    {
+      "id": "042",
+      "title": "ColorDrop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "042_ColorDrop",
+      "description": "色付きの雨粒を同色のバケツにスワイプで振り分ける",
+      "implemented": false
+    },
+    {
+      "id": "043",
+      "title": "BallSort3D",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "043_BallSort3D",
+      "description": "3Dのカップで色のボールを同色ごとに整理する",
+      "implemented": false
+    },
+    {
+      "id": "044",
+      "title": "TiltMaze",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "044_TiltMaze",
+      "description": "デバイスを傾けてボールを迷路の出口へ転がす",
+      "implemented": false
+    },
+    {
+      "id": "045",
+      "title": "FingerPaint",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "045_FingerPaint",
+      "description": "BGMのリズムに乗ってキャンバスに指で絵を描く",
+      "implemented": false
+    },
+    {
+      "id": "046",
+      "title": "SqueezePop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "046_SqueezePop",
+      "description": "絞ると色が出るチューブで画面全体を塗りつぶす",
+      "implemented": false
+    },
+    {
+      "id": "047",
+      "title": "SpinBalance",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "047_SpinBalance",
+      "description": "画面を回転させて端から落ちないようコマを保持し続ける",
+      "implemented": false
+    },
+    {
+      "id": "048",
+      "title": "GlassBall",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "048_GlassBall",
+      "description": "ガラスの傾斜面を滑るボールを目的地へ誘導する",
+      "implemented": false
+    },
+    {
+      "id": "049",
+      "title": "CloudHop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "049_CloudHop",
+      "description": "消える雲を素早く踏み台にして空高く跳ね上がる",
+      "implemented": false
+    },
+    {
+      "id": "050",
+      "title": "BubbleSort",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "050_BubbleSort",
+      "description": "浮かんでくる色バブルを色ごとに分けて並べる",
+      "implemented": false
+    },
+    {
+      "id": "051",
+      "title": "DrawBridge",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "051_DrawBridge",
+      "description": "橋を指で描いてボールを転がしゴールへ届ける",
+      "implemented": false
+    },
+    {
+      "id": "052",
+      "title": "HammerNail",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "052_HammerNail",
+      "description": "リズムよくタップして釘を打ち込む爽快ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "053",
+      "title": "SlideBlitz",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "053_SlideBlitz",
+      "description": "スライドパズルをいかに速く解けるかのタイムアタック",
+      "implemented": false
+    },
+    {
+      "id": "054",
+      "title": "FruitSlash",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "054_FruitSlash",
+      "description": "飛んでくるフルーツをスワイプで切り爆弾は回避する",
+      "implemented": false
+    },
+    {
+      "id": "055",
+      "title": "DustSweep",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "055_DustSweep",
+      "description": "画面の砂埃をスワイプで一掃する爽快クリーニングゲーム",
+      "implemented": false
+    },
+    {
+      "id": "056",
+      "title": "InflateFloat",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "056_InflateFloat",
+      "description": "風船を膨らませ障害物をかわしながら空を飛ぶ",
+      "implemented": false
+    },
+    {
+      "id": "057",
+      "title": "CandyDrop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "057_CandyDrop",
+      "description": "落下するキャンディを積み上げる物理パズル",
+      "implemented": false
+    },
+    {
+      "id": "058",
+      "title": "ThreadNeedle",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "058_ThreadNeedle",
+      "description": "揺れる針穴に糸を通すような精密タップゲーム",
+      "implemented": false
+    },
+    {
+      "id": "059",
+      "title": "WaterJug",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "059_WaterJug",
+      "description": "ジャグを傾けて指定量の水を正確に計る操作ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "060",
+      "title": "MeltIce",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "060_MeltIce",
+      "description": "太陽光を鏡で反射させて的の氷を溶かすカジュアルゲーム",
+      "implemented": false
+    },
+    {
+      "id": "061",
+      "title": "CookieFactory",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "061_CookieFactory",
+      "description": "クッキーを焼いて工場を拡大するクリッカー",
+      "implemented": false
+    },
+    {
+      "id": "062",
+      "title": "MagicForest",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "062_MagicForest",
+      "description": "木をタップして育て森を広げる放置育成",
+      "implemented": false
+    },
+    {
+      "id": "063",
+      "title": "StarMiner",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "063_StarMiner",
+      "description": "星を採掘して宇宙船をアップグレードする放置ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "064",
+      "title": "AquaCity",
+      "category": "idle",
+      "size": "L",
+      "sceneName": "064_AquaCity",
+      "description": "水中都市を建設して魚を集める放置シム",
+      "implemented": false
+    },
+    {
+      "id": "065",
+      "title": "SpellBrewery",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "065_SpellBrewery",
+      "description": "魔法の材料を自動収集してポーションを醸造する",
+      "implemented": false
+    },
+    {
+      "id": "066",
+      "title": "RoboFactory",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "066_RoboFactory",
+      "description": "ロボットが自動で資源を集めて都市を建設する",
+      "implemented": false
+    },
+    {
+      "id": "067",
+      "title": "TapDojo",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "067_TapDojo",
+      "description": "道場でひたすらタップ修行して武道家を最強へ育てる",
+      "implemented": false
+    },
+    {
+      "id": "068",
+      "title": "CloudFarm",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "068_CloudFarm",
+      "description": "雲の上の農場で野菜を育てて市場に出荷する放置農業",
+      "implemented": false
+    },
+    {
+      "id": "069",
+      "title": "DungeonDigger",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "069_DungeonDigger",
+      "description": "地下を掘り続けて宝を集めるドリルクリッカー",
+      "implemented": false
+    },
+    {
+      "id": "070",
+      "title": "NanoLab",
+      "category": "idle",
+      "size": "L",
+      "sceneName": "070_NanoLab",
+      "description": "ナノマシンを増殖させて科学技術を段階的に進化させる",
+      "implemented": false
+    },
+    {
+      "id": "071",
+      "title": "BeatTiles",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "071_BeatTiles",
+      "description": "落ちてくるタイルをリズムに合わせてタップするリズムゲーム",
+      "implemented": false
+    },
+    {
+      "id": "072",
+      "title": "DrumKit",
+      "category": "rhythm",
+      "size": "S",
+      "sceneName": "072_DrumKit",
+      "description": "画面上のドラムセットをタップして演奏する楽器ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "073",
+      "title": "MelodyMaze",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "073_MelodyMaze",
+      "description": "音符を繋げてメロディを完成させる音楽パズル",
+      "implemented": false
+    },
+    {
+      "id": "074",
+      "title": "NoteRain",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "074_NoteRain",
+      "description": "降ってくる音符を正確にキャッチして演奏を完成させる",
+      "implemented": false
+    },
+    {
+      "id": "075",
+      "title": "SoundGarden",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "075_SoundGarden",
+      "description": "植物をタップして育てると音楽が生まれるインタラクティブアート",
+      "implemented": false
+    },
+    {
+      "id": "076",
+      "title": "ChordCatch",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "076_ChordCatch",
+      "description": "和音を聞き取り対応するボタンを素早くタップする",
+      "implemented": false
+    },
+    {
+      "id": "077",
+      "title": "BeatRunner",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "077_BeatRunner",
+      "description": "BGMのビートに合わせてジャンプするリズムランゲーム",
+      "implemented": false
+    },
+    {
+      "id": "078",
+      "title": "EchoBack",
+      "category": "rhythm",
+      "size": "S",
+      "sceneName": "078_EchoBack",
+      "description": "再生された音楽パターンを正確に再現する音楽記憶ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "079",
+      "title": "SilentBeat",
+      "category": "rhythm",
+      "size": "S",
+      "sceneName": "079_SilentBeat",
+      "description": "無音の画面でリズムを感じ取り正確なタイミングでタップ",
+      "implemented": false
+    },
+    {
+      "id": "080",
+      "title": "FreqFight",
+      "category": "rhythm",
+      "size": "L",
+      "sceneName": "080_FreqFight",
+      "description": "周波数（音程）を合わせると敵にダメージを与える音楽バトル",
+      "implemented": false
+    },
+    {
+      "id": "081",
+      "title": "PetBonsai",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "081_PetBonsai",
+      "description": "盆栽に水をやり枝を整えて美しい形に育てる和風育成",
+      "implemented": false
+    },
+    {
+      "id": "082",
+      "title": "AquaPet",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "082_AquaPet",
+      "description": "水槽の魚を育てて鑑賞する仮想アクアリウム",
+      "implemented": false
+    },
+    {
+      "id": "083",
+      "title": "StarChef",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "083_StarChef",
+      "description": "星を使って宇宙レシピの料理を作るお料理育成ゲーム",
+      "implemented": false
+    },
+    {
+      "id": "084",
+      "title": "GardenZen",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "084_GardenZen",
+      "description": "禅の庭を自由にデザインし石と砂紋で癒やしの空間を作る",
+      "implemented": false
+    },
+    {
+      "id": "085",
+      "title": "MechPet",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "085_MechPet",
+      "description": "メカのパーツを組み合わせて独自のロボットペットを育てる",
+      "implemented": false
+    },
+    {
+      "id": "086",
+      "title": "CityBonsai",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "086_CityBonsai",
+      "description": "盆栽の中に小さな都市を育てる箱庭シミュレーション",
+      "implemented": false
+    },
+    {
+      "id": "087",
+      "title": "DreamCatcher",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "087_DreamCatcher",
+      "description": "夢の破片を集めて自分だけの夢の世界を構築する",
+      "implemented": false
+    },
+    {
+      "id": "088",
+      "title": "AlchemyPet",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "088_AlchemyPet",
+      "description": "錬金術で素材を変換してユニークなペットを生み出す",
+      "implemented": false
+    },
+    {
+      "id": "089",
+      "title": "IslandHop",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "089_IslandHop",
+      "description": "孤島を次々と開拓してリゾートアイランドを完成させる",
+      "implemented": false
+    },
+    {
+      "id": "090",
+      "title": "StarshipCrew",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "090_StarshipCrew",
+      "description": "宇宙船クルーを育成して銀河探検ミッションをこなす",
+      "implemented": false
+    },
+    {
+      "id": "091",
+      "title": "TimeBlender",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "091_TimeBlender",
+      "description": "過去と未来を自由に切り替えて謎を解くタイムトラベルパズル",
+      "implemented": false
+    },
+    {
+      "id": "092",
+      "title": "MirrorWorld",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "092_MirrorWorld",
+      "description": "画面上下が鏡像になっており逆向きに操作するギミックゲーム",
+      "implemented": false
+    },
+    {
+      "id": "093",
+      "title": "ColorPerception",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "093_ColorPerception",
+      "description": "色覚の違いをテーマにした視点切替パズル",
+      "implemented": false
+    },
+    {
+      "id": "094",
+      "title": "GravityPainter",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "094_GravityPainter",
+      "description": "重力方向を変えながら絵の具が流れて絵が完成するアート体験",
+      "implemented": false
+    },
+    {
+      "id": "095",
+      "title": "SilentWorld",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "095_SilentWorld",
+      "description": "音が存在しない世界で視覚だけを頼りに進む実験的アドベンチャー",
+      "implemented": false
+    },
+    {
+      "id": "096",
+      "title": "DualControl",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "096_DualControl",
+      "description": "2つのキャラを同時に別々に操作する二刀流アクション",
+      "implemented": false
+    },
+    {
+      "id": "097",
+      "title": "PixelEvolution",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "097_PixelEvolution",
+      "description": "ピクセルが世代を経るごとに進化して複雑な生命体になるシム",
+      "implemented": false
+    },
+    {
+      "id": "098",
+      "title": "InfiniteLoop",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "098_InfiniteLoop",
+      "description": "同じループを繰り返す世界に気づき脱出するメタゲーム",
+      "implemented": false
+    },
+    {
+      "id": "099",
+      "title": "TouchMemory",
+      "category": "unique",
+      "size": "S",
+      "sceneName": "099_TouchMemory",
+      "description": "タッチした順番を記憶して同じパターンを再現するメモリーゲーム",
+      "implemented": false
+    },
+    {
+      "id": "100",
+      "title": "DreamRun",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "100_DreamRun",
+      "description": "シュールな夢の中を走り続けるナラティブランゲーム",
+      "implemented": false
+    }
+  ]
+}
