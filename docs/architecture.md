@@ -51,8 +51,13 @@ cc_unity_maker/
     │   │   ├── Game001_BlockFlow/      ← ゲームごとに独立したフォルダ
     │   │   ├── Game002_MirrorMaze/
     │   │   └── ...
+    │   ├── Fonts/
+    │   │   ├── NotoSansJP-Regular.ttf      ← 日本語フォント（Google Fonts）
+    │   │   └── NotoSansJP-Regular SDF.asset ← TMP用フォントアセット
     │   ├── Editor/
     │   │   └── SceneSetup/
+    │   │       ├── SetupTopMenu.cs         ← TopMenuシーン自動構成
+    │   │       ├── SetupJapaneseFont.cs    ← 日本語フォントアセット生成
     │   │       ├── Setup001_BlockFlow.cs   ← ゲームごとのシーン自動構成
     │   │       └── ...
     │   └── Resources/

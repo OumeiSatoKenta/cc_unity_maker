@@ -67,8 +67,14 @@ MiniGameCollection/Assets/
 │   │   └── ...
 │   └── ...（ゲーム追加のたびに増える）
 │
+├── Fonts/
+│   ├── NotoSansJP-Regular.ttf          # 日本語フォント（Noto Sans JP）
+│   └── NotoSansJP-Regular SDF.asset    # TMP用フォントアセット（Generate Japanese Fontで生成）
+│
 ├── Editor/
 │   └── SceneSetup/                     # シーン自動構成Editorスクリプト
+│       ├── SetupTopMenu.cs             # TopMenuシーン自動構成
+│       ├── SetupJapaneseFont.cs        # 日本語フォントアセット生成
 │       ├── Setup001_BlockFlow.cs       # ゲームごとに1ファイル
 │       ├── Setup002_MirrorMaze.cs
 │       └── ...（ゲーム追加のたびに増える）
@@ -112,6 +118,18 @@ MiniGameCollection/Assets/
 **依存関係**:
 - 依存可能: Unityの標準API（`UnityEngine`, `UnityEngine.SceneManagement`）
 - 依存禁止: 各ゲーム固有のスクリプト（`Game001_*` 等）
+
+---
+
+### MiniGameCollection/Assets/Fonts/
+
+**役割**: 日本語フォントファイルとTMP用フォントアセットを管理
+
+**配置ファイル**:
+- `NotoSansJP-Regular.ttf`: Noto Sans JP フォント（Google Fonts）
+- `NotoSansJP-Regular SDF.asset`: TextMeshPro用フォントアセット
+
+**生成方法**: `Assets > Setup > Generate Japanese Font` で自動生成
 
 ---
 

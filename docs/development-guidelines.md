@@ -321,7 +321,13 @@ claude
 # 4. Unity Hub でプロジェクトを開く
 # Unity Hub > Add project > cc_unity_maker/MiniGameCollection/ を選択
 
-# 5. 最初のゲームを作る
+# 5. 日本語フォントをセットアップ（初回のみ）
+# Unity Editor で Assets > Setup > Generate Japanese Font を実行
+
+# 6. TopMenuシーンを構成（初回のみ）
+# Unity Editor で Assets > Setup > TopMenu を実行
+
+# 7. 最初のゲームを作る
 # Claude Code に「ゲーム001 BlockFlow を作って」と伝える
 ```
 
