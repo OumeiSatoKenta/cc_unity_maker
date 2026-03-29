@@ -3,21 +3,21 @@
 ## 実行コマンド一覧
 
 ```bash
-# Phase 1: 基盤構築（この順で実行）
-/add-feature GitHubラベルとIssueテンプレートのセットアップ
-/add-feature 全100ゲームのIssue一括登録スクリプト
-/add-feature Unityプロジェクト初期構築
-/add-feature 共通スクリプト実装（SceneLoader・GameRegistry・BackToMenuButton）
-/add-feature GameRegistry.json初期データ（全100ゲーム・未実装状態）
+# Phase 1: 基盤構築 ✅ 完了
+/add-feature GitHubラベルとIssueテンプレートのセットアップ        # ✅
+/add-feature 全100ゲームのIssue一括登録スクリプト                 # ✅
+/add-feature Unityプロジェクト初期構築                           # ✅
+/add-feature 共通スクリプト実装（SceneLoader・GameRegistry・BackToMenuButton） # ✅
+/add-feature GameRegistry.json初期データ（全100ゲーム・未実装状態） # ✅（共通スクリプトと同時実施）
 
-# Phase 2: TopMenu実装
-/add-feature TopMenuシーン（カテゴリタブ・ゲームカードUI）
+# Phase 2: TopMenu実装 ✅ 完了
+/add-feature TopMenuシーン（カテゴリタブ・ゲームカードUI）        # ✅
 
-# Phase 3: 動作確認用ゲーム実装
-/add-feature ゲーム001 BlockFlow実装
+# Phase 3: 動作確認用ゲーム実装 ✅ 完了
+/add-feature ゲーム001 BlockFlow実装                             # ✅
 
-# Phase 4: 非エンジニア向けガイド
-/add-feature GETTING_STARTED.md（初回セットアップガイド）
+# Phase 4: 非エンジニア向けガイド ✅ 完了
+/add-feature GETTING_STARTED.md（初回セットアップガイド）         # ✅
 ```
 
 ---

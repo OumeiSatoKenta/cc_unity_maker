@@ -26,31 +26,18 @@ type: project
 - `glossary.md` ✅
 - `roadmap.md` ✅（実装順序の定義）
 
-## 次のアクション（`docs/roadmap.md` 参照）
+## ロードマップ完了状況
 
-### Phase 1: 基盤構築
-```
-/add-feature GitHubラベルとIssueテンプレートのセットアップ
-/add-feature 全100ゲームのIssue一括登録スクリプト
-/add-feature Unityプロジェクト初期構築
-/add-feature 共通スクリプト実装（SceneLoader・GameRegistry・BackToMenuButton）
-/add-feature GameRegistry.json初期データ（全100ゲーム・未実装状態）
-```
+全4フェーズ完了（2026-03-29）:
+- Phase 1: 基盤構築 ✅（GitHub Issues 100件・ラベル・Unityプロジェクト・共通スクリプト・GameRegistry.json）
+- Phase 2: TopMenu ✅（カテゴリタブ・ゲームカードUI・日本語フォント対応）
+- Phase 3: ゲーム001 BlockFlow ✅（スワイプパズル・クリア判定・動作確認済み）
+- Phase 4: GETTING_STARTED.md ✅（非エンジニア向け初回セットアップガイド）
 
-### Phase 2: TopMenu
-```
-/add-feature TopMenuシーン（カテゴリタブ・ゲームカードUI）
-```
+## 次のアクション
 
-### Phase 3: 動作確認用ゲーム
-```
-/add-feature ゲーム001 BlockFlow実装
-```
-
-### Phase 4: ガイド
-```
-/add-feature GETTING_STARTED.md（初回セットアップガイド）
-```
+- 工数Sのゲームを順次実装（`/add-feature ゲームXXX タイトル実装` で追加）
+- GitHub Projects のテーブルビュー設定（手動）
 
 ## ゲームアイデアソース
 - リポジトリ: `https://github.com/OumeiSatoKenta/cc_game_ideas`
