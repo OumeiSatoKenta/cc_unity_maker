@@ -14,6 +14,33 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/001_BlockFlow.unity
     guid: 28edba97538ff4666bf68efdb174b02e
+  - enabled: 1
+    path: Assets/Scenes/002_MirrorMaze.unity
+    guid: 8adbfa91b3d164363aab2e9ffb87e168
+  - enabled: 1
+    path: Assets/Scenes/005_PipeConnect.unity
+    guid: 006f9746072ab46c7a706c7c510fe341
+  - enabled: 1
+    path: Assets/Scenes/004_WordCrystal.unity
+    guid: 8bceaa159e2b74ac1b6eca3a28259c24
+  - enabled: 1
+    path: Assets/Scenes/003_GravitySwitch.unity
+    guid: c77eb667d401b4c98adbf8fd3d1889c2
+  - enabled: 1
+    path: Assets/Scenes/007_NumberFlow.unity
+    guid: e47a482ae57fd4c9fa240cf9146a7106
+  - enabled: 1
+    path: Assets/Scenes/008_IcePath.unity
+    guid: c827fe365fef5487abb1a316416455cc
+  - enabled: 1
+    path: Assets/Scenes/011_FoldPaper.unity
+    guid: 00b680cb3a0af4d0d846534a0802d8bc
+  - enabled: 1
+    path: Assets/Scenes/012_BridgeBuilder.unity
+    guid: e83a6e6323e094e11b244e66cdf1989a
+  - enabled: 1
+    path: Assets/Scenes/013_SymmetryDraw.unity
+    guid: 155749bb5650a460a9f5b2849c91a9c5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

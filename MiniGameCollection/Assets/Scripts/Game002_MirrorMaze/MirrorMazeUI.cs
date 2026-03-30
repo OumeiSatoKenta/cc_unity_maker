@@ -6,22 +6,39 @@ namespace Game002_MirrorMaze
 {
     public class MirrorMazeUI : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI _moveCountText;
+        [SerializeField] private TextMeshProUGUI _stageText;
         [SerializeField] private GameObject _clearPanel;
         [SerializeField] private TextMeshProUGUI _clearText;
         [SerializeField] private Button _restartButton;
-        [SerializeField] private Button _menuButton;
+        [SerializeField] private Button _nextStageButton;
         [SerializeField] private MirrorMazeGameManager _gameManager;
 
         private void Awake()
         {
-            _restartButton?.onClick.AddListener(OnRestart);
-            _menuButton?.onClick.AddListener(OnMenu);
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(OnRestartClicked);
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(OnNextStageClicked);
         }
 
-        public void ShowClearPanel()
+        public void UpdateMoveCount(int count)
+        {
+            if (_moveCountText != null)
+                _moveCountText.text = $"手数: {count}";
+        }
+
+        public void UpdateStageText(int stageNum)
+        {
+            if (_stageText != null)
+                _stageText.text = $"ステージ {stageNum}";
+        }
+
+        public void ShowClearPanel(int moveCount, int stageNum)
         {
             if (_clearPanel != null) _clearPanel.SetActive(true);
-            if (_clearText != null) _clearText.text = "クリア！\nレーザーをゴールに届けた！";
+            if (_clearText != null)
+                _clearText.text = $"クリア!\nステージ {stageNum}\n{moveCount} 手";
         }
 
         public void HideClearPanel()
@@ -29,7 +46,14 @@ namespace Game002_MirrorMaze
             if (_clearPanel != null) _clearPanel.SetActive(false);
         }
 
-        private void OnRestart() => _gameManager?.RestartGame();
-        private void OnMenu()    => SceneLoader.BackToMenu();
+        private void OnRestartClicked()
+        {
+            if (_gameManager != null) _gameManager.RestartGame();
+        }
+
+        private void OnNextStageClicked()
+        {
+            if (_gameManager != null) _gameManager.NextStage();
+        }
     }
 }

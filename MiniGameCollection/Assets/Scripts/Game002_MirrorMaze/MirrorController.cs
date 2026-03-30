@@ -2,27 +2,55 @@ using UnityEngine;
 
 namespace Game002_MirrorMaze
 {
-    public enum MirrorType { Slash, Backslash }
-
     public class MirrorController : MonoBehaviour
     {
-        public Vector2Int GridPos { get; set; }
-        public MirrorType Type { get; private set; }
+        [SerializeField] private int _angleType;
 
-        private SpriteRenderer _sr;
+        public int AngleType => _angleType;
+        public Vector2Int GridPosition { get; private set; }
 
-        public void Init(Vector2Int gridPos, MirrorType type, Sprite slashSprite, Sprite backslashSprite)
+        public void Initialize(Vector2Int gridPos, int angleType)
         {
-            GridPos = gridPos;
-            Type = type;
-            _sr = GetComponent<SpriteRenderer>();
-            UpdateSprite(slashSprite, backslashSprite);
+            GridPosition = gridPos;
+            _angleType = angleType;
+            UpdateVisual();
         }
 
-        public void UpdateSprite(Sprite slashSprite, Sprite backslashSprite)
+        public void Rotate45()
         {
-            if (_sr == null) _sr = GetComponent<SpriteRenderer>();
-            _sr.sprite = Type == MirrorType.Slash ? slashSprite : backslashSprite;
+            _angleType = (_angleType + 1) % 2;
+            UpdateVisual();
+        }
+
+        /// <summary>
+        /// 入射方向から反射方向を計算する。
+        /// angleType 0 (/) : (dx,dy) → (dy,dx)
+        /// angleType 1 (\) : (dx,dy) → (-dy,-dx)
+        /// </summary>
+        public Vector2Int Reflect(Vector2Int inDir)
+        {
+            if (_angleType == 0)
+                return new Vector2Int(inDir.y, inDir.x);
+            else
+                return new Vector2Int(-inDir.y, -inDir.x);
+        }
+
+        public void SetGridPosition(Vector2Int newPos)
+        {
+            GridPosition = newPos;
+        }
+
+        public void UpdateWorldPosition(Vector3 worldPos)
+        {
+            transform.position = worldPos;
+        }
+
+        private void UpdateVisual()
+        {
+            if (_angleType == 0)
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+            else
+                transform.rotation = Quaternion.Euler(0, 0, 90);
         }
     }
 }
