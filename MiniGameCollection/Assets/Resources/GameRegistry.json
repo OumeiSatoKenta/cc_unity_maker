@@ -34,7 +34,7 @@
       "size": "M",
       "sceneName": "004_WordCrystal",
       "description": "クリスタルを砕くと文字が出て英単語を作る",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "005",
