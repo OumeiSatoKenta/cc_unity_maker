@@ -79,7 +79,7 @@
       "size": "S",
       "sceneName": "009_ColorMix",
       "description": "絵の具を混ぜて指定の色を正確に再現する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "010",
