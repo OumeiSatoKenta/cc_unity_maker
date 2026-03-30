@@ -115,7 +115,7 @@
       "size": "S",
       "sceneName": "013_SymmetryDraw",
       "description": "線を引くと左右対称にも描かれ、指定の絵を完成させる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "014",
