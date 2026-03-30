@@ -52,7 +52,7 @@
       "size": "S",
       "sceneName": "006_ShadowMatch",
       "description": "3Dオブジェクトの影が指定のシルエットと一致するよう回転させる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "007",
