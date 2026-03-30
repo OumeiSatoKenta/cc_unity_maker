@@ -70,7 +70,7 @@
       "size": "S",
       "sceneName": "008_IcePath",
       "description": "氷の上を滑って一筆書きで全マスを通過する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "009",
