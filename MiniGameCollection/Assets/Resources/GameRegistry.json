@@ -16,7 +16,7 @@
       "size": "M",
       "sceneName": "002_MirrorMaze",
       "description": "鏡を配置してレーザーをゴールへ誘導する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "003",
