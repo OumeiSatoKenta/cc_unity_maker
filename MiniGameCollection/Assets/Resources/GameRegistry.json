@@ -88,7 +88,7 @@
       "size": "M",
       "sceneName": "010_GearSync",
       "description": "歯車の向きを合わせて機械を起動させる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "011",
