@@ -164,6 +164,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/051_DrawBridge.unity
     guid: 0b2e8dd497853424396564ecc2ca773e
+  - enabled: 1
+    path: Assets/Scenes/052_HammerNail.unity
+    guid: 7099bcd36b6954b9f8fbe9bb91489348
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
