@@ -151,7 +151,7 @@
                   "size": "S",
                   "sceneName": "017_CrystalSort",
                   "description": "色のついたクリスタルを同色の瓶に正しく分類する",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "018",
