@@ -56,6 +56,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/015_TileTurn.unity
     guid: 4373d428e83c34c0ca30321e9e1623b4
+  - enabled: 1
+    path: Assets/Scenes/016_LightSwitch.unity
+    guid: 18838a8e88e5e44c3aa8b2b28cb0c56c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
