@@ -1,265 +1,248 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Game012_BridgeBuilder
 {
     public class BridgeManager : MonoBehaviour
     {
-        [SerializeField] private BridgeBuilderGameManager _gameManager;
-        [SerializeField] private BridgeBuilderUI _ui;
-        [SerializeField] private Transform _bridgeParent;
-        [SerializeField] private Transform _carTransform;
-        [SerializeField] private SpriteRenderer _carRenderer;
+        [SerializeField] private int _gridWidth = 8;
+        [SerializeField] private int _gridHeight = 5;
+        [SerializeField] private float _cellSize = 1.0f;
+        [SerializeField] private GameObject _slotPrefab;
 
-        private LevelData _levelData;
-        private List<BridgePart> _placedParts = new();
-        private int _remainingBudget;
-        private int _selectedPartType; // 0=plank, 1=support
-        private bool _isTestRunning;
+        private BridgeSlot[,] _grid;
+        private readonly List<GameObject> _stageObjects = new List<GameObject>();
 
-        // Part types
-        private const int PartPlank = 0;
-        private const int PartSupport = 1;
+        private BridgeBuilderGameManager _gameManager;
+        private Camera _mainCamera;
+        private int _planksRemaining;
 
-        public void LoadLevel(LevelData data)
+        private Sprite _emptySprite;
+        private Sprite _plankSprite;
+        private Sprite _supportSprite;
+        private Sprite _cliffSprite;
+        private Sprite _waterSprite;
+
+        public static int StageCount => 3;
+
+        private void Awake()
         {
-            _levelData = data;
-            _remainingBudget = data.Budget;
-            _selectedPartType = PartPlank;
-            _isTestRunning = false;
-
-            // Clear existing parts
-            foreach (var part in _placedParts)
-            {
-                if (part != null && part.gameObject != null)
-                    Destroy(part.gameObject);
-            }
-            _placedParts.Clear();
-
-            // Reset car
-            if (_carTransform != null)
-            {
-                _carTransform.position = new Vector3(_levelData.LeftEdge.x - 1.5f, _levelData.LeftEdge.y + 0.5f, 0f);
-                _carTransform.gameObject.SetActive(false);
-            }
-        }
-
-        public void SelectPartType(int type)
-        {
-            _selectedPartType = type;
+            _gameManager = GetComponentInParent<BridgeBuilderGameManager>();
+            _mainCamera = Camera.main;
+            _emptySprite = Resources.Load<Sprite>("Sprites/Game012_BridgeBuilder/slot_empty");
+            _plankSprite = Resources.Load<Sprite>("Sprites/Game012_BridgeBuilder/plank");
+            _supportSprite = Resources.Load<Sprite>("Sprites/Game012_BridgeBuilder/support");
+            _cliffSprite = Resources.Load<Sprite>("Sprites/Game012_BridgeBuilder/cliff");
+            _waterSprite = Resources.Load<Sprite>("Sprites/Game012_BridgeBuilder/water");
         }
 
         private void Update()
         {
-            if (_gameManager == null || !_gameManager.IsPlaying || _gameManager.IsTesting) return;
-            if (!Mouse.current.leftButton.wasPressedThisFrame) return;
-
-            Vector2 worldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-
-            // Check if click is in the buildable area (between edges, slightly above bottom)
-            float minX = _levelData.LeftEdge.x;
-            float maxX = _levelData.RightEdge.x;
-            float minY = Mathf.Min(_levelData.LeftEdge.y, _levelData.RightEdge.y) - 2f;
-            float maxY = Mathf.Max(_levelData.LeftEdge.y, _levelData.RightEdge.y) + 1f;
-
-            if (worldPos.x < minX || worldPos.x > maxX || worldPos.y < minY || worldPos.y > maxY)
-                return;
-
-            if (_remainingBudget <= 0) return;
-
-            PlacePart(worldPos);
+            HandleInput();
         }
 
-        private void PlacePart(Vector2 position)
+        private void HandleInput()
         {
-            // Snap to grid (0.5 unit increments)
-            float snapX = Mathf.Round(position.x * 2f) / 2f;
-            float snapY = Mathf.Round(position.y * 2f) / 2f;
-            Vector2 snapped = new Vector2(snapX, snapY);
+            var mouse = Mouse.current;
+            if (mouse == null || _mainCamera == null) return;
 
-            // Check for overlap with existing parts
-            foreach (var existing in _placedParts)
+            if (mouse.leftButton.wasPressedThisFrame)
             {
-                if (existing != null && Vector2.Distance(existing.Position, snapped) < 0.3f)
-                    return;
-            }
-
-            var partObj = new GameObject(_selectedPartType == PartPlank ? "Plank" : "Support");
-            partObj.transform.SetParent(_bridgeParent);
-            partObj.transform.position = new Vector3(snapped.x, snapped.y, 0f);
-
-            var sr = partObj.AddComponent<SpriteRenderer>();
-            sr.sprite = Resources.Load<Sprite>(
-                _selectedPartType == PartPlank
-                    ? "Sprites/Game012_BridgeBuilder/plank"
-                    : "Sprites/Game012_BridgeBuilder/support");
-            sr.sortingOrder = 5;
-
-            if (_selectedPartType == PartPlank)
-            {
-                partObj.transform.localScale = new Vector3(1.5f, 0.25f, 1f);
-                sr.color = new Color(0.65f, 0.45f, 0.2f);
-            }
-            else
-            {
-                partObj.transform.localScale = new Vector3(0.2f, 1.2f, 1f);
-                sr.color = new Color(0.5f, 0.5f, 0.55f);
-            }
-
-            var collider = partObj.AddComponent<BoxCollider2D>();
-            collider.isTrigger = true;
-
-            var part = partObj.AddComponent<BridgePart>();
-            part.Init(_selectedPartType, snapped);
-            _placedParts.Add(part);
-
-            _remainingBudget--;
-            _ui?.SetBudgetText(_remainingBudget);
-        }
-
-        public void UndoLastPart()
-        {
-            if (_placedParts.Count == 0 || _isTestRunning) return;
-            var last = _placedParts[_placedParts.Count - 1];
-            _placedParts.RemoveAt(_placedParts.Count - 1);
-            if (last != null && last.gameObject != null)
-                Destroy(last.gameObject);
-            _remainingBudget++;
-            _ui?.SetBudgetText(_remainingBudget);
-        }
-
-        public void StartTest()
-        {
-            _isTestRunning = true;
-            StartCoroutine(RunTest());
-        }
-
-        private IEnumerator RunTest()
-        {
-            // Evaluate bridge structure
-            bool hasPath = EvaluateBridge();
-
-            if (!hasPath)
-            {
-                yield return StartCoroutine(ShowFailure());
-                _isTestRunning = false;
-                _gameManager.OnTestResult(false);
-                yield break;
-            }
-
-            // Animate car crossing
-            yield return StartCoroutine(AnimateCarCrossing());
-
-            _isTestRunning = false;
-            _gameManager.OnTestResult(true);
-        }
-
-        private bool EvaluateBridge()
-        {
-            if (_placedParts.Count == 0) return false;
-
-            // Check that planks form a continuous path from left to right
-            int plankCount = 0;
-            int supportCount = 0;
-            float leftMost = float.MaxValue;
-            float rightMost = float.MinValue;
-
-            foreach (var part in _placedParts)
-            {
-                if (part.PartType == PartPlank)
+                Vector3 sp = mouse.position.ReadValue();
+                sp.z = -_mainCamera.transform.position.z;
+                Vector2 worldPos = _mainCamera.ScreenToWorldPoint(sp);
+                var hit = Physics2D.OverlapPoint(worldPos);
+                if (hit != null)
                 {
-                    plankCount++;
-                    float partLeft = part.Position.x - 0.75f;
-                    float partRight = part.Position.x + 0.75f;
-                    if (partLeft < leftMost) leftMost = partLeft;
-                    if (partRight > rightMost) rightMost = partRight;
-                }
-                else
-                {
-                    supportCount++;
-                }
-            }
-
-            // Need enough planks to span the gap
-            bool spansGap = leftMost <= _levelData.LeftEdge.x + 0.5f &&
-                            rightMost >= _levelData.RightEdge.x - 0.5f;
-
-            // Need required supports
-            bool hasSupports = supportCount >= _levelData.RequiredSupports;
-
-            // Planks must be roughly at the right height
-            bool heightOk = true;
-            foreach (var part in _placedParts)
-            {
-                if (part.PartType == PartPlank)
-                {
-                    float expectedY = Mathf.Lerp(_levelData.LeftEdge.y, _levelData.RightEdge.y,
-                        Mathf.InverseLerp(_levelData.LeftEdge.x, _levelData.RightEdge.x, part.Position.x));
-                    if (Mathf.Abs(part.Position.y - expectedY) > 1.5f)
+                    var slot = hit.GetComponent<BridgeSlot>();
+                    if (slot != null && !slot.IsFixed && slot.Type == SlotType.Empty && _planksRemaining > 0)
                     {
-                        heightOk = false;
-                        break;
-                    }
-                }
-            }
+                        slot.SetType(SlotType.Plank, _plankSprite);
+                        _planksRemaining--;
 
-            return spansGap && hasSupports && heightOk;
-        }
-
-        private IEnumerator ShowFailure()
-        {
-            // Flash parts red to indicate failure
-            foreach (var part in _placedParts)
-            {
-                if (part != null)
-                {
-                    var sr = part.GetComponent<SpriteRenderer>();
-                    if (sr != null) sr.color = new Color(0.9f, 0.2f, 0.2f);
-                }
-            }
-
-            yield return new WaitForSeconds(1f);
-
-            // Restore colors
-            foreach (var part in _placedParts)
-            {
-                if (part != null)
-                {
-                    var sr = part.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                    {
-                        sr.color = part.PartType == PartPlank
-                            ? new Color(0.65f, 0.45f, 0.2f)
-                            : new Color(0.5f, 0.5f, 0.55f);
+                        if (_gameManager != null)
+                        {
+                            _gameManager.OnPlankPlaced(_planksRemaining);
+                            if (CheckBridgeComplete())
+                                _gameManager.OnBridgeComplete();
+                        }
                     }
                 }
             }
         }
 
-        private IEnumerator AnimateCarCrossing()
+        public bool CheckBridgeComplete()
         {
-            if (_carTransform == null) yield break;
-
-            _carTransform.gameObject.SetActive(true);
-            Vector3 start = new Vector3(_levelData.LeftEdge.x - 1.5f, _levelData.LeftEdge.y + 0.5f, 0f);
-            Vector3 end = new Vector3(_levelData.RightEdge.x + 1.5f, _levelData.RightEdge.y + 0.5f, 0f);
-            _carTransform.position = start;
-
-            float duration = 2f;
-            float elapsed = 0f;
-
-            while (elapsed < duration)
+            // Check if there's a continuous path of planks/cliff/support from left to right on the bridge row
+            int bridgeRow = _gridHeight - 2; // row above water
+            for (int x = 0; x < _gridWidth; x++)
             {
-                elapsed += Time.deltaTime;
-                float t = elapsed / duration;
-                _carTransform.position = Vector3.Lerp(start, end, t);
-                yield return null;
+                var slot = _grid[x, bridgeRow];
+                if (slot == null) return false;
+                if (slot.Type != SlotType.Plank && slot.Type != SlotType.Cliff && slot.Type != SlotType.Support)
+                    return false;
             }
-
-            _carTransform.position = end;
-            yield return new WaitForSeconds(0.5f);
+            return true;
         }
+
+        public void SetupStage(int stageIndex)
+        {
+            ClearStage();
+            var data = GetStageData(stageIndex);
+            _gridWidth = data.width;
+            _gridHeight = data.height;
+            _planksRemaining = data.planksAvailable;
+            _grid = new BridgeSlot[_gridWidth, _gridHeight];
+            BuildStage(data);
+        }
+
+        private void ClearStage()
+        {
+            foreach (var obj in _stageObjects)
+                if (obj != null) Destroy(obj);
+            _stageObjects.Clear();
+        }
+
+        private void BuildStage(StageData data)
+        {
+            for (int x = 0; x < _gridWidth; x++)
+            {
+                for (int y = 0; y < _gridHeight; y++)
+                {
+                    if (_slotPrefab == null) continue;
+                    var obj = Instantiate(_slotPrefab, transform);
+                    var gp = new Vector2Int(x, y);
+                    obj.transform.position = GridToWorld(gp);
+                    obj.name = $"Slot_{x}_{y}";
+
+                    var slot = obj.GetComponent<BridgeSlot>();
+                    SlotType type = SlotType.Empty;
+                    bool isFixed = false;
+                    Sprite sprite = _emptySprite;
+
+                    if (data.cliffs.Contains(gp))
+                    {
+                        type = SlotType.Cliff; isFixed = true; sprite = _cliffSprite;
+                    }
+                    else if (data.water.Contains(gp))
+                    {
+                        type = SlotType.Water; isFixed = true; sprite = _waterSprite;
+                    }
+                    else if (data.supports.Contains(gp))
+                    {
+                        type = SlotType.Support; isFixed = true; sprite = _supportSprite;
+                    }
+
+                    if (slot != null)
+                    {
+                        slot.Initialize(gp, type, isFixed);
+                        if (sprite != null)
+                        {
+                            var sr = obj.GetComponent<SpriteRenderer>();
+                            if (sr != null) sr.sprite = sprite;
+                        }
+                    }
+
+                    _grid[x, y] = slot;
+                    _stageObjects.Add(obj);
+                }
+            }
+        }
+
+        public Vector3 GridToWorld(Vector2Int gridPos)
+        {
+            float offsetX = (_gridWidth - 1) * _cellSize * 0.5f;
+            float offsetY = (_gridHeight - 1) * _cellSize * 0.5f;
+            return new Vector3(gridPos.x * _cellSize - offsetX, gridPos.y * _cellSize - offsetY, 0f);
+        }
+
+        #region Stage Data
+
+        private struct StageData
+        {
+            public int width, height, planksAvailable;
+            public HashSet<Vector2Int> cliffs;
+            public HashSet<Vector2Int> water;
+            public HashSet<Vector2Int> supports;
+        }
+
+        private StageData GetStageData(int index)
+        {
+            switch (index % StageCount)
+            {
+                case 0: return GetStage1();
+                case 1: return GetStage2();
+                case 2: return GetStage3();
+                default: return GetStage1();
+            }
+        }
+
+        // Stage1: 6x4, simple gap, 3 planks needed
+        private StageData GetStage1()
+        {
+            var cliffs = new HashSet<Vector2Int>();
+            var water = new HashSet<Vector2Int>();
+            var supports = new HashSet<Vector2Int>();
+
+            // Top row (sky) - all empty
+            // Bridge row (y=2): cliff on edges, empty in middle
+            cliffs.Add(new Vector2Int(0, 2)); cliffs.Add(new Vector2Int(1, 2));
+            cliffs.Add(new Vector2Int(4, 2)); cliffs.Add(new Vector2Int(5, 2));
+            // Support in middle
+            supports.Add(new Vector2Int(3, 2));
+
+            // Water row (y=1)
+            for (int x = 2; x < 4; x++) water.Add(new Vector2Int(x, 1));
+
+            // Ground (y=0)
+            for (int x = 0; x < 6; x++) cliffs.Add(new Vector2Int(x, 0));
+            cliffs.Add(new Vector2Int(0, 1)); cliffs.Add(new Vector2Int(1, 1));
+            cliffs.Add(new Vector2Int(4, 1)); cliffs.Add(new Vector2Int(5, 1));
+
+            return new StageData { width = 6, height = 4, planksAvailable = 2, cliffs = cliffs, water = water, supports = supports };
+        }
+
+        // Stage2: 8x4, wider gap, 4 planks
+        private StageData GetStage2()
+        {
+            var cliffs = new HashSet<Vector2Int>();
+            var water = new HashSet<Vector2Int>();
+            var supports = new HashSet<Vector2Int>();
+
+            cliffs.Add(new Vector2Int(0, 2)); cliffs.Add(new Vector2Int(1, 2));
+            cliffs.Add(new Vector2Int(6, 2)); cliffs.Add(new Vector2Int(7, 2));
+            supports.Add(new Vector2Int(4, 2));
+
+            for (int x = 2; x < 6; x++) water.Add(new Vector2Int(x, 1));
+            for (int x = 0; x < 8; x++) cliffs.Add(new Vector2Int(x, 0));
+            cliffs.Add(new Vector2Int(0, 1)); cliffs.Add(new Vector2Int(1, 1));
+            cliffs.Add(new Vector2Int(6, 1)); cliffs.Add(new Vector2Int(7, 1));
+
+            return new StageData { width = 8, height = 4, planksAvailable = 4, cliffs = cliffs, water = water, supports = supports };
+        }
+
+        // Stage3: 8x5, two gaps with support
+        private StageData GetStage3()
+        {
+            var cliffs = new HashSet<Vector2Int>();
+            var water = new HashSet<Vector2Int>();
+            var supports = new HashSet<Vector2Int>();
+
+            cliffs.Add(new Vector2Int(0, 3)); cliffs.Add(new Vector2Int(1, 3));
+            supports.Add(new Vector2Int(3, 3));
+            cliffs.Add(new Vector2Int(5, 3));
+            cliffs.Add(new Vector2Int(6, 3)); cliffs.Add(new Vector2Int(7, 3));
+
+            for (int x = 2; x < 5; x++) water.Add(new Vector2Int(x, 2));
+            water.Add(new Vector2Int(4, 2));
+            for (int x = 0; x < 8; x++) { cliffs.Add(new Vector2Int(x, 0)); cliffs.Add(new Vector2Int(x, 1)); }
+            cliffs.Add(new Vector2Int(0, 2)); cliffs.Add(new Vector2Int(1, 2));
+            cliffs.Add(new Vector2Int(5, 2)); cliffs.Add(new Vector2Int(6, 2)); cliffs.Add(new Vector2Int(7, 2));
+
+            return new StageData { width = 8, height = 5, planksAvailable = 4, cliffs = cliffs, water = water, supports = supports };
+        }
+
+        #endregion
     }
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game012_BridgeBuilder
 {
@@ -8,102 +7,47 @@ namespace Game012_BridgeBuilder
         [SerializeField] private BridgeManager _bridgeManager;
         [SerializeField] private BridgeBuilderUI _ui;
 
-        public bool IsPlaying { get; private set; }
-        public bool IsTesting { get; private set; }
+        private bool _isCleared;
+        private int _currentStage;
 
-        public UnityEvent<int> OnLevelCleared = new();
-
-        private int _currentLevel;
-
-        // Level definitions: anchor points and gap info
-        private static readonly LevelData[] Levels =
+        private void Start()
         {
-            new LevelData
-            {
-                LeftEdge = new Vector2(-3f, -1f),
-                RightEdge = new Vector2(3f, -1f),
-                GapWidth = 6f,
-                Budget = 5,
-                RequiredSupports = 1,
-            },
-            new LevelData
-            {
-                LeftEdge = new Vector2(-3.5f, -1f),
-                RightEdge = new Vector2(3.5f, -0.5f),
-                GapWidth = 7f,
-                Budget = 7,
-                RequiredSupports = 2,
-            },
-            new LevelData
-            {
-                LeftEdge = new Vector2(-4f, -1f),
-                RightEdge = new Vector2(4f, -1f),
-                GapWidth = 8f,
-                Budget = 8,
-                RequiredSupports = 2,
-            },
-        };
-
-        private void Start() => LoadLevel(0);
-
-        public void LoadLevel(int level)
-        {
-            _currentLevel = Mathf.Clamp(level, 0, Levels.Length - 1);
-            IsPlaying = true;
-            IsTesting = false;
-            _bridgeManager.LoadLevel(Levels[_currentLevel]);
-            _ui?.SetLevelText($"Level {_currentLevel + 1} / {Levels.Length}");
-            _ui?.SetBudgetText(Levels[_currentLevel].Budget);
-            _ui?.HideClearPanel();
-            _ui?.SetTestMode(false);
+            _currentStage = 0;
+            StartGame();
         }
 
-        public void StartTest()
+        public void StartGame()
         {
-            if (!IsPlaying || IsTesting) return;
-            IsTesting = true;
-            _ui?.SetTestMode(true);
-            _bridgeManager.StartTest();
-        }
-
-        public void OnTestResult(bool success)
-        {
-            IsTesting = false;
-            if (success)
+            _isCleared = false;
+            if (_bridgeManager != null) _bridgeManager.SetupStage(_currentStage);
+            if (_ui != null)
             {
-                IsPlaying = false;
-                _ui?.ShowClearPanel();
-                OnLevelCleared?.Invoke(_currentLevel);
-            }
-            else
-            {
-                _ui?.SetTestMode(false);
+                _ui.UpdateStageText(_currentStage + 1);
+                _ui.UpdatePlanksText(0);
+                _ui.HideClearPanel();
             }
         }
 
-        public void ResetLevel()
+        public void OnPlankPlaced(int remaining)
         {
-            LoadLevel(_currentLevel);
+            if (_isCleared) return;
+            if (_ui != null) _ui.UpdatePlanksText(remaining);
         }
 
-        public void LoadNextLevel()
+        public void OnBridgeComplete()
         {
-            LoadLevel((_currentLevel + 1) % Levels.Length);
+            if (_isCleared) return;
+            _isCleared = true;
+            if (_ui != null) _ui.ShowClearPanel(_currentStage + 1);
         }
 
-        public void LoadMenu()
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
-        }
-    }
+        public void RestartGame() { StartGame(); }
 
-    [System.Serializable]
-    public class LevelData
-    {
-        public Vector2 LeftEdge;
-        public Vector2 RightEdge;
-        public float GapWidth;
-        public int Budget;
-        public int RequiredSupports;
+        public void NextStage()
+        {
+            _currentStage++;
+            if (_currentStage >= BridgeManager.StageCount) _currentStage = 0;
+            StartGame();
+        }
     }
 }
