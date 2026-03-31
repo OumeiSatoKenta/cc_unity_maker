@@ -83,6 +83,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/024_BubblePop.unity
     guid: e68d9a0f37c434bfdaf9ad571ed646b1
+  - enabled: 1
+    path: Assets/Scenes/025_TowerDefend.unity
+    guid: 1e98a0ca058374bc28a87c2820e9b443
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
