@@ -385,7 +385,7 @@
       "size": "S",
       "sceneName": "043_BallSort3D",
       "description": "3Dのカップで色のボールを同色ごとに整理する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "044",
