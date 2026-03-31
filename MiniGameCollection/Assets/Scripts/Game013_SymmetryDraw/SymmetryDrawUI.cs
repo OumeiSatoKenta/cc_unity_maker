@@ -4,68 +4,44 @@ using TMPro;
 
 namespace Game013_SymmetryDraw
 {
-    /// <summary>
-    /// SymmetryDraw のUI制御。ストローク数表示・クリアパネル・メニューへ戻るボタンを管理する。
-    /// </summary>
     public class SymmetryDrawUI : MonoBehaviour
     {
-        [SerializeField, Tooltip("ストローク数を表示するテキスト")]
-        private TextMeshProUGUI _strokeCountText;
-
-        [SerializeField, Tooltip("クリア時に表示するパネル")]
-        private GameObject _clearPanel;
-
-        [SerializeField, Tooltip("クリアメッセージのテキスト")]
-        private TextMeshProUGUI _clearText;
-
-        [SerializeField, Tooltip("リスタートボタン")]
-        private Button _restartButton;
-
-        [SerializeField, Tooltip("メニューへ戻るボタン")]
-        private Button _menuButton;
-
-        [SerializeField, Tooltip("ゲームマネージャー参照")]
-        private SymmetryDrawGameManager _gameManager;
+        [SerializeField] private TextMeshProUGUI _progressText;
+        [SerializeField] private TextMeshProUGUI _stageText;
+        [SerializeField] private GameObject _clearPanel;
+        [SerializeField] private TextMeshProUGUI _clearText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _nextStageButton;
+        [SerializeField] private SymmetryDrawGameManager _gameManager;
 
         private void Awake()
         {
             if (_restartButton != null)
-            {
-                _restartButton.onClick.AddListener(OnRestartClicked);
-            }
-            if (_menuButton != null)
-            {
-                _menuButton.onClick.AddListener(OnMenuClicked);
-            }
+                _restartButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.RestartGame(); });
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.NextStage(); });
         }
 
-        public void UpdateStrokeCount(int count)
+        public void UpdateProgress(int painted, int total)
         {
-            if (_strokeCountText != null)
-            {
-                _strokeCountText.text = $"ストローク: {count}";
-            }
+            if (_progressText != null)
+                _progressText.text = total > 0 ? $"{painted}/{total}" : "";
         }
 
-        public void ShowClearPanel(int strokeCount)
+        public void UpdateStageText(int stageNum)
+        {
+            if (_stageText != null) _stageText.text = $"ステージ {stageNum}";
+        }
+
+        public void ShowClearPanel(int stageNum)
         {
             if (_clearPanel != null) _clearPanel.SetActive(true);
-            if (_clearText != null) _clearText.text = $"クリア!\n{strokeCount} ストローク";
+            if (_clearText != null) _clearText.text = $"クリア!\nステージ {stageNum} 完了";
         }
 
         public void HideClearPanel()
         {
             if (_clearPanel != null) _clearPanel.SetActive(false);
-        }
-
-        private void OnRestartClicked()
-        {
-            if (_gameManager != null) _gameManager.RestartGame();
-        }
-
-        private void OnMenuClicked()
-        {
-            SceneLoader.BackToMenu();
         }
     }
 }

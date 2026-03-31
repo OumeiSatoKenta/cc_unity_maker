@@ -2,75 +2,56 @@ using UnityEngine;
 
 namespace Game013_SymmetryDraw
 {
-    /// <summary>
-    /// SymmetryDraw のゲーム全体を制御する。
-    /// お手本との一致判定、ステージ管理、クリア判定を担当する。
-    /// </summary>
     public class SymmetryDrawGameManager : MonoBehaviour
     {
-        [SerializeField, Tooltip("キャンバス管理コンポーネント")]
-        private CanvasDrawManager _canvasDrawManager;
+        [SerializeField] private CanvasDrawManager _drawManager;
+        [SerializeField] private SymmetryDrawUI _ui;
 
-        [SerializeField, Tooltip("UI管理コンポーネント")]
-        private SymmetryDrawUI _ui;
-
-        [SerializeField, Tooltip("ステージデータ管理")]
-        private StageData _stageData;
-
-        private int _currentStage;
-        private int _strokeCount;
         private bool _isCleared;
-
-        public int StrokeCount => _strokeCount;
+        private int _currentStage;
 
         private void Start()
         {
+            _currentStage = 0;
             StartGame();
         }
 
         public void StartGame()
         {
-            _currentStage = 0;
-            _strokeCount = 0;
             _isCleared = false;
-
+            if (_drawManager != null) _drawManager.SetupStage(_currentStage);
             if (_ui != null)
             {
-                _ui.UpdateStrokeCount(_strokeCount);
+                _ui.UpdateStageText(_currentStage + 1);
+                _ui.UpdateProgress(0, 0);
                 _ui.HideClearPanel();
             }
-
-            LoadStage(_currentStage);
         }
 
-        private void LoadStage(int stageIndex)
-        {
-            if (_stageData == null || _canvasDrawManager == null) return;
-
-            var pattern = _stageData.GetPattern(stageIndex);
-            _canvasDrawManager.Initialize(pattern);
-        }
-
-        /// <summary>
-        /// ストロークが完了したときに呼ばれる。
-        /// </summary>
-        public void OnStrokeCompleted()
+        public void OnCellPainted(int painted, int total)
         {
             if (_isCleared) return;
+            if (_ui != null) _ui.UpdateProgress(painted, total);
+        }
 
-            _strokeCount++;
-            if (_ui != null) _ui.UpdateStrokeCount(_strokeCount);
-
-            // 一致判定
-            if (_canvasDrawManager != null && _canvasDrawManager.CheckMatch())
-            {
-                _isCleared = true;
-                if (_ui != null) _ui.ShowClearPanel(_strokeCount);
-            }
+        public void OnPuzzleSolved()
+        {
+            if (_isCleared) return;
+            _isCleared = true;
+            if (_ui != null) _ui.ShowClearPanel(_currentStage + 1);
         }
 
         public void RestartGame()
         {
+            _isCleared = false;
+            if (_drawManager != null) _drawManager.ResetStage(_currentStage);
+            if (_ui != null) _ui.UpdateProgress(0, 0);
+        }
+
+        public void NextStage()
+        {
+            _currentStage++;
+            if (_currentStage >= CanvasDrawManager.StageCount) _currentStage = 0;
             StartGame();
         }
     }
