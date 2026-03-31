@@ -493,7 +493,7 @@
       "size": "S",
       "sceneName": "055_DustSweep",
       "description": "画面の砂埃をスワイプで一掃する爽快クリーニングゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "056",
