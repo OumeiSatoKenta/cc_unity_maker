@@ -4,78 +4,28 @@ using UnityEngine.InputSystem;
 
 namespace Game010_GearSync
 {
-    /// <summary>
-    /// 歯車の配置・入力処理・クリア判定を一元管理するコアメカニクスManager。
-    /// 入力処理はここだけで行う。
-    /// </summary>
     public class GearManager : MonoBehaviour
     {
-        [SerializeField] private GearSyncGameManager _gameManager;
-        [SerializeField] private Sprite _gearSprite;
-        [SerializeField] private Sprite _arrowSprite;
+        [SerializeField] private float _gearSpacing = 2.0f;
+        [SerializeField] private GameObject _gearPrefab;
 
         private readonly List<GearController> _gears = new List<GearController>();
-        private float _cellSize = 1.4f;
+        private readonly List<GameObject> _stageObjects = new List<GameObject>();
+        private readonly Dictionary<Vector2Int, GearController> _gearMap = new Dictionary<Vector2Int, GearController>();
 
-        // ── レベル定義 ────────────────────────────────────────────────────────
-        // 各レベル: (gearCount, layout, targetDirections)
-        // 方向: 0=右,1=上,2=左,3=下
-        private static readonly int[][,] LevelLayouts = new int[][,]
-        {
-            // Level 1: 3x1 横並び (3歯車)
-            new int[,] { {0,0}, {1,0}, {2,0} },
-            // Level 2: 2x2 グリッド (4歯車)
-            new int[,] { {0,0}, {1,0}, {0,1}, {1,1} },
-            // Level 3: L字 (5歯車)
-            new int[,] { {0,0}, {1,0}, {2,0}, {0,1}, {0,2} },
-            // Level 4: T字 (5歯車)
-            new int[,] { {0,1}, {1,1}, {2,1}, {1,0}, {1,2} },
-            // Level 5: 3x3 (9歯車)
-            new int[,] { {0,0},{1,0},{2,0}, {0,1},{1,1},{2,1}, {0,2},{1,2},{2,2} },
+        private GearSyncGameManager _gameManager;
+        private Camera _mainCamera;
+
+        public static int StageCount => 3;
+
+        private static readonly Vector2Int[] Neighbors = {
+            Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left
         };
 
-        private static readonly int[][] LevelTargetDirs = new int[][]
+        private void Awake()
         {
-            new int[] { 0, 1, 2 },             // Level 1
-            new int[] { 0, 1, 2, 3 },          // Level 2
-            new int[] { 0, 2, 1, 3, 0 },       // Level 3
-            new int[] { 1, 0, 3, 2, 1 },       // Level 4
-            new int[] { 0,1,2, 3,0,1, 2,3,0 }, // Level 5
-        };
-
-        public void SetupLevel(int level)
-        {
-            ClearGears();
-
-            int idx = Mathf.Clamp(level - 1, 0, LevelLayouts.Length - 1);
-            var layout = LevelLayouts[idx];
-            var targets = LevelTargetDirs[idx];
-
-            // レイアウト中心を計算してオフセット
-            float maxX = 0, maxY = 0;
-            for (int i = 0; i < layout.GetLength(0); i++)
-            {
-                if (layout[i, 0] > maxX) maxX = layout[i, 0];
-                if (layout[i, 1] > maxY) maxY = layout[i, 1];
-            }
-            float offsetX = maxX * _cellSize * 0.5f;
-            float offsetY = maxY * _cellSize * 0.5f;
-
-            for (int i = 0; i < layout.GetLength(0); i++)
-            {
-                float wx = layout[i, 0] * _cellSize - offsetX;
-                float wy = layout[i, 1] * _cellSize - offsetY;
-
-                var go = new GameObject($"Gear_{i}");
-                go.transform.SetParent(transform, false);
-                go.transform.position = new Vector3(wx, wy, 0f);
-
-                var gear = go.AddComponent<GearController>();
-                bool isDriver = (i == 0); // 最初の歯車が駆動歯車
-                gear.Initialize(i, targets[i], isDriver, _gearSprite, _arrowSprite);
-                gear.SetupCollider();
-                _gears.Add(gear);
-            }
+            _gameManager = GetComponentInParent<GearSyncGameManager>();
+            _mainCamera = Camera.main;
         }
 
         private void Update()
@@ -86,39 +36,162 @@ namespace Game010_GearSync
         private void HandleInput()
         {
             var mouse = Mouse.current;
-            if (mouse == null) return;
+            if (mouse == null || _mainCamera == null) return;
 
-            if (!mouse.leftButton.wasPressedThisFrame) return;
-
-            Vector2 worldPos = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
-            var hit = Physics2D.OverlapPoint(worldPos);
-            if (hit == null) return;
-
-            var gear = hit.GetComponent<GearController>();
-            if (gear == null || !_gears.Contains(gear)) return;
-            if (gear.IsDriver) return; // 駆動歯車は回転不可
-
-            gear.RotateClockwise();
-            if (_gameManager != null) _gameManager.OnGearRotated();
+            if (mouse.leftButton.wasPressedThisFrame)
+            {
+                Vector3 sp = mouse.position.ReadValue();
+                sp.z = -_mainCamera.transform.position.z;
+                Vector2 worldPos = _mainCamera.ScreenToWorldPoint(sp);
+                var hit = Physics2D.OverlapPoint(worldPos);
+                if (hit != null)
+                {
+                    var gear = hit.GetComponent<GearController>();
+                    if (gear != null)
+                    {
+                        RotateGearChain(gear, true);
+                        if (_gameManager != null)
+                        {
+                            _gameManager.OnGearRotated();
+                            if (CheckAllAligned())
+                                _gameManager.OnPuzzleSolved();
+                        }
+                    }
+                }
+            }
         }
 
-        /// <summary>全ての非駆動歯車の向きが目標方向と一致しているか確認</summary>
-        public bool IsAllGearsSynced()
+        private void RotateGearChain(GearController gear, bool clockwise)
+        {
+            var visited = new HashSet<Vector2Int>();
+            RotateRecursive(gear, clockwise, visited);
+        }
+
+        private void RotateRecursive(GearController gear, bool clockwise, HashSet<Vector2Int> visited)
+        {
+            if (visited.Contains(gear.GridPosition)) return;
+            visited.Add(gear.GridPosition);
+
+            if (clockwise)
+                gear.RotateCW();
+            else
+                gear.RotateCCW();
+
+            // Adjacent gears rotate in opposite direction
+            foreach (var dir in Neighbors)
+            {
+                var neighborPos = gear.GridPosition + dir;
+                if (_gearMap.TryGetValue(neighborPos, out var neighbor))
+                {
+                    RotateRecursive(neighbor, !clockwise, visited);
+                }
+            }
+        }
+
+        public bool CheckAllAligned()
         {
             foreach (var gear in _gears)
             {
-                if (!gear.IsSynced) return false;
+                if (!gear.IsAligned()) return false;
             }
             return true;
         }
 
-        private void ClearGears()
+        public void SetupStage(int stageIndex)
         {
-            foreach (var gear in _gears)
-            {
-                if (gear != null) Destroy(gear.gameObject);
-            }
-            _gears.Clear();
+            ClearStage();
+            var data = GetStageData(stageIndex);
+            BuildStage(data);
         }
+
+        private void ClearStage()
+        {
+            foreach (var obj in _stageObjects)
+                if (obj != null) Destroy(obj);
+            _stageObjects.Clear();
+            _gears.Clear();
+            _gearMap.Clear();
+        }
+
+        private void BuildStage(StageData data)
+        {
+            foreach (var gd in data.gears)
+            {
+                if (_gearPrefab == null) continue;
+                var obj = Instantiate(_gearPrefab, transform);
+                obj.transform.position = new Vector3(gd.pos.x * _gearSpacing, gd.pos.y * _gearSpacing, 0f);
+                obj.name = $"Gear_{gd.pos.x}_{gd.pos.y}";
+
+                var ctrl = obj.GetComponent<GearController>();
+                if (ctrl != null)
+                {
+                    ctrl.Initialize(gd.pos, gd.startRotation, gd.targetRotation);
+                    _gears.Add(ctrl);
+                    _gearMap[gd.pos] = ctrl;
+                }
+                _stageObjects.Add(obj);
+            }
+        }
+
+        #region Stage Data
+
+        private struct GearData
+        {
+            public Vector2Int pos;
+            public int startRotation;
+            public int targetRotation;
+            public GearData(int x, int y, int s, int t) { pos = new Vector2Int(x, y); startRotation = s; targetRotation = t; }
+        }
+
+        private struct StageData
+        {
+            public List<GearData> gears;
+        }
+
+        private StageData GetStageData(int index)
+        {
+            switch (index % StageCount)
+            {
+                case 0: return GetStage1();
+                case 1: return GetStage2();
+                case 2: return GetStage3();
+                default: return GetStage1();
+            }
+        }
+
+        // Stage1: 3 gears in a row
+        private StageData GetStage1()
+        {
+            return new StageData { gears = new List<GearData> {
+                new GearData(0, 0, 1, 0),
+                new GearData(1, 0, 2, 0),
+                new GearData(2, 0, 3, 0),
+            }};
+        }
+
+        // Stage2: 2x2 grid
+        private StageData GetStage2()
+        {
+            return new StageData { gears = new List<GearData> {
+                new GearData(0, 0, 2, 0),
+                new GearData(1, 0, 1, 0),
+                new GearData(0, 1, 3, 0),
+                new GearData(1, 1, 0, 0),
+            }};
+        }
+
+        // Stage3: L-shape 5 gears
+        private StageData GetStage3()
+        {
+            return new StageData { gears = new List<GearData> {
+                new GearData(0, 0, 1, 0),
+                new GearData(1, 0, 3, 0),
+                new GearData(2, 0, 2, 0),
+                new GearData(0, 1, 2, 0),
+                new GearData(0, 2, 1, 0),
+            }};
+        }
+
+        #endregion
     }
 }

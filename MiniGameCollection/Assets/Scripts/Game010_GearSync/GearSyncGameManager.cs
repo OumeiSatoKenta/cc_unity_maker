@@ -1,83 +1,56 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Game010_GearSync
 {
-    /// <summary>
-    /// GearSync ゲームの全体状態を管理する。
-    /// ステージ進行・クリア判定・UI制御を担当。
-    /// </summary>
     public class GearSyncGameManager : MonoBehaviour
     {
-        public enum GameState { Playing, Clear }
-
         [SerializeField] private GearManager _gearManager;
         [SerializeField] private GearSyncUI _ui;
 
-        private GameState _state = GameState.Playing;
-        private int _currentLevel = 1;
-        private const int TotalLevels = 5;
-        private int _rotationCount = 0;
-
-        public GameState State => _state;
-        public int CurrentLevel => _currentLevel;
-        public int RotationCount => _rotationCount;
+        private int _moveCount;
+        private bool _isCleared;
+        private int _currentStage;
 
         private void Start()
         {
-            _rotationCount = 0;
-            _gearManager.SetupLevel(_currentLevel);
-            _ui.UpdateLevelText(_currentLevel, TotalLevels);
-            _ui.UpdateRotationText(_rotationCount);
-            _ui.HideClearPanel();
+            _currentStage = 0;
+            StartGame();
         }
 
-        /// <summary>歯車を回転させた際に呼ばれる</summary>
+        public void StartGame()
+        {
+            _moveCount = 0;
+            _isCleared = false;
+            if (_gearManager != null) _gearManager.SetupStage(_currentStage);
+            if (_ui != null)
+            {
+                _ui.UpdateMoveCount(_moveCount);
+                _ui.UpdateStageText(_currentStage + 1);
+                _ui.HideClearPanel();
+            }
+        }
+
         public void OnGearRotated()
         {
-            if (_state != GameState.Playing) return;
-            _rotationCount++;
-            _ui.UpdateRotationText(_rotationCount);
-            CheckClear();
+            if (_isCleared) return;
+            _moveCount++;
+            if (_ui != null) _ui.UpdateMoveCount(_moveCount);
         }
 
-        private void CheckClear()
+        public void OnPuzzleSolved()
         {
-            if (!_gearManager.IsAllGearsSynced()) return;
-
-            _state = GameState.Clear;
-            _ui.ShowClearPanel(_rotationCount);
+            if (_isCleared) return;
+            _isCleared = true;
+            if (_ui != null) _ui.ShowClearPanel(_moveCount, _currentStage + 1);
         }
 
-        public void OnNextLevel()
-        {
-            if (_currentLevel >= TotalLevels)
-            {
-                LoadMenu();
-                return;
-            }
-            _currentLevel++;
-            _rotationCount = 0;
-            _state = GameState.Playing;
-            _gearManager.SetupLevel(_currentLevel);
-            _ui.UpdateLevelText(_currentLevel, TotalLevels);
-            _ui.UpdateRotationText(_rotationCount);
-            _ui.HideClearPanel();
-        }
+        public void RestartGame() { StartGame(); }
 
-        public void OnRestart()
+        public void NextStage()
         {
-            _rotationCount = 0;
-            _state = GameState.Playing;
-            _gearManager.SetupLevel(_currentLevel);
-            _ui.UpdateLevelText(_currentLevel, TotalLevels);
-            _ui.UpdateRotationText(_rotationCount);
-            _ui.HideClearPanel();
-        }
-
-        public void LoadMenu()
-        {
-            SceneManager.LoadScene("TopMenu");
+            _currentStage++;
+            if (_currentStage >= GearManager.StageCount) _currentStage = 0;
+            StartGame();
         }
     }
 }

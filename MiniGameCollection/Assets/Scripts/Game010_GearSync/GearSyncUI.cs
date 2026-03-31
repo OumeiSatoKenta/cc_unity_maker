@@ -1,57 +1,46 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Game010_GearSync
 {
-    /// <summary>
-    /// GearSync のUI表示を担当する。
-    /// テキスト更新・クリアパネルの表示/非表示を管理する。
-    /// </summary>
     public class GearSyncUI : MonoBehaviour
     {
-        [SerializeField] private Text _levelText;
-        [SerializeField] private Text _rotationText;
+        [SerializeField] private TextMeshProUGUI _moveCountText;
+        [SerializeField] private TextMeshProUGUI _stageText;
         [SerializeField] private GameObject _clearPanel;
-        [SerializeField] private Text _clearRotationText;
+        [SerializeField] private TextMeshProUGUI _clearText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _nextStageButton;
         [SerializeField] private GearSyncGameManager _gameManager;
 
-        public void UpdateLevelText(int current, int total)
+        private void Awake()
         {
-            if (_levelText != null)
-                _levelText.text = $"Level {current} / {total}";
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.RestartGame(); });
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.NextStage(); });
         }
 
-        public void UpdateRotationText(int count)
+        public void UpdateMoveCount(int count)
         {
-            if (_rotationText != null)
-                _rotationText.text = $"Rotations: {count}";
+            if (_moveCountText != null) _moveCountText.text = $"手数: {count}";
         }
 
-        public void ShowClearPanel(int rotationCount)
+        public void UpdateStageText(int stageNum)
+        {
+            if (_stageText != null) _stageText.text = $"ステージ {stageNum}";
+        }
+
+        public void ShowClearPanel(int moveCount, int stageNum)
         {
             if (_clearPanel != null) _clearPanel.SetActive(true);
-            if (_clearRotationText != null)
-                _clearRotationText.text = $"Rotations: {rotationCount}";
+            if (_clearText != null) _clearText.text = $"クリア!\nステージ {stageNum}\n{moveCount} 手";
         }
 
         public void HideClearPanel()
         {
             if (_clearPanel != null) _clearPanel.SetActive(false);
-        }
-
-        public void OnRestartClicked()
-        {
-            if (_gameManager != null) _gameManager.OnRestart();
-        }
-
-        public void OnNextClicked()
-        {
-            if (_gameManager != null) _gameManager.OnNextLevel();
-        }
-
-        public void OnMenuClicked()
-        {
-            if (_gameManager != null) _gameManager.LoadMenu();
         }
     }
 }
