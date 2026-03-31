@@ -1,46 +1,59 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Game005_PipeConnect
 {
     public class PipeConnectUI : MonoBehaviour
     {
-        [SerializeField] private Text _levelText;
-        [SerializeField] private Text _moveText;
+        [SerializeField] private TextMeshProUGUI _moveCountText;
+        [SerializeField] private TextMeshProUGUI _stageText;
         [SerializeField] private GameObject _clearPanel;
-        [SerializeField] private Text _clearResultText;
+        [SerializeField] private TextMeshProUGUI _clearText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _nextStageButton;
         [SerializeField] private PipeConnectGameManager _gameManager;
 
-        private void Start()
+        private void Awake()
         {
-            _gameManager.OnMoveCountChanged.AddListener(UpdateMoveCount);
-            _gameManager.OnLevelCleared.AddListener(ShowClearPanel);
-            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(OnRestartClicked);
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(OnNextStageClicked);
         }
 
-        public void SetLevelText(string text)
+        public void UpdateMoveCount(int count)
         {
-            if (_levelText) _levelText.text = text;
+            if (_moveCountText != null)
+                _moveCountText.text = $"手数: {count}";
         }
 
-        private void UpdateMoveCount(int count)
+        public void UpdateStageText(int stageNum)
         {
-            if (_moveText) _moveText.text = $"Moves: {count}";
+            if (_stageText != null)
+                _stageText.text = $"ステージ {stageNum}";
         }
 
-        private void ShowClearPanel(int level)
+        public void ShowClearPanel(int moveCount, int stageNum)
         {
-            if (_clearPanel) _clearPanel.SetActive(true);
-            if (_clearResultText)
-                _clearResultText.text = $"Cleared in {_gameManager.GetMoveCount()} moves!";
+            if (_clearPanel != null) _clearPanel.SetActive(true);
+            if (_clearText != null)
+                _clearText.text = $"クリア!\nステージ {stageNum}\n{moveCount} 手";
         }
 
         public void HideClearPanel()
         {
-            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_clearPanel != null) _clearPanel.SetActive(false);
         }
 
-        public void OnNextLevelClicked() => _gameManager?.LoadNextLevel();
-        public void OnMenuClicked() => _gameManager?.LoadMenu();
+        private void OnRestartClicked()
+        {
+            if (_gameManager != null) _gameManager.RestartGame();
+        }
+
+        private void OnNextStageClicked()
+        {
+            if (_gameManager != null) _gameManager.NextStage();
+        }
     }
 }

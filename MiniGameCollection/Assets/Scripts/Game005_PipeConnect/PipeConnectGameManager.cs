@@ -1,128 +1,60 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game005_PipeConnect
 {
-    /// <summary>
-    /// ゲーム状態・レベル管理を担当する。
-    /// レベルデータは 5x5 int[,] で定義（型別・初期回転別に保持）。
-    /// </summary>
     public class PipeConnectGameManager : MonoBehaviour
     {
         [SerializeField] private PipeManager _pipeManager;
         [SerializeField] private PipeConnectUI _ui;
 
-        public bool IsPlaying { get; private set; }
-
-        public UnityEvent<int> OnMoveCountChanged = new();
-        public UnityEvent<int> OnLevelCleared = new();
-
-        private int _currentLevel;
         private int _moveCount;
+        private bool _isCleared;
+        private int _currentStage;
 
-        // ── Level data ───────────────────────────────────────────────
-        // 0=empty, 1=straight, 2=bend, 3=T, 4=cross, 5=source, 6=goal
-        private static readonly int[][,] LevelTypes =
+        private void Start()
         {
-            // Level 1: horizontal line
-            new int[5, 5]
-            {
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-                { 5, 1, 1, 1, 6 },
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-            },
-            // Level 2: L-shape
-            new int[5, 5]
-            {
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 6, 0 },
-                { 0, 0, 0, 1, 0 },
-                { 0, 5, 1, 2, 0 },
-                { 0, 0, 0, 0, 0 },
-            },
-            // Level 3: zigzag
-            new int[5, 5]
-            {
-                { 0, 0, 0, 0, 6 },
-                { 0, 0, 0, 2, 2 },
-                { 0, 0, 0, 1, 0 },
-                { 2, 1, 1, 2, 0 },
-                { 5, 0, 0, 0, 0 },
-            },
-        };
+            _currentStage = 0;
+            StartGame();
+        }
 
-        // Initial (scrambled) rotations
-        // Rotation: 0=0°, 1=90°CW, 2=180°, 3=270°CW
-        // Fixed tiles (source/goal/empty) keep their rotation as-is.
-        private static readonly int[][,] LevelInitialRotations =
+        public void StartGame()
         {
-            // Level 1: all 0; straights (2,1-3) at rot 0 = vertical (wrong; solution = rot 1)
-            new int[5, 5]
-            {
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-            },
-            // Level 2: goal(1,3)=rot3; straight(2,3)=rot1(wrong); bend(3,3)=rot0(wrong); straight(3,2)=rot0(wrong)
-            new int[5, 5]
-            {
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 3, 0 },
-                { 0, 0, 0, 1, 0 },
-                { 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0 },
-            },
-            // Level 3: source(4,0)=rot3; goal(0,4)=rot3; pipes scrambled
-            new int[5, 5]
-            {
-                { 0, 0, 0, 0, 3 },
-                { 0, 0, 0, 3, 0 },
-                { 0, 0, 0, 1, 0 },
-                { 0, 0, 0, 0, 0 },
-                { 3, 0, 0, 0, 0 },
-            },
-        };
-
-        private void Start() => LoadLevel(0);
-
-        public void LoadLevel(int level)
-        {
-            _currentLevel = Mathf.Clamp(level, 0, LevelTypes.Length - 1);
             _moveCount = 0;
-            IsPlaying = true;
-            _pipeManager.LoadLevel(LevelTypes[_currentLevel], LevelInitialRotations[_currentLevel]);
-            OnMoveCountChanged?.Invoke(_moveCount);
-            _ui?.SetLevelText($"Level {_currentLevel + 1} / {LevelTypes.Length}");
+            _isCleared = false;
+            if (_pipeManager != null) _pipeManager.SetupStage(_currentStage);
+            if (_ui != null)
+            {
+                _ui.UpdateMoveCount(_moveCount);
+                _ui.UpdateStageText(_currentStage + 1);
+                _ui.HideClearPanel();
+            }
         }
 
-        public void OnTileMoved()
+        public void OnPipeRotated()
         {
+            if (_isCleared) return;
             _moveCount++;
-            OnMoveCountChanged?.Invoke(_moveCount);
+            if (_ui != null) _ui.UpdateMoveCount(_moveCount);
         }
 
-        public void OnSolved()
+        public void OnPuzzleSolved()
         {
-            IsPlaying = false;
-            OnLevelCleared?.Invoke(_currentLevel);
+            if (_isCleared) return;
+            _isCleared = true;
+            if (_ui != null) _ui.ShowClearPanel(_moveCount, _currentStage + 1);
         }
 
-        public int GetMoveCount() => _moveCount;
-
-        public void LoadNextLevel()
+        public void RestartGame()
         {
-            int next = (_currentLevel + 1) % LevelTypes.Length;
-            LoadLevel(next);
-            _ui?.HideClearPanel();
+            StartGame();
         }
 
-        public void LoadMenu()
+        public void NextStage()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
+            _currentStage++;
+            if (_currentStage >= PipeManager.StageCount)
+                _currentStage = 0;
+            StartGame();
         }
     }
 }
