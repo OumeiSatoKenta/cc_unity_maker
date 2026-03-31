@@ -511,7 +511,7 @@
       "size": "S",
       "sceneName": "057_CandyDrop",
       "description": "落下するキャンディを積み上げる物理パズル",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "058",
