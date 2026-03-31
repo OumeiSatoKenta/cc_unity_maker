@@ -268,7 +268,7 @@
       "size": "M",
       "sceneName": "030_FingerRacer",
       "description": "指でなぞったコースを車が走るフィンガーレース",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "031",
@@ -277,7 +277,7 @@
       "size": "S",
       "sceneName": "031_BounceKing",
       "description": "ボールをバウンドさせてブロックを全破壊するブレイクアウト",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "032",
@@ -286,7 +286,7 @@
       "size": "M",
       "sceneName": "032_SpinCutter",
       "description": "回転する刃の軌道をコントロールして敵を一掃する",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "033",
@@ -295,7 +295,7 @@
       "size": "S",
       "sceneName": "033_AimSniper",
       "description": "揺れるスコープでタイミングよくタップして動くターゲットを撃つ",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "034",
@@ -304,7 +304,7 @@
       "size": "S",
       "sceneName": "034_DropZone",
       "description": "落下するアイテムをドラッグして正しいゾーンに分類する",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "035",
@@ -313,7 +313,7 @@
       "size": "M",
       "sceneName": "035_WaveRider",
       "description": "波に乗ってサーフィンし岩を避けながらトリックでスコアを稼ぐ",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "036",
@@ -322,7 +322,7 @@
       "size": "S",
       "sceneName": "036_CoinStack",
       "description": "落下するコインをタイミングよく積み上げ崩れないタワーを作る",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "037",
@@ -331,7 +331,7 @@
       "size": "M",
       "sceneName": "037_ZapChain",
       "description": "敵に触れると電撃が連鎖して多数をまとめて倒す",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "038",
@@ -340,7 +340,7 @@
       "size": "S",
       "sceneName": "038_FlyBird",
       "description": "ワンタップ操作で障害物の隙間をすり抜けて飛び続ける",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "039",
@@ -349,7 +349,7 @@
       "size": "M",
       "sceneName": "039_BoomerangHero",
       "description": "ブーメランを投げ軌道を指でなぞり操作して敵を倒す",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "040",
@@ -358,7 +358,7 @@
       "size": "M",
       "sceneName": "040_DashDungeon",
       "description": "ワンタップでダッシュ方向を切り替えながらダンジョンを突破",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "041",
@@ -367,7 +367,7 @@
       "size": "S",
       "sceneName": "041_StackJump",
       "description": "タイミングよくタップしてプラットフォームを積み上げ高さを競う",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "042",
@@ -376,7 +376,7 @@
       "size": "S",
       "sceneName": "042_ColorDrop",
       "description": "色付きの雨粒を同色のバケツにスワイプで振り分ける",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "043",
@@ -385,7 +385,7 @@
       "size": "S",
       "sceneName": "043_BallSort3D",
       "description": "3Dのカップで色のボールを同色ごとに整理する",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "044",
@@ -394,7 +394,7 @@
       "size": "S",
       "sceneName": "044_TiltMaze",
       "description": "デバイスを傾けてボールを迷路の出口へ転がす",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "045",
@@ -403,7 +403,7 @@
       "size": "S",
       "sceneName": "045_FingerPaint",
       "description": "BGMのリズムに乗ってキャンバスに指で絵を描く",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "046",
@@ -412,7 +412,7 @@
       "size": "S",
       "sceneName": "046_SqueezePop",
       "description": "絞ると色が出るチューブで画面全体を塗りつぶす",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "047",
@@ -421,7 +421,7 @@
       "size": "S",
       "sceneName": "047_SpinBalance",
       "description": "画面を回転させて端から落ちないようコマを保持し続ける",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "048",
@@ -430,7 +430,7 @@
       "size": "S",
       "sceneName": "048_GlassBall",
       "description": "ガラスの傾斜面を滑るボールを目的地へ誘導する",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "049",
@@ -439,7 +439,7 @@
       "size": "S",
       "sceneName": "049_CloudHop",
       "description": "消える雲を素早く踏み台にして空高く跳ね上がる",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "050",
@@ -448,7 +448,7 @@
       "size": "S",
       "sceneName": "050_BubbleSort",
       "description": "浮かんでくる色バブルを色ごとに分けて並べる",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "051",
@@ -457,7 +457,7 @@
       "size": "S",
       "sceneName": "051_DrawBridge",
       "description": "橋を指で描いてボールを転がしゴールへ届ける",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "052",
@@ -466,7 +466,7 @@
       "size": "S",
       "sceneName": "052_HammerNail",
       "description": "リズムよくタップして釘を打ち込む爽快ゲーム",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "053",
@@ -475,7 +475,7 @@
       "size": "S",
       "sceneName": "053_SlideBlitz",
       "description": "スライドパズルをいかに速く解けるかのタイムアタック",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "054",
@@ -484,7 +484,7 @@
       "size": "S",
       "sceneName": "054_FruitSlash",
       "description": "飛んでくるフルーツをスワイプで切り爆弾は回避する",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "055",
@@ -493,7 +493,7 @@
       "size": "S",
       "sceneName": "055_DustSweep",
       "description": "画面の砂埃をスワイプで一掃する爽快クリーニングゲーム",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "056",
@@ -502,7 +502,7 @@
       "size": "S",
       "sceneName": "056_InflateFloat",
       "description": "風船を膨らませ障害物をかわしながら空を飛ぶ",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "057",
@@ -511,7 +511,7 @@
       "size": "S",
       "sceneName": "057_CandyDrop",
       "description": "落下するキャンディを積み上げる物理パズル",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "058",
@@ -520,7 +520,7 @@
       "size": "S",
       "sceneName": "058_ThreadNeedle",
       "description": "揺れる針穴に糸を通すような精密タップゲーム",
-      "implemented": true
+      "implemented": false
     },
     {
       "id": "059",
