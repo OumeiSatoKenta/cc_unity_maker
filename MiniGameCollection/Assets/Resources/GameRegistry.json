@@ -178,7 +178,7 @@
                   "size": "L",
                   "sceneName": "020_EchoMaze",
                   "description": "音のエコーと反響だけを頼りに見えない迷路を進む",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "021",
