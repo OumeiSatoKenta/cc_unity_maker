@@ -6,10 +6,6 @@ using UnityEngine.InputSystem.UI;
 using TMPro;
 using Game003_GravitySwitch;
 
-/// <summary>
-/// GravitySwitch のゲームシーンを自動構成する Editor スクリプト。
-/// Assets > Setup > 003 GravitySwitch から実行する。
-/// </summary>
 public static class Setup003_GravitySwitch
 {
     [MenuItem("Assets/Setup/003 GravitySwitch")]
@@ -22,225 +18,265 @@ public static class Setup003_GravitySwitch
         }
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-
         var jpFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansJP-Regular SDF.asset");
 
-        // --- カメラ設定 ---
+        // --- Camera ---
         var camera = Object.FindFirstObjectByType<Camera>();
         if (camera != null)
         {
-            camera.backgroundColor = new Color(0.08f, 0.10f, 0.16f);
+            camera.backgroundColor = new Color(0.06f, 0.08f, 0.14f, 1f);
             camera.orthographic = true;
-            camera.orthographicSize = 5.0f;
+            camera.orthographicSize = 5.5f;
         }
 
-        // --- GameManager ---
-        var gmGo = new GameObject("GameManager");
-        var gameManager = gmGo.AddComponent<GravitySwitchGameManager>();
+        // --- White sprite ---
+        string whiteTexPath = "Assets/Scripts/Game003_GravitySwitch/WhiteSquare.png";
+        if (!System.IO.File.Exists(whiteTexPath))
+        {
+            var wTex = new Texture2D(4, 4);
+            var wPixels = new Color[16];
+            for (int i = 0; i < 16; i++) wPixels[i] = Color.white;
+            wTex.SetPixels(wPixels);
+            wTex.Apply();
+            System.IO.File.WriteAllBytes(whiteTexPath, wTex.EncodeToPNG());
+            Object.DestroyImmediate(wTex);
+            AssetDatabase.ImportAsset(whiteTexPath);
+            var wImporter = AssetImporter.GetAtPath(whiteTexPath) as TextureImporter;
+            if (wImporter != null)
+            {
+                wImporter.textureType = TextureImporterType.Sprite;
+                wImporter.spritePixelsPerUnit = 1;
+                wImporter.SaveAndReimport();
+            }
+        }
+        var whiteSprite = AssetDatabase.LoadAssetAtPath<Sprite>(whiteTexPath);
 
-        // --- GravityManager (GameManager の子) ---
-        var gravGo = new GameObject("GravityManager");
-        gravGo.transform.SetParent(gmGo.transform);
-        var gravityManager = gravGo.AddComponent<GravityManager>();
+        // --- Sprites ---
+        string spritePath = "Assets/Resources/Sprites/Game003_GravitySwitch/";
+        var boardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "board_background.png");
+        var floorSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "floor.png");
+        var wallSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "wall.png");
+        var ballSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "ball.png");
+        var goalSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "goal.png");
 
-        var gravSO = new SerializedObject(gravityManager);
-        gravSO.FindProperty("_gameManager").objectReferenceValue = gameManager;
-        gravSO.FindProperty("_cellSize").floatValue = 1.0f;
-        gravSO.ApplyModifiedProperties();
+        // --- Board background ---
+        var boardBgObj = new GameObject("BoardBackground");
+        var boardBgSr = boardBgObj.AddComponent<SpriteRenderer>();
+        boardBgSr.sprite = boardBgSprite != null ? boardBgSprite : whiteSprite;
+        boardBgSr.color = boardBgSprite != null ? Color.white : new Color(0.06f, 0.08f, 0.14f);
+        boardBgObj.transform.localScale = new Vector3(3.0f, 3.0f, 1f);
+        boardBgSr.sortingOrder = -10;
 
-        // --- Canvas ---
-        var canvasGo = new GameObject("Canvas");
-        var canvas = canvasGo.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        var scaler = canvasGo.AddComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080, 1920);
-        canvasGo.AddComponent<GraphicRaycaster>();
+        // --- Prefabs ---
+        string prefabDir = "Assets/Scripts/Game003_GravitySwitch/";
 
-        // 手数テキスト（左上）
-        var moveTextGo = CreateText(canvasGo.transform, "MoveCountText", "手数: 0", 36, jpFont,
-            new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
-            new Vector2(220f, 60f), new Vector2(20f, -30f));
+        var floorPrefab = CreateSimplePrefab(prefabDir + "FloorPrefab.prefab", "FloorPrefab", floorSprite, whiteSprite, -5);
+        var wallPrefab = CreateSimplePrefab(prefabDir + "WallPrefab.prefab", "WallPrefab", wallSprite, whiteSprite, 5);
+        var goalPrefab = CreateSimplePrefab(prefabDir + "GoalPrefab.prefab", "GoalPrefab", goalSprite, whiteSprite, 3);
 
-        // タイトル（上中央）
-        CreateText(canvasGo.transform, "TitleText", "GravitySwitch", 30, jpFont,
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-            new Vector2(400f, 60f), new Vector2(0f, -30f));
+        // Ball prefab (with collider + BallController)
+        var ballObjInScene = new GameObject("BallPrefab");
+        var ballSr = ballObjInScene.AddComponent<SpriteRenderer>();
+        ballSr.sprite = ballSprite != null ? ballSprite : whiteSprite;
+        ballSr.color = Color.white;
+        ballSr.sortingOrder = 10;
+        ballObjInScene.AddComponent<BallController>();
+        var ballPrefab = PrefabUtility.SaveAsPrefabAsset(ballObjInScene, prefabDir + "BallPrefab.prefab");
+        Object.DestroyImmediate(ballObjInScene);
 
-        // メニューへ戻るボタン（右上）
-        var menuBtnGo = CreateButton(canvasGo.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
-            new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
-            new Vector2(220f, 55f), new Vector2(-20f, -30f),
-            new Color(0.3f, 0.3f, 0.4f, 0.9f));
-        menuBtnGo.AddComponent<BackToMenuButton>();
+        // --- GameManager + GravityManager ---
+        var gameManagerObj = new GameObject("GameManager");
+        var gameManager = gameManagerObj.AddComponent<GravitySwitchGameManager>();
 
-        // --- 重力方向ボタン（下部）---
-        // ▲ Up
-        var btnUpGo = CreateGravityButton(canvasGo.transform, "BtnUp", "▲", 40, jpFont,
-            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(110f, 110f), new Vector2(0f, 250f),
-            new Color(0.18f, 0.42f, 0.72f, 0.9f));
+        var boardObj = new GameObject("GravityBoard");
+        boardObj.transform.SetParent(gameManagerObj.transform);
+        var gravityManager = boardObj.AddComponent<GravityManager>();
 
-        // ▼ Down
-        var btnDownGo = CreateGravityButton(canvasGo.transform, "BtnDown", "▼", 40, jpFont,
-            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(110f, 110f), new Vector2(0f, 80f),
-            new Color(0.18f, 0.42f, 0.72f, 0.9f));
-
-        // ◀ Left
-        var btnLeftGo = CreateGravityButton(canvasGo.transform, "BtnLeft", "◀", 40, jpFont,
-            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(110f, 110f), new Vector2(-130f, 165f),
-            new Color(0.18f, 0.42f, 0.72f, 0.9f));
-
-        // ▶ Right
-        var btnRightGo = CreateGravityButton(canvasGo.transform, "BtnRight", "▶", 40, jpFont,
-            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(110f, 110f), new Vector2(130f, 165f),
-            new Color(0.18f, 0.42f, 0.72f, 0.9f));
-
-        // 各重力ボタンに GravityButtonHandler を追加
-        AddGravityHandler(btnUpGo,    gravityManager, 0); // Up
-        AddGravityHandler(btnDownGo,  gravityManager, 1); // Down
-        AddGravityHandler(btnLeftGo,  gravityManager, 2); // Left
-        AddGravityHandler(btnRightGo, gravityManager, 3); // Right
-
-        // --- クリアパネル ---
-        var clearPanelGo = new GameObject("ClearPanel", typeof(RectTransform));
-        clearPanelGo.transform.SetParent(canvasGo.transform, false);
-        var cpImg = clearPanelGo.AddComponent<Image>();
-        cpImg.color = new Color(0f, 0f, 0f, 0.85f);
-        var cpRect = clearPanelGo.GetComponent<RectTransform>();
-        cpRect.anchorMin = new Vector2(0.1f, 0.25f);
-        cpRect.anchorMax = new Vector2(0.9f, 0.75f);
-        cpRect.offsetMin = Vector2.zero;
-        cpRect.offsetMax = Vector2.zero;
-
-        var clearTextGo = CreateText(clearPanelGo.transform, "ClearText", "クリア!", 52, jpFont,
-            new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.5f),
-            new Vector2(400f, 130f), Vector2.zero);
-        clearTextGo.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-
-        var restartBtnGo = CreateButton(clearPanelGo.transform, "RestartButton", "もう一度", 30, jpFont,
-            new Vector2(0.25f, 0.2f), new Vector2(0.25f, 0.2f), new Vector2(0.5f, 0.5f),
-            new Vector2(190f, 65f), Vector2.zero,
-            new Color(0.1f, 0.5f, 0.3f));
-
-        var nextBtnGo = CreateButton(clearPanelGo.transform, "NextLevelButton", "次のステージ", 28, jpFont,
-            new Vector2(0.75f, 0.2f), new Vector2(0.75f, 0.2f), new Vector2(0.5f, 0.5f),
-            new Vector2(210f, 65f), Vector2.zero,
-            new Color(0.1f, 0.3f, 0.6f));
-
-        clearPanelGo.SetActive(false);
-
-        // --- GravitySwitchUI ---
-        var uiGo = new GameObject("GravitySwitchUI");
-        var ui = uiGo.AddComponent<GravitySwitchUI>();
-        var uiSO = new SerializedObject(ui);
-        uiSO.FindProperty("_moveCountText").objectReferenceValue  = moveTextGo.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_clearPanel").objectReferenceValue     = clearPanelGo;
-        uiSO.FindProperty("_clearText").objectReferenceValue      = clearTextGo.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_restartButton").objectReferenceValue  = restartBtnGo.GetComponent<Button>();
-        uiSO.FindProperty("_nextLevelButton").objectReferenceValue = nextBtnGo.GetComponent<Button>();
-        uiSO.FindProperty("_gameManager").objectReferenceValue    = gameManager;
-        uiSO.ApplyModifiedProperties();
-
-        // --- GameManager 参照設定 ---
-        var gmSO = new SerializedObject(gameManager);
-        gmSO.FindProperty("_gravityManager").objectReferenceValue = gravityManager;
-        gmSO.FindProperty("_ui").objectReferenceValue             = ui;
+        var gmSO = new SerializedObject(gravityManager);
+        gmSO.FindProperty("_gridWidth").intValue = 7;
+        gmSO.FindProperty("_gridHeight").intValue = 7;
+        gmSO.FindProperty("_cellSize").floatValue = 1.0f;
+        gmSO.FindProperty("_ballPrefab").objectReferenceValue = ballPrefab;
+        gmSO.FindProperty("_wallPrefab").objectReferenceValue = wallPrefab;
+        gmSO.FindProperty("_goalPrefab").objectReferenceValue = goalPrefab;
+        gmSO.FindProperty("_floorPrefab").objectReferenceValue = floorPrefab;
         gmSO.ApplyModifiedProperties();
 
-        // --- EventSystem（新 Input System 対応）---
+        // --- Canvas ---
+        var canvasObj = new GameObject("Canvas");
+        var canvas = canvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        canvasObj.AddComponent<GraphicRaycaster>();
+
+        // Move count (top-left)
+        var moveTextObj = CreateText(canvasObj.transform, "MoveCountText", "手数: 0", 32, jpFont,
+            new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(250, 50), new Vector2(20, -20));
+
+        // Stage text (top-center)
+        var stageTextObj = CreateText(canvasObj.transform, "StageText", "ステージ 1", 32, jpFont,
+            new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1),
+            new Vector2(300, 50), new Vector2(0, -20));
+        stageTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        // Menu button (top-right)
+        var menuBtnObj = CreateButton(canvasObj.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
+            new Vector2(1, 1), new Vector2(1, 1), new Vector2(1, 1),
+            new Vector2(240, 50), new Vector2(-20, -20),
+            new Color(0.3f, 0.3f, 0.4f, 0.9f));
+
+        // Direction buttons (bottom area)
+        var upBtn = CreateButton(canvasObj.transform, "UpButton", "↑", 36, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(80, 80), new Vector2(0, 180),
+            new Color(0.2f, 0.5f, 0.7f, 1f));
+        var downBtn = CreateButton(canvasObj.transform, "DownButton", "↓", 36, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(80, 80), new Vector2(0, 30),
+            new Color(0.2f, 0.5f, 0.7f, 1f));
+        var leftBtn = CreateButton(canvasObj.transform, "LeftButton", "←", 36, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(80, 80), new Vector2(-100, 105),
+            new Color(0.2f, 0.5f, 0.7f, 1f));
+        var rightBtn = CreateButton(canvasObj.transform, "RightButton", "→", 36, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(80, 80), new Vector2(100, 105),
+            new Color(0.2f, 0.5f, 0.7f, 1f));
+
+        // Clear panel
+        var clearPanelObj = new GameObject("ClearPanel", typeof(RectTransform));
+        clearPanelObj.transform.SetParent(canvasObj.transform, false);
+        clearPanelObj.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.8f);
+        var clearRect = clearPanelObj.GetComponent<RectTransform>();
+        clearRect.anchorMin = new Vector2(0.2f, 0.2f);
+        clearRect.anchorMax = new Vector2(0.8f, 0.8f);
+        clearRect.offsetMin = Vector2.zero;
+        clearRect.offsetMax = Vector2.zero;
+
+        var clearTextObj = CreateText(clearPanelObj.transform, "ClearText", "クリア!", 48, jpFont,
+            new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.5f),
+            new Vector2(400, 150), Vector2.zero);
+        clearTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        var restartBtnObj = CreateButton(clearPanelObj.transform, "RestartButton", "もう一度", 28, jpFont,
+            new Vector2(0.3f, 0.15f), new Vector2(0.3f, 0.15f), new Vector2(0.5f, 0.5f),
+            new Vector2(200, 60), Vector2.zero,
+            new Color(0.1f, 0.5f, 0.3f, 1f));
+
+        var nextStageBtnObj = CreateButton(clearPanelObj.transform, "NextStageButton", "次のステージ", 28, jpFont,
+            new Vector2(0.7f, 0.15f), new Vector2(0.7f, 0.15f), new Vector2(0.5f, 0.5f),
+            new Vector2(220, 60), Vector2.zero,
+            new Color(0.2f, 0.4f, 0.7f, 1f));
+
+        clearPanelObj.SetActive(false);
+
+        // --- GravitySwitchUI ---
+        var uiObj = new GameObject("GravitySwitchUI");
+        var gsUI = uiObj.AddComponent<GravitySwitchUI>();
+
+        var uiSO = new SerializedObject(gsUI);
+        uiSO.FindProperty("_moveCountText").objectReferenceValue = moveTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_stageText").objectReferenceValue = stageTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_clearPanel").objectReferenceValue = clearPanelObj;
+        uiSO.FindProperty("_clearText").objectReferenceValue = clearTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_restartButton").objectReferenceValue = restartBtnObj.GetComponent<Button>();
+        uiSO.FindProperty("_nextStageButton").objectReferenceValue = nextStageBtnObj.GetComponent<Button>();
+        uiSO.FindProperty("_upButton").objectReferenceValue = upBtn.GetComponent<Button>();
+        uiSO.FindProperty("_downButton").objectReferenceValue = downBtn.GetComponent<Button>();
+        uiSO.FindProperty("_leftButton").objectReferenceValue = leftBtn.GetComponent<Button>();
+        uiSO.FindProperty("_rightButton").objectReferenceValue = rightBtn.GetComponent<Button>();
+        uiSO.FindProperty("_gameManager").objectReferenceValue = gameManager;
+        uiSO.ApplyModifiedProperties();
+
+        // BackToMenuButton on top-right
+        menuBtnObj.AddComponent<BackToMenuButton>();
+
+        // GameManager references
+        var gameManagerSO = new SerializedObject(gameManager);
+        gameManagerSO.FindProperty("_gravityManager").objectReferenceValue = gravityManager;
+        gameManagerSO.FindProperty("_ui").objectReferenceValue = gsUI;
+        gameManagerSO.ApplyModifiedProperties();
+
+        // EventSystem
         if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
         {
-            var esGo = new GameObject("EventSystem");
-            esGo.AddComponent<UnityEngine.EventSystems.EventSystem>();
-            esGo.AddComponent<InputSystemUIInputModule>();
+            var eventObj = new GameObject("EventSystem");
+            eventObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventObj.AddComponent<InputSystemUIInputModule>();
         }
 
-        // --- シーン保存 ---
+        // Save scene
         string scenePath = "Assets/Scenes/003_GravitySwitch.unity";
         EditorSceneManager.SaveScene(scene, scenePath);
         AddSceneToBuildSettings(scenePath);
 
-        Debug.Log("[Setup003_GravitySwitch] シーンを作成しました: " + scenePath);
+        Debug.Log("[Setup003_GravitySwitch] GravitySwitch シーンを作成しました: " + scenePath);
     }
 
-    private static void AddGravityHandler(GameObject btnGo, GravityManager gravMgr, int dir)
+    private static GameObject CreateSimplePrefab(string path, string name, Sprite sprite, Sprite fallback, int sortOrder)
     {
-        var handler = btnGo.AddComponent<GravityButtonHandler>();
-        var so = new SerializedObject(handler);
-        so.FindProperty("_gravityManager").objectReferenceValue = gravMgr;
-        so.FindProperty("_direction").intValue = dir;
-        so.ApplyModifiedProperties();
+        var obj = new GameObject(name);
+        var sr = obj.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite != null ? sprite : fallback;
+        sr.color = Color.white;
+        sr.sortingOrder = sortOrder;
+        var prefab = PrefabUtility.SaveAsPrefabAsset(obj, path);
+        Object.DestroyImmediate(obj);
+        return prefab;
     }
 
     private static GameObject CreateText(Transform parent, string name, string text, float fontSize,
         TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
         Vector2 sizeDelta, Vector2 anchoredPos)
     {
-        var go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-
-        var tmp = go.AddComponent<TextMeshProUGUI>();
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        var tmp = obj.AddComponent<TextMeshProUGUI>();
         tmp.text = text;
         tmp.fontSize = fontSize;
         tmp.color = Color.white;
         if (font != null) tmp.font = font;
-
-        var rect = go.GetComponent<RectTransform>();
+        var rect = obj.GetComponent<RectTransform>();
         rect.anchorMin = anchorMin;
         rect.anchorMax = anchorMax;
         rect.pivot = pivot;
         rect.sizeDelta = sizeDelta;
         rect.anchoredPosition = anchoredPos;
-
-        return go;
+        return obj;
     }
 
     private static GameObject CreateButton(Transform parent, string name, string label, float fontSize,
         TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
         Vector2 sizeDelta, Vector2 anchoredPos, Color bgColor)
     {
-        var go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-
-        var img = go.AddComponent<Image>();
-        img.color = bgColor;
-        go.AddComponent<Button>();
-
-        var rect = go.GetComponent<RectTransform>();
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        obj.AddComponent<Image>().color = bgColor;
+        obj.AddComponent<Button>();
+        var rect = obj.GetComponent<RectTransform>();
         rect.anchorMin = anchorMin;
         rect.anchorMax = anchorMax;
         rect.pivot = pivot;
         rect.sizeDelta = sizeDelta;
         rect.anchoredPosition = anchoredPos;
 
-        var textGo = new GameObject("Text", typeof(RectTransform));
-        textGo.transform.SetParent(go.transform, false);
-        var tmp = textGo.AddComponent<TextMeshProUGUI>();
+        var textObj = new GameObject("Text", typeof(RectTransform));
+        textObj.transform.SetParent(obj.transform, false);
+        var tmp = textObj.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
         tmp.fontSize = fontSize;
         tmp.color = Color.white;
         tmp.alignment = TextAlignmentOptions.Center;
         if (font != null) tmp.font = font;
-
-        var tr = textGo.GetComponent<RectTransform>();
-        tr.anchorMin = Vector2.zero;
-        tr.anchorMax = Vector2.one;
-        tr.offsetMin = Vector2.zero;
-        tr.offsetMax = Vector2.zero;
-
-        return go;
-    }
-
-    private static GameObject CreateGravityButton(Transform parent, string name, string symbol, float fontSize,
-        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
-        Vector2 sizeDelta, Vector2 anchoredPos, Color bgColor)
-    {
-        return CreateButton(parent, name, symbol, fontSize, font, anchorMin, anchorMax, pivot,
-            sizeDelta, anchoredPos, bgColor);
+        var textRect = textObj.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+        return obj;
     }
 
     private static void AddSceneToBuildSettings(string scenePath)

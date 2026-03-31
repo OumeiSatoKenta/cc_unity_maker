@@ -25,7 +25,7 @@
                   "size": "S",
                   "sceneName": "003_GravitySwitch",
                   "description": "重力方向を4方向に切り替えてボールをゴールへ導く",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "004",
