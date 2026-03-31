@@ -119,6 +119,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/036_CoinStack.unity
     guid: aa81d104ac00a4a9aa2ebb9a08028c86
+  - enabled: 1
+    path: Assets/Scenes/037_ZapChain.unity
+    guid: 5912ee3030136427db2a1d2f3c2353e2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
