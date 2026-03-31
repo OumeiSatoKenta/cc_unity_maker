@@ -250,7 +250,7 @@
                   "size": "M",
                   "sceneName": "028_RopeSwing",
                   "description": "ロープを掴んで振り子運動でステージを渡り歩く",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "029",
