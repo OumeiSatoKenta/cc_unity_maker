@@ -2,60 +2,79 @@ using UnityEngine;
 
 namespace Game005_PipeConnect
 {
-    /// <summary>
-    /// パイプタイルの種別・回転・表示を管理する。入力処理は持たない。
-    /// タイル種別: 0=空, 1=直管, 2=曲管, 3=T字, 4=十字, 5=水源, 6=ゴール
-    /// 回転: 0=0°, 1=90°CW, 2=180°, 3=270°CW
-    /// </summary>
+    public enum PipeType
+    {
+        Empty,
+        Straight,  // connects 2 opposite sides (top-bottom)
+        Bend,      // connects 2 adjacent sides (top-right)
+        Cross,     // connects all 4 sides
+        TJunction, // connects 3 sides (top-left-right)
+        Source,
+        Goal
+    }
+
     public class PipeTile : MonoBehaviour
     {
-        public int TileType { get; private set; }
-        public int Rotation { get; private set; }
-        public bool IsFixed { get; private set; }
-        public int Row { get; private set; }
-        public int Col { get; private set; }
+        public Vector2Int GridPosition { get; private set; }
+        public PipeType Type { get; private set; }
+        public int Rotation { get; private set; } // 0, 1, 2, 3 (x90 degrees)
 
-        private static readonly string[] SpriteNames =
+        public void Initialize(Vector2Int gridPos, PipeType type, int rotation)
         {
-            "Sprites/Game005_PipeConnect/pipe_empty",
-            "Sprites/Game005_PipeConnect/pipe_straight",
-            "Sprites/Game005_PipeConnect/pipe_bend",
-            "Sprites/Game005_PipeConnect/pipe_t",
-            "Sprites/Game005_PipeConnect/pipe_cross",
-            "Sprites/Game005_PipeConnect/pipe_source",
-            "Sprites/Game005_PipeConnect/pipe_goal",
-        };
-
-        private SpriteRenderer _sr;
-
-        private void Awake() => _sr = GetComponent<SpriteRenderer>();
-
-        public void Init(int type, int rotation, int row, int col, bool isFixed)
-        {
-            TileType = type;
+            GridPosition = gridPos;
+            Type = type;
             Rotation = rotation;
-            Row = row;
-            Col = col;
-            IsFixed = isFixed;
             UpdateVisual();
         }
 
-        public void Rotate()
+        public void RotateCW()
         {
-            if (IsFixed) return;
+            if (Type == PipeType.Source || Type == PipeType.Goal || Type == PipeType.Cross)
+                return;
             Rotation = (Rotation + 1) % 4;
             UpdateVisual();
         }
 
+        /// <summary>
+        /// Returns which directions this pipe connects to.
+        /// 0=up, 1=right, 2=down, 3=left
+        /// </summary>
+        public bool[] GetConnections()
+        {
+            bool[] conn = new bool[4];
+            switch (Type)
+            {
+                case PipeType.Straight:
+                    conn[0] = true; conn[2] = true; // up-down
+                    break;
+                case PipeType.Bend:
+                    conn[0] = true; conn[1] = true; // up-right
+                    break;
+                case PipeType.TJunction:
+                    conn[0] = true; conn[1] = true; conn[3] = true; // up-right-left
+                    break;
+                case PipeType.Cross:
+                    conn[0] = true; conn[1] = true; conn[2] = true; conn[3] = true;
+                    break;
+                case PipeType.Source:
+                    conn[0] = true; conn[1] = true; conn[2] = true; conn[3] = true;
+                    break;
+                case PipeType.Goal:
+                    conn[0] = true; conn[1] = true; conn[2] = true; conn[3] = true;
+                    break;
+            }
+            // Apply rotation
+            bool[] rotated = new bool[4];
+            for (int i = 0; i < 4; i++)
+            {
+                rotated[(i + Rotation) % 4] = conn[i];
+            }
+            return rotated;
+        }
+
         private void UpdateVisual()
         {
-            if (_sr != null && TileType >= 0 && TileType < SpriteNames.Length)
-            {
-                var sp = Resources.Load<Sprite>(SpriteNames[TileType]);
-                if (sp != null) _sr.sprite = sp;
-            }
-            // Rotate transform CW: rot0=0°, rot1=-90°, rot2=-180°, rot3=-270°
-            transform.rotation = Quaternion.Euler(0f, 0f, -Rotation * 90f);
+            transform.rotation = Quaternion.Euler(0, 0, -Rotation * 90);
         }
     }
 }

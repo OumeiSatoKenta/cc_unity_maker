@@ -1,396 +1,230 @@
-using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.UI;
+using TMPro;
 using Game005_PipeConnect;
 
-public class Setup005_PipeConnect
+public static class Setup005_PipeConnect
 {
     [MenuItem("Assets/Setup/005 PipeConnect")]
-    public static void Setup()
+    public static void CreateScene()
     {
         if (EditorApplication.isPlaying)
         {
-            Debug.LogError("Exit Play Mode before running setup.");
+            Debug.LogError("[Setup005_PipeConnect] Play モード中は実行できません。");
             return;
         }
 
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+        var jpFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansJP-Regular SDF.asset");
 
-        // ── Camera ──────────────────────────────────────────────────
-        var camGo = new GameObject("Main Camera");
-        camGo.tag = "MainCamera";
-        var cam = camGo.AddComponent<Camera>();
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = new Color(0.1f, 0.12f, 0.18f);
-        cam.orthographic = true;
-        cam.orthographicSize = 4f;
-        camGo.AddComponent<AudioListener>();
-
-        // ── Sprites ─────────────────────────────────────────────────
-        string spriteDir = "Assets/Resources/Sprites/Game005_PipeConnect";
-        Directory.CreateDirectory(spriteDir);
-
-        Sprite sprEmpty    = GetOrCreateSprite(spriteDir + "/pipe_empty.png",    MakeEmptyTex());
-        Sprite sprStraight = GetOrCreateSprite(spriteDir + "/pipe_straight.png", MakeStraightTex());
-        Sprite sprBend     = GetOrCreateSprite(spriteDir + "/pipe_bend.png",     MakeBendTex());
-        Sprite sprT        = GetOrCreateSprite(spriteDir + "/pipe_t.png",        MakeTTex());
-        Sprite sprCross    = GetOrCreateSprite(spriteDir + "/pipe_cross.png",    MakeCrossTex());
-        Sprite sprSource   = GetOrCreateSprite(spriteDir + "/pipe_source.png",   MakeSourceTex());
-        Sprite sprGoal     = GetOrCreateSprite(spriteDir + "/pipe_goal.png",     MakeGoalTex());
-
-        // ── GameManager ─────────────────────────────────────────────
-        var gmGo = new GameObject("GameManager");
-        var gameManager = gmGo.AddComponent<PipeConnectGameManager>();
-        var pipeManager = gmGo.AddComponent<PipeManager>();
-
-        // ── 5×5 Grid ────────────────────────────────────────────────
-        // tile(row, col) at world pos (col-2, 2-row, 0)
-        var tiles = new PipeTile[25];
-        var tileGo = new GameObject("TileGrid");
-        for (int r = 0; r < 5; r++)
+        var camera = Object.FindFirstObjectByType<Camera>();
+        if (camera != null)
         {
-            for (int c = 0; c < 5; c++)
-            {
-                var go = new GameObject($"Tile_{r}_{c}");
-                go.transform.SetParent(tileGo.transform);
-                go.transform.position = new Vector3(c - 2f, 2f - r, 0f);
-
-                var sr = go.AddComponent<SpriteRenderer>();
-                sr.sprite = sprEmpty;
-                sr.sortingOrder = 0;
-
-                var col2d = go.AddComponent<BoxCollider2D>();
-                col2d.size = new Vector2(0.95f, 0.95f);
-
-                tiles[r * 5 + c] = go.AddComponent<PipeTile>();
-            }
+            camera.backgroundColor = new Color(0.05f, 0.06f, 0.11f, 1f);
+            camera.orthographic = true;
+            camera.orthographicSize = 4.5f;
         }
 
-        // ── Canvas ──────────────────────────────────────────────────
-        var canvasGo = new GameObject("Canvas");
-        var canvas = canvasGo.AddComponent<Canvas>();
+        // White sprite
+        string whiteTexPath = "Assets/Scripts/Game005_PipeConnect/WhiteSquare.png";
+        if (!System.IO.File.Exists(whiteTexPath))
+        {
+            var wTex = new Texture2D(4, 4);
+            var px = new Color[16];
+            for (int i = 0; i < 16; i++) px[i] = Color.white;
+            wTex.SetPixels(px);
+            wTex.Apply();
+            System.IO.File.WriteAllBytes(whiteTexPath, wTex.EncodeToPNG());
+            Object.DestroyImmediate(wTex);
+            AssetDatabase.ImportAsset(whiteTexPath);
+            var imp = AssetImporter.GetAtPath(whiteTexPath) as TextureImporter;
+            if (imp != null) { imp.textureType = TextureImporterType.Sprite; imp.spritePixelsPerUnit = 1; imp.SaveAndReimport(); }
+        }
+        var whiteSprite = AssetDatabase.LoadAssetAtPath<Sprite>(whiteTexPath);
+
+        string sp = "Assets/Resources/Sprites/Game005_PipeConnect/";
+        var straightSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "pipe_straight.png");
+        var bendSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "pipe_bend.png");
+        var crossSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "pipe_cross.png");
+        var tSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "pipe_t.png");
+        var sourceSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "source.png");
+        var goalSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "goal.png");
+        var cellBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "cell_bg.png");
+        var boardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "board_background.png");
+
+        // Board background
+        var bgObj = new GameObject("BoardBackground");
+        var bgSr = bgObj.AddComponent<SpriteRenderer>();
+        bgSr.sprite = boardBgSprite != null ? boardBgSprite : whiteSprite;
+        bgSr.color = boardBgSprite != null ? Color.white : new Color(0.05f, 0.06f, 0.11f);
+        bgObj.transform.localScale = new Vector3(2.5f, 2.5f, 1f);
+        bgSr.sortingOrder = -10;
+
+        string pd = "Assets/Scripts/Game005_PipeConnect/";
+
+        var straightPrefab = CreatePipePrefab(pd + "PipeStraightPrefab.prefab", straightSprite, whiteSprite);
+        var bendPrefab = CreatePipePrefab(pd + "PipeBendPrefab.prefab", bendSprite, whiteSprite);
+        var crossPrefab = CreatePipePrefab(pd + "PipeCrossPrefab.prefab", crossSprite, whiteSprite);
+        var tPrefab = CreatePipePrefab(pd + "PipeTJunctionPrefab.prefab", tSprite, whiteSprite);
+        var sourcePrefab = CreatePipePrefab(pd + "SourcePrefab.prefab", sourceSprite, whiteSprite);
+        var goalPrefab = CreatePipePrefab(pd + "GoalPrefab.prefab", goalSprite, whiteSprite);
+        var cellBgPrefab = CreateSimplePrefab(pd + "CellBgPrefab.prefab", "CellBgPrefab", cellBgSprite, whiteSprite, -5);
+
+        // GameManager + PipeManager
+        var gmObj = new GameObject("GameManager");
+        var gm = gmObj.AddComponent<PipeConnectGameManager>();
+        var boardObj = new GameObject("PipeBoard");
+        boardObj.transform.SetParent(gmObj.transform);
+        var pm = boardObj.AddComponent<PipeManager>();
+
+        var pmSO = new SerializedObject(pm);
+        pmSO.FindProperty("_gridWidth").intValue = 5;
+        pmSO.FindProperty("_gridHeight").intValue = 5;
+        pmSO.FindProperty("_cellSize").floatValue = 1.0f;
+        pmSO.FindProperty("_pipeStraightPrefab").objectReferenceValue = straightPrefab;
+        pmSO.FindProperty("_pipeBendPrefab").objectReferenceValue = bendPrefab;
+        pmSO.FindProperty("_pipeCrossPrefab").objectReferenceValue = crossPrefab;
+        pmSO.FindProperty("_pipeTJunctionPrefab").objectReferenceValue = tPrefab;
+        pmSO.FindProperty("_sourcePrefab").objectReferenceValue = sourcePrefab;
+        pmSO.FindProperty("_goalPrefab").objectReferenceValue = goalPrefab;
+        pmSO.FindProperty("_cellBgPrefab").objectReferenceValue = cellBgPrefab;
+        pmSO.ApplyModifiedProperties();
+
+        // Canvas
+        var canvasObj = new GameObject("Canvas");
+        var canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        var scaler = canvasGo.AddComponent<CanvasScaler>();
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(720, 1280);
-        scaler.matchWidthOrHeight = 0.5f;
-        canvasGo.AddComponent<GraphicRaycaster>();
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        canvasObj.AddComponent<GraphicRaycaster>();
 
-        // Level text (top-left)
-        var levelGo = MakeText(canvasGo.transform, "LevelText", "Level 1 / 3", 32, Color.white,
-            TextAnchor.MiddleLeft);
-        SetRT(levelGo, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
-            new Vector2(10f, -40f), new Vector2(300f, 60f));
+        var moveTextObj = CreateText(canvasObj.transform, "MoveCountText", "手数: 0", 32, jpFont,
+            new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, 1), new Vector2(250, 50), new Vector2(20, -20));
+        var stageTextObj = CreateText(canvasObj.transform, "StageText", "ステージ 1", 32, jpFont,
+            new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(300, 50), new Vector2(0, -20));
+        stageTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        var menuBtnObj = CreateButton(canvasObj.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
+            new Vector2(1, 1), new Vector2(1, 1), new Vector2(1, 1), new Vector2(240, 50), new Vector2(-20, -20),
+            new Color(0.3f, 0.3f, 0.4f, 0.9f));
 
-        // Move count (top-right)
-        var moveGo = MakeText(canvasGo.transform, "MoveText", "Moves: 0", 32, Color.white,
-            TextAnchor.MiddleRight);
-        SetRT(moveGo, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
-            new Vector2(-10f, -40f), new Vector2(260f, 60f));
-
-        // ── Clear Panel ─────────────────────────────────────────────
-        var clearPanel = new GameObject("ClearPanel");
-        clearPanel.transform.SetParent(canvasGo.transform, false);
-        var panelImg = clearPanel.AddComponent<Image>();
-        panelImg.color = new Color(0f, 0f, 0f, 0.88f);
-        var panelRt = clearPanel.GetComponent<RectTransform>();
-        panelRt.anchorMin = Vector2.zero;
-        panelRt.anchorMax = Vector2.one;
-        panelRt.sizeDelta = Vector2.zero;
-
-        var clearTitle = MakeText(clearPanel.transform, "ClearTitle", "CLEAR!", 58,
-            new Color(0.4f, 1f, 0.5f));
-        SetRT(clearTitle, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(0f, 130f), new Vector2(500f, 80f));
-
-        var clearResult = MakeText(clearPanel.transform, "ClearResultText",
-            "Cleared in 0 moves!", 34, Color.white);
-        SetRT(clearResult, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(0f, 50f), new Vector2(500f, 60f));
-
-        var nextBtn = MakeButton(clearPanel.transform, "NextLevelButton", "NEXT",
-            new Color(0.15f, 0.55f, 0.8f));
-        SetRT(nextBtn, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(-130f, -60f), new Vector2(220f, 70f));
-
-        var menuBtn = MakeButton(clearPanel.transform, "MenuButton", "MENU",
-            new Color(0.4f, 0.4f, 0.4f));
-        SetRT(menuBtn, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(130f, -60f), new Vector2(220f, 70f));
-
+        // Clear panel
+        var clearPanel = new GameObject("ClearPanel", typeof(RectTransform));
+        clearPanel.transform.SetParent(canvasObj.transform, false);
+        clearPanel.AddComponent<Image>().color = new Color(0, 0, 0, 0.8f);
+        var cr = clearPanel.GetComponent<RectTransform>();
+        cr.anchorMin = new Vector2(0.2f, 0.2f); cr.anchorMax = new Vector2(0.8f, 0.8f);
+        cr.offsetMin = cr.offsetMax = Vector2.zero;
+        var clearTextObj = CreateText(clearPanel.transform, "ClearText", "クリア!", 48, jpFont,
+            new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.5f), new Vector2(400, 150), Vector2.zero);
+        clearTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        var restartBtn = CreateButton(clearPanel.transform, "RestartButton", "もう一度", 28, jpFont,
+            new Vector2(0.3f, 0.15f), new Vector2(0.3f, 0.15f), new Vector2(0.5f, 0.5f), new Vector2(200, 60), Vector2.zero,
+            new Color(0.1f, 0.5f, 0.3f, 1f));
+        var nextBtn = CreateButton(clearPanel.transform, "NextStageButton", "次のステージ", 28, jpFont,
+            new Vector2(0.7f, 0.15f), new Vector2(0.7f, 0.15f), new Vector2(0.5f, 0.5f), new Vector2(220, 60), Vector2.zero,
+            new Color(0.2f, 0.4f, 0.7f, 1f));
         clearPanel.SetActive(false);
 
-        // ── PipeConnectUI ────────────────────────────────────────────
-        var uiGo = new GameObject("PipeConnectUI");
-        var ui = uiGo.AddComponent<PipeConnectUI>();
+        // PipeConnectUI
+        var uiObj = new GameObject("PipeConnectUI");
+        var pcUI = uiObj.AddComponent<PipeConnectUI>();
+        var uiSO = new SerializedObject(pcUI);
+        uiSO.FindProperty("_moveCountText").objectReferenceValue = moveTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_stageText").objectReferenceValue = stageTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_clearPanel").objectReferenceValue = clearPanel;
+        uiSO.FindProperty("_clearText").objectReferenceValue = clearTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_restartButton").objectReferenceValue = restartBtn.GetComponent<Button>();
+        uiSO.FindProperty("_nextStageButton").objectReferenceValue = nextBtn.GetComponent<Button>();
+        uiSO.FindProperty("_gameManager").objectReferenceValue = gm;
+        uiSO.ApplyModifiedProperties();
 
+        menuBtnObj.AddComponent<BackToMenuButton>();
+
+        var gmSO = new SerializedObject(gm);
+        gmSO.FindProperty("_pipeManager").objectReferenceValue = pm;
+        gmSO.FindProperty("_ui").objectReferenceValue = pcUI;
+        gmSO.ApplyModifiedProperties();
+
+        if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
         {
-            var so = new SerializedObject(ui);
-            so.FindProperty("_levelText").objectReferenceValue = levelGo.GetComponent<Text>();
-            so.FindProperty("_moveText").objectReferenceValue = moveGo.GetComponent<Text>();
-            so.FindProperty("_clearPanel").objectReferenceValue = clearPanel;
-            so.FindProperty("_clearResultText").objectReferenceValue =
-                clearResult.GetComponent<Text>();
-            so.FindProperty("_gameManager").objectReferenceValue = gameManager;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            var eventObj = new GameObject("EventSystem");
+            eventObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventObj.AddComponent<InputSystemUIInputModule>();
         }
 
-        // Wire PipeManager
-        {
-            var so = new SerializedObject(pipeManager);
-            so.FindProperty("_gameManager").objectReferenceValue = gameManager;
-            var listProp = so.FindProperty("_tiles");
-            listProp.arraySize = 25;
-            for (int i = 0; i < 25; i++)
-                listProp.GetArrayElementAtIndex(i).objectReferenceValue = tiles[i];
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        // Wire GameManager
-        {
-            var so = new SerializedObject(gameManager);
-            so.FindProperty("_pipeManager").objectReferenceValue = pipeManager;
-            so.FindProperty("_ui").objectReferenceValue = ui;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        // Wire OnSolved → gameManager.OnSolved
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            pipeManager.OnSolved, gameManager.OnSolved);
-
-        // Wire buttons
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            nextBtn.GetComponent<Button>().onClick, ui.OnNextLevelClicked);
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            menuBtn.GetComponent<Button>().onClick, ui.OnMenuClicked);
-
-        // ── EventSystem ─────────────────────────────────────────────
-        var esGo = new GameObject("EventSystem");
-        esGo.AddComponent<EventSystem>();
-        esGo.AddComponent<InputSystemUIInputModule>();
-
-        // ── Save ────────────────────────────────────────────────────
-        string scenesDir = "Assets/Scenes";
-        Directory.CreateDirectory(scenesDir);
-        string scenePath = $"{scenesDir}/005_PipeConnect.unity";
+        string scenePath = "Assets/Scenes/005_PipeConnect.unity";
         EditorSceneManager.SaveScene(scene, scenePath);
         AddSceneToBuildSettings(scenePath);
-        AssetDatabase.Refresh();
-
-        Debug.Log("[Setup005] PipeConnect scene saved to " + scenePath);
+        Debug.Log("[Setup005_PipeConnect] PipeConnect シーンを作成しました: " + scenePath);
     }
 
-    // ── Sprite generators ────────────────────────────────────────────
-
-    private static Sprite GetOrCreateSprite(string path, Texture2D tex)
+    private static GameObject CreatePipePrefab(string path, Sprite sprite, Sprite fallback)
     {
-        if (!File.Exists(path))
-        {
-            File.WriteAllBytes(path, tex.EncodeToPNG());
-            AssetDatabase.ImportAsset(path);
-            var ti = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (ti != null)
-            {
-                ti.textureType = TextureImporterType.Sprite;
-                ti.spriteImportMode = SpriteImportMode.Single;
-                AssetDatabase.ImportAsset(path);
-            }
-        }
-        Object.DestroyImmediate(tex);
-        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        string name = System.IO.Path.GetFileNameWithoutExtension(path);
+        var obj = new GameObject(name);
+        var sr = obj.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite != null ? sprite : fallback;
+        sr.sortingOrder = 5;
+        var col = obj.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.9f, 0.9f);
+        obj.AddComponent<PipeTile>();
+        var prefab = PrefabUtility.SaveAsPrefabAsset(obj, path);
+        Object.DestroyImmediate(obj);
+        return prefab;
     }
 
-    private static Color TileBg => new Color(0.18f, 0.22f, 0.3f);
-    private static Color PipeColor => new Color(0.35f, 0.7f, 1f);
-    private static Color PipeDark => new Color(0.15f, 0.45f, 0.75f);
-
-    private static void FillBg(Color[] px, int sz)
+    private static GameObject CreateSimplePrefab(string path, string name, Sprite sprite, Sprite fallback, int sortOrder)
     {
-        Color bg = TileBg;
-        for (int i = 0; i < px.Length; i++) px[i] = bg;
+        var obj = new GameObject(name);
+        var sr = obj.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite != null ? sprite : fallback;
+        sr.sortingOrder = sortOrder;
+        var prefab = PrefabUtility.SaveAsPrefabAsset(obj, path);
+        Object.DestroyImmediate(obj);
+        return prefab;
     }
 
-    private static void DrawRect(Color[] px, int sz, int x0, int y0, int w, int h, Color c)
+    private static GameObject CreateText(Transform parent, string name, string text, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPos)
     {
-        for (int y = y0; y < y0 + h; y++)
-            for (int x = x0; x < x0 + w; x++)
-                if (x >= 0 && x < sz && y >= 0 && y < sz) px[y * sz + x] = c;
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        var tmp = obj.AddComponent<TextMeshProUGUI>();
+        tmp.text = text; tmp.fontSize = fontSize; tmp.color = Color.white;
+        if (font != null) tmp.font = font;
+        var r = obj.GetComponent<RectTransform>();
+        r.anchorMin = anchorMin; r.anchorMax = anchorMax; r.pivot = pivot; r.sizeDelta = sizeDelta; r.anchoredPosition = anchoredPos;
+        return obj;
     }
 
-    private static Texture2D MakeTex(int sz = 64)
+    private static GameObject CreateButton(Transform parent, string name, string label, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPos, Color bgColor)
     {
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        FillBg(px, sz);
-        t.SetPixels(px);
-        t.Apply();
-        return t;
-    }
-
-    // pipe_empty: just dark tile
-    private static Texture2D MakeEmptyTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        FillBg(px, sz);
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // pipe_straight: vertical channel (rotation 0 = U+D)
-    private static Texture2D MakeStraightTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        FillBg(px, sz);
-        DrawRect(px, sz, 25, 0, 14, 64, PipeDark);   // channel walls
-        DrawRect(px, sz, 27, 0, 10, 64, PipeColor);   // channel fill
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // pipe_bend: U+R corner (rotation 0)
-    private static Texture2D MakeBendTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        FillBg(px, sz);
-        // Vertical arm (top to center)
-        DrawRect(px, sz, 25, 32, 14, 32, PipeDark);
-        DrawRect(px, sz, 27, 32, 10, 32, PipeColor);
-        // Horizontal arm (center to right)
-        DrawRect(px, sz, 32, 25, 32, 14, PipeDark);
-        DrawRect(px, sz, 32, 27, 32, 10, PipeColor);
-        // Corner fill
-        DrawRect(px, sz, 27, 27, 15, 15, PipeColor);
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // pipe_t: U+R+D (missing L)
-    private static Texture2D MakeTTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        FillBg(px, sz);
-        // Vertical full
-        DrawRect(px, sz, 25, 0, 14, 64, PipeDark);
-        DrawRect(px, sz, 27, 0, 10, 64, PipeColor);
-        // Horizontal right half
-        DrawRect(px, sz, 32, 25, 32, 14, PipeDark);
-        DrawRect(px, sz, 32, 27, 32, 10, PipeColor);
-        DrawRect(px, sz, 27, 27, 15, 10, PipeColor);
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // pipe_cross: all four
-    private static Texture2D MakeCrossTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        FillBg(px, sz);
-        DrawRect(px, sz, 25, 0, 14, 64, PipeDark);
-        DrawRect(px, sz, 27, 0, 10, 64, PipeColor);
-        DrawRect(px, sz, 0, 25, 64, 14, PipeDark);
-        DrawRect(px, sz, 0, 27, 64, 10, PipeColor);
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // pipe_source: green tile with arrow pointing right
-    private static Texture2D MakeSourceTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        Color src = new Color(0.15f, 0.75f, 0.35f);
-        Color arrow = Color.white;
-        for (int i = 0; i < px.Length; i++) px[i] = src;
-        // Arrow pointing right: horizontal bar + triangle tip
-        DrawRect(px, sz, 12, 27, 30, 10, arrow); // stem
-        // Triangle tip
-        for (int y = 20; y <= 44; y++)
-        {
-            int tip = 42 + (y < 32 ? y - 20 : 44 - y);
-            for (int x = 42; x <= tip; x++)
-                if (x < sz && y < sz) px[y * sz + x] = arrow;
-        }
-        // Horizontal channel on right half
-        DrawRect(px, sz, 32, 27, 32, 10, PipeColor);
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // pipe_goal: gold tile with star-like opening on left
-    private static Texture2D MakeGoalTex()
-    {
-        int sz = 64;
-        var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
-        var px = new Color[sz * sz];
-        Color goal = new Color(0.9f, 0.72f, 0.1f);
-        Color star = Color.white;
-        for (int i = 0; i < px.Length; i++) px[i] = goal;
-        // Star (simple 4-point cross)
-        DrawRect(px, sz, 0, 27, 32, 10, PipeColor);  // left opening
-        DrawRect(px, sz, 24, 20, 16, 24, star);       // vertical bar
-        DrawRect(px, sz, 20, 24, 24, 16, star);       // horizontal bar
-        t.SetPixels(px); t.Apply(); return t;
-    }
-
-    // ── UI helpers ────────────────────────────────────────────────────
-
-    private static GameObject MakeText(Transform parent, string name, string text,
-        int fontSize, Color color, TextAnchor anchor = TextAnchor.MiddleCenter)
-    {
-        var go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        var t = go.AddComponent<Text>();
-        t.text = text;
-        t.fontSize = fontSize;
-        t.color = color;
-        t.alignment = anchor;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        return go;
-    }
-
-    private static GameObject MakeButton(Transform parent, string name, string label, Color bg)
-    {
-        var go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.AddComponent<Image>().color = bg;
-        go.AddComponent<Button>();
-        var lbl = new GameObject("Label");
-        lbl.transform.SetParent(go.transform, false);
-        var t = lbl.AddComponent<Text>();
-        t.text = label;
-        t.fontSize = 26;
-        t.color = Color.white;
-        t.alignment = TextAnchor.MiddleCenter;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        var rt = lbl.GetComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one; rt.sizeDelta = Vector2.zero;
-        return go;
-    }
-
-    private static void SetRT(GameObject go, Vector2 aMin, Vector2 aMax, Vector2 pivot,
-        Vector2 pos, Vector2 size)
-    {
-        var rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = aMin; rt.anchorMax = aMax; rt.pivot = pivot;
-        rt.anchoredPosition = pos; rt.sizeDelta = size;
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        obj.AddComponent<Image>().color = bgColor;
+        obj.AddComponent<Button>();
+        var r = obj.GetComponent<RectTransform>();
+        r.anchorMin = anchorMin; r.anchorMax = anchorMax; r.pivot = pivot; r.sizeDelta = sizeDelta; r.anchoredPosition = anchoredPos;
+        var tObj = new GameObject("Text", typeof(RectTransform));
+        tObj.transform.SetParent(obj.transform, false);
+        var tmp = tObj.AddComponent<TextMeshProUGUI>();
+        tmp.text = label; tmp.fontSize = fontSize; tmp.color = Color.white; tmp.alignment = TextAlignmentOptions.Center;
+        if (font != null) tmp.font = font;
+        var tr = tObj.GetComponent<RectTransform>();
+        tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one; tr.offsetMin = tr.offsetMax = Vector2.zero;
+        return obj;
     }
 
     private static void AddSceneToBuildSettings(string scenePath)
     {
-        var scenes = EditorBuildSettings.scenes;
+        var scenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
         foreach (var s in scenes) if (s.path == scenePath) return;
-        var n = new EditorBuildSettingsScene[scenes.Length + 1];
-        System.Array.Copy(scenes, n, scenes.Length);
-        n[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
-        EditorBuildSettings.scenes = n;
+        scenes.Add(new EditorBuildSettingsScene(scenePath, true));
+        EditorBuildSettings.scenes = scenes.ToArray();
     }
 }
