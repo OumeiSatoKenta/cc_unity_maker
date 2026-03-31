@@ -65,6 +65,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/018_TimeRewind.unity
     guid: 3e20d8702b158457cb843a312ddf6730
+  - enabled: 1
+    path: Assets/Scenes/019_PathCut.unity
+    guid: fa4f4dbddf025408bad5c3cae04b1254
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
