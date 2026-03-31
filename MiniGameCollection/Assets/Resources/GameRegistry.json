@@ -97,7 +97,7 @@
                   "size": "M",
                   "sceneName": "011_FoldPaper",
                   "description": "紙を折り畳んで指定の形を作る折り紙パズル",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "012",
