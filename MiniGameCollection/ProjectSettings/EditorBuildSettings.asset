@@ -146,6 +146,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/045_FingerPaint.unity
     guid: b0629fea551b145ac87b9f9559c4ca2b
+  - enabled: 1
+    path: Assets/Scenes/046_SqueezePop.unity
+    guid: 3b750d9aece0546059bda737a3cfbb27
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
