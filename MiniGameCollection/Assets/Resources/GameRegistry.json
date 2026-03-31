@@ -214,7 +214,7 @@
                   "size": "S",
                   "sceneName": "024_BubblePop",
                   "description": "迫ってくるバブルをタップで破裂させるアーケード",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "025",
