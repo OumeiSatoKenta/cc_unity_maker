@@ -1,72 +1,104 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game009_ColorMix
 {
-    /// <summary>
-    /// ColorMix のコアロジックを担当。
-    /// スライダー値を管理し、混合色を計算する。
-    /// 入力処理はスライダーUIイベント経由で行う。
-    /// </summary>
     public class ColorMixManager : MonoBehaviour
     {
-        [SerializeField] private ColorMixUI _ui;
-        [SerializeField] private ColorMixGameManager _gameManager;
-
-        public UnityEvent<Color> OnMixChanged = new();
+        [SerializeField] private SpriteRenderer _playerColorDisplay;
+        [SerializeField] private SpriteRenderer _targetColorDisplay;
 
         private Color _targetColor;
-        private float _tolerance;
+        private Color _playerColor;
+        private float _matchThreshold = 0.1f;
+        private int _currentStage;
 
-        // 現在のスライダー値 (0-1)
-        private float _red = 0f;
-        private float _green = 0f;
-        private float _blue = 0f;
+        private ColorMixGameManager _gameManager;
 
-        public Color CurrentMixedColor => new Color(_red, _green, _blue);
-        public Color TargetColor => _targetColor;
+        public static int StageCount => 3;
 
-        public void LoadLevel(Color targetColor, float tolerance)
+        private void Awake()
         {
-            _targetColor = targetColor;
-            _tolerance = tolerance;
-            _red = 0f;
-            _green = 0f;
-            _blue = 0f;
-
-            _ui?.UpdateMixPreview(CurrentMixedColor);
-            _ui?.UpdateTargetPreview(targetColor);
-            _ui?.ResetSliders();
+            _gameManager = GetComponentInParent<ColorMixGameManager>();
         }
 
-        public void OnRedChanged(float value)
+        public void SetupStage(int stageIndex)
         {
-            _red = value;
-            NotifyMixChanged();
+            _currentStage = stageIndex;
+            _targetColor = GetTargetColor(stageIndex);
+            _playerColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+
+            if (_targetColorDisplay != null)
+                _targetColorDisplay.color = _targetColor;
+            if (_playerColorDisplay != null)
+                _playerColorDisplay.color = _playerColor;
         }
 
-        public void OnGreenChanged(float value)
+        public void SetRedValue(float value)
         {
-            _green = value;
-            NotifyMixChanged();
+            _playerColor.r = value;
+            UpdatePlayerDisplay();
+            CheckMatch();
         }
 
-        public void OnBlueChanged(float value)
+        public void SetGreenValue(float value)
         {
-            _blue = value;
-            NotifyMixChanged();
+            _playerColor.g = value;
+            UpdatePlayerDisplay();
+            CheckMatch();
         }
 
-        public void SubmitMix()
+        public void SetBlueValue(float value)
         {
-            _gameManager?.OnMixSubmitted(CurrentMixedColor);
+            _playerColor.b = value;
+            UpdatePlayerDisplay();
+            CheckMatch();
         }
 
-        private void NotifyMixChanged()
+        public Color GetPlayerColor() => _playerColor;
+        public Color GetTargetColor() => _targetColor;
+
+        public float GetMatchPercentage()
         {
-            Color mixed = CurrentMixedColor;
-            _ui?.UpdateMixPreview(mixed);
-            OnMixChanged?.Invoke(mixed);
+            float dr = Mathf.Abs(_playerColor.r - _targetColor.r);
+            float dg = Mathf.Abs(_playerColor.g - _targetColor.g);
+            float db = Mathf.Abs(_playerColor.b - _targetColor.b);
+            float avgDiff = (dr + dg + db) / 3f;
+            return Mathf.Clamp01(1f - avgDiff) * 100f;
+        }
+
+        public bool IsMatched()
+        {
+            float dr = Mathf.Abs(_playerColor.r - _targetColor.r);
+            float dg = Mathf.Abs(_playerColor.g - _targetColor.g);
+            float db = Mathf.Abs(_playerColor.b - _targetColor.b);
+            return dr < _matchThreshold && dg < _matchThreshold && db < _matchThreshold;
+        }
+
+        private void UpdatePlayerDisplay()
+        {
+            if (_playerColorDisplay != null)
+                _playerColorDisplay.color = _playerColor;
+        }
+
+        private void CheckMatch()
+        {
+            if (_gameManager != null)
+            {
+                _gameManager.OnColorChanged(GetMatchPercentage());
+                if (IsMatched())
+                    _gameManager.OnColorMatched();
+            }
+        }
+
+        private Color GetTargetColor(int index)
+        {
+            switch (index % StageCount)
+            {
+                case 0: return new Color(0.9f, 0.2f, 0.3f, 1f);  // Red-ish
+                case 1: return new Color(0.2f, 0.7f, 0.4f, 1f);  // Green-ish
+                case 2: return new Color(0.3f, 0.4f, 0.9f, 1f);  // Blue-ish
+                default: return Color.red;
+            }
         }
     }
 }
