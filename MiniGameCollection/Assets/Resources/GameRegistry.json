@@ -259,7 +259,7 @@
                   "size": "S",
                   "sceneName": "029_MeteorShield",
                   "description": "落下する隕石をシールドで弾いて星を守るディフェンス",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "030",
