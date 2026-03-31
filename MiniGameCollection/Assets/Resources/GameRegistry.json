@@ -142,7 +142,7 @@
                   "size": "S",
                   "sceneName": "016_LightSwitch",
                   "description": "電球のオンオフパターンで暗号を解読する",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "017",
