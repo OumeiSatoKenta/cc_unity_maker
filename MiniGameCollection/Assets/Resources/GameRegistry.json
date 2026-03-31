@@ -457,7 +457,7 @@
       "size": "S",
       "sceneName": "051_DrawBridge",
       "description": "橋を指で描いてボールを転がしゴールへ届ける",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "052",

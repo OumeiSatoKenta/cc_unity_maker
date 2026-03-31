@@ -158,6 +158,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/049_CloudHop.unity
     guid: d814e28f5e7974bbfb4e9af4f0389201
+  - enabled: 1
+    path: Assets/Scenes/050_BubbleSort.unity
+    guid: 39a93f2b5a0104678a5e90b2ffa5aa83
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
