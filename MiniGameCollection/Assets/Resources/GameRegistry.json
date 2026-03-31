@@ -484,7 +484,7 @@
       "size": "S",
       "sceneName": "054_FruitSlash",
       "description": "飛んでくるフルーツをスワイプで切り爆弾は回避する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "055",
