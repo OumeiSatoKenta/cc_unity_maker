@@ -403,7 +403,7 @@
       "size": "S",
       "sceneName": "045_FingerPaint",
       "description": "BGMのリズムに乗ってキャンバスに指で絵を描く",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "046",

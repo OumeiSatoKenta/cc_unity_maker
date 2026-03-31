@@ -140,6 +140,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/043_BallSort3D.unity
     guid: 86c91f08ba7d94894ac48e694cefa776
+  - enabled: 1
+    path: Assets/Scenes/044_TiltMaze.unity
+    guid: 1f3ffee23f9ce410284fbce7bad85c76
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
