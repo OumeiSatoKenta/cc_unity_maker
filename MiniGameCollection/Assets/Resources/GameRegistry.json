@@ -241,7 +241,7 @@
                   "size": "S",
                   "sceneName": "027_DotDodge",
                   "description": "画面を埋め尽くす無数のドットを避け生き延びるサバイバル",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "028",
