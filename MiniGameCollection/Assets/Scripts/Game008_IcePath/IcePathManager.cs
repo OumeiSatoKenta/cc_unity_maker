@@ -1,154 +1,269 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 namespace Game008_IcePath
 {
-    /// <summary>
-    /// IcePath のコア入力・ロジック管理。
-    /// 方向キー/クリックで氷上を滑らせ、全マス通過でクリア判定を行う。
-    /// 入力処理を一元管理する。
-    /// </summary>
     public class IcePathManager : MonoBehaviour
     {
-        [SerializeField] private IcePathGameManager _gameManager;
-        [SerializeField] private IcePathUI _ui;
-        [SerializeField] private IceCell[] _cells; // GridSize*GridSize, row*GridSize+col
+        [SerializeField] private int _gridWidth = 7;
+        [SerializeField] private int _gridHeight = 7;
+        [SerializeField] private float _cellSize = 1.0f;
+        [SerializeField] private GameObject _icePrefab;
+        [SerializeField] private GameObject _wallPrefab;
+        [SerializeField] private GameObject _goalPrefab;
+        [SerializeField] private GameObject _playerPrefab;
 
-        public UnityEvent OnCleared = new();
-
-        private const int GridSize = 5;
-
-        // Current player position
-        private int _playerRow;
-        private int _playerCol;
-        private int _visitedCount;
+        private IceCell[,] _grid;
+        private readonly List<GameObject> _stageObjects = new List<GameObject>();
+        private GameObject _playerObj;
+        private Vector2Int _playerPos;
         private int _totalIceCells;
+        private int _visitedCount;
 
-        // Level layout: 0=ice, 1=wall
-        private int[,] _currentLayout;
+        private IcePathGameManager _gameManager;
+        private Camera _mainCamera;
+        private Vector2 _dragStart;
+        private bool _isDragging;
 
-        // Arrow key / WASD tracking
-        private bool _upPrev, _downPrev, _leftPrev, _rightPrev;
+        private Sprite _iceSprite;
+        private Sprite _visitedSprite;
 
-        // Player visual
-        private GameObject _playerGo;
+        public static int StageCount => 3;
 
-        public void LoadLevel(int[,] layout, int startRow, int startCol)
+        private void Awake()
         {
-            _currentLayout = layout;
-            _visitedCount = 0;
-            _totalIceCells = 0;
-
-            for (int r = 0; r < GridSize; r++)
-                for (int c = 0; c < GridSize; c++)
-                    if (layout[r, c] == 0) _totalIceCells++;
-
-            // Init cells
-            foreach (var cell in _cells)
-                cell.Reset();
-
-            // Set player
-            _playerRow = startRow;
-            _playerCol = startCol;
-            MarkVisited(_playerRow, _playerCol);
-
-            UpdatePlayerVisual();
-            _ui?.UpdateProgress(_visitedCount, _totalIceCells);
-        }
-
-        public void ResetLevel()
-        {
-            if (_currentLayout == null) return;
-            // Find start position (will be re-supplied by GameManager)
+            _gameManager = GetComponentInParent<IcePathGameManager>();
+            _mainCamera = Camera.main;
+            _iceSprite = Resources.Load<Sprite>("Sprites/Game008_IcePath/ice_cell");
+            _visitedSprite = Resources.Load<Sprite>("Sprites/Game008_IcePath/visited_cell");
         }
 
         private void Update()
         {
-            if (_gameManager == null || !_gameManager.IsPlaying) return;
-
-            // Keyboard input (arrow keys / WASD)
-            bool up    = Keyboard.current != null && (Keyboard.current.upArrowKey.isPressed    || Keyboard.current.wKey.isPressed);
-            bool down  = Keyboard.current != null && (Keyboard.current.downArrowKey.isPressed  || Keyboard.current.sKey.isPressed);
-            bool left  = Keyboard.current != null && (Keyboard.current.leftArrowKey.isPressed  || Keyboard.current.aKey.isPressed);
-            bool right = Keyboard.current != null && (Keyboard.current.rightArrowKey.isPressed || Keyboard.current.dKey.isPressed);
-
-            if (up    && !_upPrev)    TrySlide(-1, 0);
-            if (down  && !_downPrev)  TrySlide(1, 0);
-            if (left  && !_leftPrev)  TrySlide(0, -1);
-            if (right && !_rightPrev) TrySlide(0, 1);
-
-            _upPrev = up; _downPrev = down; _leftPrev = left; _rightPrev = right;
-
-            // Mouse click on direction arrows (touch/click the UI buttons)
-            // Direction button clicks are wired via UnityEvent in Setup
+            HandleInput();
         }
 
-        /// <summary>
-        /// 指定方向に壁にぶつかるまで滑る。
-        /// </summary>
-        public void TrySlide(int dr, int dc)
+        private void HandleInput()
         {
-            if (_currentLayout == null) return;
+            var mouse = Mouse.current;
+            if (mouse == null) return;
 
-            int r = _playerRow;
-            int c = _playerCol;
+            if (mouse.leftButton.wasPressedThisFrame)
+            {
+                _dragStart = mouse.position.ReadValue();
+                _isDragging = true;
+            }
 
-            // Slide until wall or boundary
+            if (mouse.leftButton.wasReleasedThisFrame && _isDragging)
+            {
+                _isDragging = false;
+                Vector2 dragEnd = mouse.position.ReadValue();
+                Vector2 delta = dragEnd - _dragStart;
+
+                if (delta.magnitude < 30f) return;
+
+                Vector2Int direction;
+                if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+                    direction = delta.x > 0 ? Vector2Int.right : Vector2Int.left;
+                else
+                    direction = delta.y > 0 ? Vector2Int.up : Vector2Int.down;
+
+                SlidePlayer(direction);
+            }
+        }
+
+        private void SlidePlayer(Vector2Int direction)
+        {
+            Vector2Int newPos = _playerPos;
+
             while (true)
             {
-                int nr = r + dr;
-                int nc = c + dc;
-
-                if (nr < 0 || nr >= GridSize || nc < 0 || nc >= GridSize) break;
-                if (_currentLayout[nr, nc] == 1) break; // wall
-
-                r = nr;
-                c = nc;
-
-                if (!GetCell(r, c).IsVisited)
-                    MarkVisited(r, c);
+                Vector2Int candidate = newPos + direction;
+                if (!IsInBounds(candidate)) break;
+                if (_grid[candidate.x, candidate.y] != null && _grid[candidate.x, candidate.y].CellType == IceCellType.Wall) break;
+                newPos = candidate;
             }
 
-            if (r == _playerRow && c == _playerCol) return; // didn't move
+            if (newPos == _playerPos) return;
 
-            _playerRow = r;
-            _playerCol = c;
-            UpdatePlayerVisual();
-            _ui?.UpdateProgress(_visitedCount, _totalIceCells);
-
-            if (_visitedCount >= _totalIceCells)
-                OnCleared?.Invoke();
-        }
-
-        // Direction wrappers for UI button events
-        public void SlideUp()    => TrySlide(-1, 0);
-        public void SlideDown()  => TrySlide(1, 0);
-        public void SlideLeft()  => TrySlide(0, -1);
-        public void SlideRight() => TrySlide(0, 1);
-
-        private void MarkVisited(int r, int c)
-        {
-            var cell = GetCell(r, c);
-            if (!cell.IsVisited)
+            // Mark all cells along the path as visited
+            Vector2Int pos = _playerPos;
+            while (pos != newPos)
             {
-                cell.SetVisited(true);
-                _visitedCount++;
+                pos += direction;
+                var cell = _grid[pos.x, pos.y];
+                if (cell != null && !cell.IsVisited && cell.CellType != IceCellType.Wall)
+                {
+                    cell.MarkVisited(_visitedSprite);
+                    _visitedCount++;
+                }
+            }
+
+            _playerPos = newPos;
+            if (_playerObj != null)
+                _playerObj.transform.position = GridToWorld(_playerPos);
+
+            if (_gameManager != null)
+            {
+                _gameManager.OnPlayerMoved(_visitedCount, _totalIceCells);
+
+                if (_visitedCount >= _totalIceCells)
+                    _gameManager.OnPuzzleSolved();
             }
         }
 
-        private IceCell GetCell(int r, int c) => _cells[r * GridSize + c];
-
-        private void UpdatePlayerVisual()
+        public void SetupStage(int stageIndex)
         {
-            if (_playerGo == null) return;
-            var cell = GetCell(_playerRow, _playerCol);
-            _playerGo.transform.position = cell.transform.position + new Vector3(0, 0, -0.5f);
+            ClearStage();
+            var data = GetStageData(stageIndex);
+            _gridWidth = data.width;
+            _gridHeight = data.height;
+            _grid = new IceCell[_gridWidth, _gridHeight];
+            _totalIceCells = 0;
+            _visitedCount = 0;
+            BuildStage(data);
         }
 
-        public void SetPlayerGo(GameObject go) => _playerGo = go;
+        public void ResetStage(int stageIndex)
+        {
+            // Reset visited state without rebuilding
+            for (int x = 0; x < _gridWidth; x++)
+                for (int y = 0; y < _gridHeight; y++)
+                    if (_grid[x, y] != null && _grid[x, y].CellType == IceCellType.Ice)
+                        _grid[x, y].ResetVisited(_iceSprite);
 
-        public void SetCells(IceCell[] cells) => _cells = cells;
+            var data = GetStageData(stageIndex);
+            _playerPos = data.startPos;
+            _visitedCount = 1; // Start cell counts
+            if (_playerObj != null)
+                _playerObj.transform.position = GridToWorld(_playerPos);
+
+            // Mark start cell as visited
+            if (_grid[_playerPos.x, _playerPos.y] != null)
+                _grid[_playerPos.x, _playerPos.y].MarkVisited(_visitedSprite);
+        }
+
+        private void ClearStage()
+        {
+            foreach (var obj in _stageObjects)
+                if (obj != null) Destroy(obj);
+            _stageObjects.Clear();
+            _playerObj = null;
+        }
+
+        private void BuildStage(StageData data)
+        {
+            // Build all cells
+            for (int x = 0; x < _gridWidth; x++)
+            {
+                for (int y = 0; y < _gridHeight; y++)
+                {
+                    var gp = new Vector2Int(x, y);
+                    bool isWall = data.walls.Contains(gp);
+                    bool isGoal = gp == data.goalPos;
+
+                    IceCellType cellType = isWall ? IceCellType.Wall : (isGoal ? IceCellType.Goal : IceCellType.Ice);
+                    GameObject prefab = isWall ? _wallPrefab : (isGoal ? _goalPrefab : _icePrefab);
+
+                    if (prefab == null) continue;
+                    var obj = Instantiate(prefab, transform);
+                    obj.transform.position = GridToWorld(gp);
+                    obj.name = $"Cell_{x}_{y}";
+
+                    var cell = obj.GetComponent<IceCell>();
+                    if (cell != null) cell.Initialize(gp, cellType);
+                    _grid[x, y] = cell;
+                    _stageObjects.Add(obj);
+
+                    if (!isWall) _totalIceCells++;
+                }
+            }
+
+            // Player
+            _playerPos = data.startPos;
+            if (_playerPrefab != null)
+            {
+                _playerObj = Instantiate(_playerPrefab, transform);
+                _playerObj.transform.position = GridToWorld(_playerPos);
+                _playerObj.name = "Player";
+                _stageObjects.Add(_playerObj);
+            }
+
+            // Mark start cell visited
+            if (_grid[_playerPos.x, _playerPos.y] != null)
+            {
+                _grid[_playerPos.x, _playerPos.y].MarkVisited(_visitedSprite);
+                _visitedCount = 1;
+            }
+        }
+
+        public Vector3 GridToWorld(Vector2Int gridPos)
+        {
+            float offsetX = (_gridWidth - 1) * _cellSize * 0.5f;
+            float offsetY = (_gridHeight - 1) * _cellSize * 0.5f;
+            return new Vector3(gridPos.x * _cellSize - offsetX, gridPos.y * _cellSize - offsetY, 0f);
+        }
+
+        private bool IsInBounds(Vector2Int pos)
+        {
+            return pos.x >= 0 && pos.x < _gridWidth && pos.y >= 0 && pos.y < _gridHeight;
+        }
+
+        #region Stage Data
+
+        private struct StageData
+        {
+            public int width, height;
+            public Vector2Int startPos;
+            public Vector2Int goalPos;
+            public HashSet<Vector2Int> walls;
+        }
+
+        private StageData GetStageData(int index)
+        {
+            switch (index % StageCount)
+            {
+                case 0: return GetStage1();
+                case 1: return GetStage2();
+                case 2: return GetStage3();
+                default: return GetStage1();
+            }
+        }
+
+        private StageData GetStage1()
+        {
+            var walls = new HashSet<Vector2Int>();
+            // Border walls
+            for (int x = 0; x < 5; x++) { walls.Add(new Vector2Int(x, 0)); walls.Add(new Vector2Int(x, 4)); }
+            for (int y = 1; y < 4; y++) { walls.Add(new Vector2Int(0, y)); walls.Add(new Vector2Int(4, y)); }
+            // Inner wall
+            walls.Add(new Vector2Int(2, 2));
+            return new StageData { width = 5, height = 5, startPos = new Vector2Int(1, 1), goalPos = new Vector2Int(3, 3), walls = walls };
+        }
+
+        private StageData GetStage2()
+        {
+            var walls = new HashSet<Vector2Int>();
+            for (int x = 0; x < 6; x++) { walls.Add(new Vector2Int(x, 0)); walls.Add(new Vector2Int(x, 5)); }
+            for (int y = 1; y < 5; y++) { walls.Add(new Vector2Int(0, y)); walls.Add(new Vector2Int(5, y)); }
+            walls.Add(new Vector2Int(2, 3));
+            walls.Add(new Vector2Int(3, 2));
+            return new StageData { width = 6, height = 6, startPos = new Vector2Int(1, 1), goalPos = new Vector2Int(4, 4), walls = walls };
+        }
+
+        private StageData GetStage3()
+        {
+            var walls = new HashSet<Vector2Int>();
+            for (int x = 0; x < 7; x++) { walls.Add(new Vector2Int(x, 0)); walls.Add(new Vector2Int(x, 6)); }
+            for (int y = 1; y < 6; y++) { walls.Add(new Vector2Int(0, y)); walls.Add(new Vector2Int(6, y)); }
+            walls.Add(new Vector2Int(2, 2));
+            walls.Add(new Vector2Int(4, 4));
+            walls.Add(new Vector2Int(3, 1));
+            walls.Add(new Vector2Int(3, 5));
+            return new StageData { width = 7, height = 7, startPos = new Vector2Int(1, 1), goalPos = new Vector2Int(5, 5), walls = walls };
+        }
+
+        #endregion
     }
 }
