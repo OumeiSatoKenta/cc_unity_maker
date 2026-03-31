@@ -4,36 +4,36 @@ using UnityEngine.InputSystem;
 
 namespace Game013_SymmetryDraw
 {
-    /// <summary>
-    /// 描画キャンバスの管理。入力処理を一元管理し、
-    /// 左半分への描画を右半分に対称コピーする。
-    /// お手本パターンとの一致判定も担当。
-    /// </summary>
     public class CanvasDrawManager : MonoBehaviour
     {
-        [SerializeField, Tooltip("セルのプレハブ")]
-        private GameObject _cellPrefab;
+        [SerializeField] private int _gridWidth = 8;
+        [SerializeField] private int _gridHeight = 6;
+        [SerializeField] private float _cellSize = 0.9f;
+        [SerializeField] private GameObject _cellPrefab;
+        [SerializeField] private GameObject _targetPrefab;
 
-        [SerializeField, Tooltip("お手本セルのプレハブ")]
-        private GameObject _targetCellPrefab;
+        private CellView[,] _grid;
+        private readonly List<GameObject> _stageObjects = new List<GameObject>();
 
-        [SerializeField, Tooltip("セルサイズ（ワールド座標）")]
-        private float _cellSize = 0.5f;
-
-        [SerializeField, Tooltip("対称線のSpriteRenderer")]
-        private SpriteRenderer _symmetryLine;
-
-        private CellView[,] _cells;
-        private bool[,] _painted;
-        private HashSet<Vector2Int> _targetCells;
         private SymmetryDrawGameManager _gameManager;
-
+        private Camera _mainCamera;
         private bool _isDrawing;
-        private bool _hasNewStroke;
 
-        private void Start()
+        private Sprite _emptySprite;
+        private Sprite _paintedSprite;
+
+        private bool[,] _targetPattern;
+        private int _targetCount;
+        private int _paintedTargetCount;
+
+        public static int StageCount => 3;
+
+        private void Awake()
         {
             _gameManager = GetComponentInParent<SymmetryDrawGameManager>();
+            _mainCamera = Camera.main;
+            _emptySprite = Resources.Load<Sprite>("Sprites/Game013_SymmetryDraw/cell_empty");
+            _paintedSprite = Resources.Load<Sprite>("Sprites/Game013_SymmetryDraw/cell_painted");
         }
 
         private void Update()
@@ -41,184 +41,220 @@ namespace Game013_SymmetryDraw
             HandleInput();
         }
 
-        /// <summary>
-        /// お手本パターンを読み込んでキャンバスを初期化する。
-        /// </summary>
-        public void Initialize(List<Vector2Int> leftPattern)
-        {
-            ClearCanvas();
-
-            int w = StageData.GridWidth;
-            int h = StageData.GridHeight;
-            _cells = new CellView[w, h];
-            _painted = new bool[w, h];
-
-            // お手本パターン（左右対称の完成形）
-            var fullPattern = StageData.MirrorPattern(leftPattern);
-            _targetCells = new HashSet<Vector2Int>(fullPattern);
-
-            float offsetX = (w - 1) * _cellSize * 0.5f;
-            float offsetY = (h - 1) * _cellSize * 0.5f;
-
-            // お手本を薄く表示
-            foreach (var pos in fullPattern)
-            {
-                if (_targetCellPrefab != null)
-                {
-                    var targetObj = Instantiate(_targetCellPrefab, transform);
-                    targetObj.name = $"Target_{pos.x}_{pos.y}";
-                    targetObj.transform.position = new Vector3(
-                        pos.x * _cellSize - offsetX,
-                        pos.y * _cellSize - offsetY,
-                        0.1f
-                    );
-                    targetObj.transform.localScale = new Vector3(_cellSize * 0.9f, _cellSize * 0.9f, 1f);
-                }
-            }
-
-            // 描画用セルを全マスに配置
-            for (int x = 0; x < w; x++)
-            {
-                for (int y = 0; y < h; y++)
-                {
-                    if (_cellPrefab == null) continue;
-
-                    var obj = Instantiate(_cellPrefab, transform);
-                    obj.name = $"Cell_{x}_{y}";
-                    obj.transform.position = new Vector3(
-                        x * _cellSize - offsetX,
-                        y * _cellSize - offsetY,
-                        0f
-                    );
-                    obj.transform.localScale = new Vector3(_cellSize * 0.95f, _cellSize * 0.95f, 1f);
-
-                    var cellView = obj.GetComponent<CellView>();
-                    if (cellView != null)
-                    {
-                        cellView.SetGridPosition(new Vector2Int(x, y));
-                        cellView.SetPainted(false);
-                    }
-                    _cells[x, y] = cellView;
-                }
-            }
-
-            // 対称線の位置設定
-            if (_symmetryLine != null)
-            {
-                _symmetryLine.transform.position = new Vector3(0f, 0f, -0.1f);
-            }
-        }
-
         private void HandleInput()
         {
             var mouse = Mouse.current;
-            if (mouse == null) return;
+            if (mouse == null || _mainCamera == null) return;
 
             if (mouse.leftButton.wasPressedThisFrame)
-            {
                 _isDrawing = true;
-                _hasNewStroke = false;
-                TryPaintAt(mouse.position.ReadValue());
-            }
-            else if (mouse.leftButton.isPressed && _isDrawing)
-            {
-                TryPaintAt(mouse.position.ReadValue());
-            }
 
-            if (mouse.leftButton.wasReleasedThisFrame && _isDrawing)
-            {
+            if (mouse.leftButton.wasReleasedThisFrame)
                 _isDrawing = false;
-                if (_hasNewStroke && _gameManager != null)
+
+            if (_isDrawing && mouse.leftButton.isPressed)
+            {
+                Vector3 sp = mouse.position.ReadValue();
+                sp.z = -_mainCamera.transform.position.z;
+                Vector2 worldPos = _mainCamera.ScreenToWorldPoint(sp);
+                var hit = Physics2D.OverlapPoint(worldPos);
+                if (hit != null)
                 {
-                    _gameManager.OnStrokeCompleted();
+                    var cell = hit.GetComponent<CellView>();
+                    if (cell != null && !cell.IsPainted)
+                    {
+                        PaintWithSymmetry(cell);
+                    }
                 }
             }
         }
 
-        private void TryPaintAt(Vector2 screenPos)
+        private void PaintWithSymmetry(CellView cell)
         {
-            if (_cells == null) return;
+            int x = cell.GridPosition.x;
+            int y = cell.GridPosition.y;
 
-            Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
-            var hit = Physics2D.OverlapPoint(worldPos);
-            if (hit == null) return;
+            // Paint the clicked cell
+            PaintCell(x, y);
 
-            var cellView = hit.GetComponent<CellView>();
-            if (cellView == null) return;
+            // Paint the mirrored cell (horizontal symmetry around center)
+            int mirrorX = _gridWidth - 1 - x;
+            if (mirrorX != x)
+                PaintCell(mirrorX, y);
 
-            var gridPos = cellView.GridPosition;
-            int halfWidth = StageData.GridWidth / 2;
-
-            // 左半分のみ描画可能
-            if (gridPos.x >= halfWidth) return;
-
-            // すでに塗り済みなら無視
-            if (_painted[gridPos.x, gridPos.y]) return;
-
-            // 左半分を塗る
-            PaintCell(gridPos.x, gridPos.y);
-
-            // 右半分にミラー塗り
-            int mirrorX = StageData.GridWidth - 1 - gridPos.x;
-            PaintCell(mirrorX, gridPos.y);
-
-            _hasNewStroke = true;
+            if (_gameManager != null)
+            {
+                _gameManager.OnCellPainted(_paintedTargetCount, _targetCount);
+                if (_paintedTargetCount >= _targetCount)
+                    _gameManager.OnPuzzleSolved();
+            }
         }
 
         private void PaintCell(int x, int y)
         {
-            if (x < 0 || x >= StageData.GridWidth || y < 0 || y >= StageData.GridHeight) return;
-            if (_painted[x, y]) return;
+            if (x < 0 || x >= _gridWidth || y < 0 || y >= _gridHeight) return;
+            var cell = _grid[x, y];
+            if (cell == null || cell.IsPainted) return;
 
-            _painted[x, y] = true;
-            if (_cells[x, y] != null)
-            {
-                _cells[x, y].SetPainted(true);
-            }
+            cell.Paint(_paintedSprite);
+
+            if (_targetPattern[x, y])
+                _paintedTargetCount++;
         }
 
-        /// <summary>
-        /// お手本と描画が一致しているかチェックする。
-        /// お手本セルが全て塗られ、かつお手本外のセルが塗られていなければ一致。
-        /// </summary>
-        public bool CheckMatch()
+        public void SetupStage(int stageIndex)
         {
-            if (_painted == null || _targetCells == null) return false;
+            ClearStage();
+            var data = GetStageData(stageIndex);
+            _gridWidth = data.width;
+            _gridHeight = data.height;
+            _grid = new CellView[_gridWidth, _gridHeight];
+            _targetPattern = data.target;
+            _targetCount = 0;
+            _paintedTargetCount = 0;
 
-            int w = StageData.GridWidth;
-            int h = StageData.GridHeight;
+            // Count targets
+            for (int x = 0; x < _gridWidth; x++)
+                for (int y = 0; y < _gridHeight; y++)
+                    if (_targetPattern[x, y]) _targetCount++;
 
-            for (int x = 0; x < w; x++)
+            BuildGrid(data);
+        }
+
+        public void ResetStage(int stageIndex)
+        {
+            _paintedTargetCount = 0;
+            for (int x = 0; x < _gridWidth; x++)
+                for (int y = 0; y < _gridHeight; y++)
+                    if (_grid[x, y] != null)
+                        _grid[x, y].ResetCell(_emptySprite);
+        }
+
+        private void ClearStage()
+        {
+            foreach (var obj in _stageObjects)
+                if (obj != null) Destroy(obj);
+            _stageObjects.Clear();
+        }
+
+        private void BuildGrid(StageData data)
+        {
+            // Target indicators (behind cells)
+            var targetSprite = Resources.Load<Sprite>("Sprites/Game013_SymmetryDraw/cell_target");
+            for (int x = 0; x < _gridWidth; x++)
             {
-                for (int y = 0; y < h; y++)
+                for (int y = 0; y < _gridHeight; y++)
                 {
-                    var pos = new Vector2Int(x, y);
-                    bool isTarget = _targetCells.Contains(pos);
-                    bool isPainted = _painted[x, y];
-
-                    if (isTarget && !isPainted) return false;
-                    if (!isTarget && isPainted) return false;
+                    if (data.target[x, y] && _targetPrefab != null)
+                    {
+                        var tObj = Instantiate(_targetPrefab, transform);
+                        tObj.transform.position = GridToWorld(new Vector2Int(x, y));
+                        tObj.name = $"Target_{x}_{y}";
+                        _stageObjects.Add(tObj);
+                    }
                 }
             }
 
-            return true;
-        }
-
-        private void ClearCanvas()
-        {
-            // 既存の子オブジェクトを削除
-            for (int i = transform.childCount - 1; i >= 0; i--)
+            // Cells
+            for (int x = 0; x < _gridWidth; x++)
             {
-                var child = transform.GetChild(i);
-                if (child != _symmetryLine?.transform)
+                for (int y = 0; y < _gridHeight; y++)
                 {
-                    DestroyImmediate(child.gameObject);
+                    if (_cellPrefab == null) continue;
+                    var obj = Instantiate(_cellPrefab, transform);
+                    var gp = new Vector2Int(x, y);
+                    obj.transform.position = GridToWorld(gp);
+                    obj.name = $"Cell_{x}_{y}";
+
+                    var cell = obj.GetComponent<CellView>();
+                    if (cell != null)
+                        cell.Initialize(gp, data.target[x, y]);
+
+                    _grid[x, y] = cell;
+                    _stageObjects.Add(obj);
                 }
             }
 
-            _cells = null;
-            _painted = null;
-            _targetCells = null;
+            // Symmetry line (center vertical)
+            var lineSprite = Resources.Load<Sprite>("Sprites/Game013_SymmetryDraw/symmetry_line");
+            if (lineSprite != null)
+            {
+                var lineObj = new GameObject("SymmetryLine");
+                var sr = lineObj.AddComponent<SpriteRenderer>();
+                sr.sprite = lineSprite;
+                sr.sortingOrder = 15;
+                float centerX = (_gridWidth - 1) * _cellSize * 0.5f;
+                lineObj.transform.position = new Vector3(0f, 0f, 0f);
+                lineObj.transform.localScale = new Vector3(0.5f, _gridHeight * _cellSize * 0.5f, 1f);
+                lineObj.transform.SetParent(transform);
+                _stageObjects.Add(lineObj);
+            }
         }
+
+        public Vector3 GridToWorld(Vector2Int gridPos)
+        {
+            float offsetX = (_gridWidth - 1) * _cellSize * 0.5f;
+            float offsetY = (_gridHeight - 1) * _cellSize * 0.5f;
+            return new Vector3(gridPos.x * _cellSize - offsetX, gridPos.y * _cellSize - offsetY, 0f);
+        }
+
+        #region Stage Data
+
+        private struct StageData
+        {
+            public int width, height;
+            public bool[,] target;
+        }
+
+        private StageData GetStageData(int index)
+        {
+            switch (index % StageCount)
+            {
+                case 0: return GetStage1();
+                case 1: return GetStage2();
+                case 2: return GetStage3();
+                default: return GetStage1();
+            }
+        }
+
+        // Stage1: 6x6, simple horizontal bar
+        private StageData GetStage1()
+        {
+            var t = new bool[6, 6];
+            for (int x = 1; x < 5; x++) t[x, 3] = true;
+            for (int x = 1; x < 5; x++) t[x, 2] = true;
+            return new StageData { width = 6, height = 6, target = t };
+        }
+
+        // Stage2: 8x6, diamond shape
+        private StageData GetStage2()
+        {
+            var t = new bool[8, 6];
+            // Diamond
+            t[3, 0] = true; t[4, 0] = true;
+            t[2, 1] = true; t[3, 1] = true; t[4, 1] = true; t[5, 1] = true;
+            t[1, 2] = true; t[2, 2] = true; t[5, 2] = true; t[6, 2] = true;
+            t[1, 3] = true; t[2, 3] = true; t[5, 3] = true; t[6, 3] = true;
+            t[2, 4] = true; t[3, 4] = true; t[4, 4] = true; t[5, 4] = true;
+            t[3, 5] = true; t[4, 5] = true;
+            return new StageData { width = 8, height = 6, target = t };
+        }
+
+        // Stage3: 8x8, heart shape
+        private StageData GetStage3()
+        {
+            var t = new bool[8, 8];
+            // Heart top
+            t[1, 6] = true; t[2, 6] = true; t[5, 6] = true; t[6, 6] = true;
+            t[0, 5] = true; t[1, 5] = true; t[2, 5] = true; t[3, 5] = true;
+            t[4, 5] = true; t[5, 5] = true; t[6, 5] = true; t[7, 5] = true;
+            for (int x = 0; x < 8; x++) t[x, 4] = true;
+            t[1, 3] = true; t[2, 3] = true; t[3, 3] = true; t[4, 3] = true; t[5, 3] = true; t[6, 3] = true;
+            t[2, 2] = true; t[3, 2] = true; t[4, 2] = true; t[5, 2] = true;
+            t[3, 1] = true; t[4, 1] = true;
+            return new StageData { width = 8, height = 8, target = t };
+        }
+
+        #endregion
     }
 }
