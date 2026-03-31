@@ -358,7 +358,7 @@
                   "size": "M",
                   "sceneName": "040_DashDungeon",
                   "description": "ワンタップでダッシュ方向を切り替えながらダンジョンを突破",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "041",
