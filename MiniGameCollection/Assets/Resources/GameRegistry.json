@@ -466,7 +466,7 @@
       "size": "S",
       "sceneName": "052_HammerNail",
       "description": "リズムよくタップして釘を打ち込む爽快ゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "053",
