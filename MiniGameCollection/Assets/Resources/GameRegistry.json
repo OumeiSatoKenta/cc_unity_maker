@@ -205,7 +205,7 @@
                   "size": "M",
                   "sceneName": "023_ChainSlash",
                   "description": "敵を鎖で繋いで一気に倒すコンボスラッシュ",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "024",
