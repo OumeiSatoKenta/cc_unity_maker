@@ -14,8 +14,10 @@ published: false
 
 - 100本のゲームアイデアをGitHub Issuesに体系的に登録する方法
 - Claude Codeが自動でUnity C#スクリプトを生成するワークフロー
+- `/implement-game` スキルによるIssue取得→コード生成→PR→マージの完全自動化
+- `/loop` コマンドでPC放置のままゲームを連続量産する仕組み
 - カテゴリ別タブ付きTopMenuのミニゲーム集アーキテクチャ
-- Gemini CLIによるゲームアセット（スプライト画像）の自動生成
+- Gemini CLI / Pillowによるゲームアセット（スプライト画像）の自動生成
 - GitHub Projectsでスプレッドシート感覚の進捗管理
 
 ## 前提条件
@@ -256,7 +258,120 @@ if (mouse.leftButton.wasPressedThisFrame)
 }
 ```
 
-## Phase 5: ゲームアセット生成
+## Phase 5: `/implement-game` スキルで完全自動実装
+
+### スキルとは
+
+Claude Codeには「スキル」という仕組みがあり、`.claude/commands/` にMarkdownファイルを置くだけで、カスタムのスラッシュコマンドを定義できます。`/implement-game 002` のように呼び出すと、Markdownに記述された手順がClaude Codeに読み込まれ、全ステップを自動で実行します。
+
+### implement-game スキルの全体フロー
+
+```
+/implement-game [ゲームID]
+    ↓
+① GitHub Issue から仕様取得（gh issue list）
+    ↓
+② GameRegistry.json からゲーム基本情報を確認
+    ↓
+③ C# スクリプト群を自動生成
+   - GameManager.cs（ゲーム状態管理）
+   - コアメカニクスManager（入力一元管理）
+   - オブジェクト制御スクリプト
+   - UI.cs（スコア・クリアパネル）
+    ↓
+④ SceneSetup Editorスクリプト生成
+    ↓
+⑤ GameRegistry.json を implemented: true に更新
+    ↓
+⑥ Python + Pillow でスプライト画像を生成
+    ↓
+⑦ ブランチ作成 → commit → push → PR作成 → mainマージ
+    ↓
+⑧ GitHub Issue にコメント
+```
+
+### スキルに埋め込んだナレッジ
+
+実装を繰り返す中でハマったポイントをスキル自体にルールとして組み込みました。
+
+```markdown
+# スキル内のルール（抜粋）
+
+- 入力処理は必ずManagerに一元管理する（個別オブジェクトで処理しない）
+- 新Input System使用: Mouse.current.leftButton.wasPressedThisFrame
+- Input.mousePosition は使わない → Mouse.current.position.ReadValue()
+- Sprite は File.WriteAllBytes → AssetDatabase.ImportAsset で保存
+  （Sprite.Create() はプレハブに保持できない）
+- EventSystem は InputSystemUIInputModule を使用
+  （StandaloneInputModule は Unity 6 で動かない）
+```
+
+これにより、同じハマりポイントを二度踏まない仕組みになっています。Claude Codeは毎回このルールを読み込んだ上でコード生成するため、品質が安定します。
+
+### PRの自動作成・マージ
+
+スキルの最終ステップでは、`gh` コマンドでPR作成からマージまでを自動実行します。
+
+```bash
+# フィーチャーブランチ作成 & commit
+git checkout -b feature/20260331-game004-wordcrystal
+git add MiniGameCollection/Assets/Scripts/Game004_WordCrystal/
+git add MiniGameCollection/Assets/Editor/SceneSetup/Setup004_WordCrystal.cs
+git add MiniGameCollection/Assets/Resources/Sprites/Game004_WordCrystal/
+git add MiniGameCollection/Assets/Resources/GameRegistry.json
+git commit -m "feat(game004): implement WordCrystal game"
+
+# PR作成 & マージ
+gh pr create --title "feat(game004): implement WordCrystal game" \
+  --body "Closes #5" --base main
+gh pr merge --merge --auto
+```
+
+Issueの `Closes #5` により、PRマージ時にIssueも自動クローズされます。
+
+## Phase 6: `/loop` で量産を完全自動化
+
+### 1本ずつ手で実行する限界
+
+`/implement-game` で1本のゲーム実装は自動化できましたが、100本を1本ずつ `/implement-game 004`、`/implement-game 005`... と打つのは非効率です。
+
+### `/loop` コマンドによる連続実行
+
+Claude Code の `/loop` コマンドを使うと、指定した間隔でプロンプトを繰り返し実行できます。
+
+```
+/loop 5h 状態ファイル(~/.claude/projects/.../game_schedule_state.json)から
+next_id を読み、/implement-game [ID] を実行 → 完了後 next_id を +1 更新
+→ 次のゲームへ。next_id が 101 以上になったら全完了。
+レートリミットエラー時は next_id を保存して停止。
+```
+
+### 状態管理ファイル
+
+どこまで実装したかをJSONファイルで管理します。
+
+```json
+{
+  "next_id": 14,
+  "total": 100
+}
+```
+
+ループが再開するたびにこのファイルを読み、次のゲームIDから再開します。レートリミットに達しても、状態が保存されているので次回のループで続きから再開できます。
+
+### なぜ `/loop` なのか
+
+当初は Claude Code の `CronCreate` API（リモートエージェント）を使ったcronジョブ方式を検討しました。しかし以下の理由で `/loop` に移行しました:
+
+- cronジョブは7日で失効するため、自己更新の仕組みが必要だった
+- `/loop` ならローカルで動き、状態管理もシンプル
+- レートリミット時に自然に停止し、次回再開できる
+
+### 実行結果
+
+この仕組みにより、PCを放置しておくだけで数時間おきにゲームが1本ずつ実装・PR・マージされていきます。GitHub Projectsのテーブルビューを見ると、「未実装」だったゲームが徐々に「完了」に変わっていく様子を確認できます。
+
+## Phase 7: ゲームアセット生成
 
 ### Gemini CLI でスプライト画像を自動生成
 
@@ -282,7 +397,7 @@ def create_gem_block(filename, base, highlight, shadow, size=128):
 
 5色のブロック + 盤面背景を生成し、`Resources.Load<Sprite>()` でランタイム読み込みしています。
 
-## Phase 6: GitHub Projects で進捗管理
+## Phase 8: GitHub Projects で進捗管理
 
 GitHub Projectsのテーブルビューを設定し、スプレッドシート感覚で100本のゲームを管理できるようにしました。
 
@@ -312,29 +427,47 @@ done
 
 ## 非エンジニアのワークフロー（最終形）
 
+### 手動モード（1本ずつ）
+
 ```
 1. GitHub Projects でゲームを選ぶ（工数Sでフィルター）
       ↓
-2. Claude Code に「ゲームXXX を作って」と依頼
+2. Claude Code に「/implement-game 004」と依頼
       ↓
-3. 「アセットを生成して」で画像作成（オプション）
+3. 自動で C#生成 → アセット生成 → PR作成 → マージ
       ↓
-4. Unity Editor で Assets > Setup > XXX を実行
+4. Unity Editor で Assets > Setup > 004 WordCrystal を実行
       ↓
 5. Play ボタンで動作確認
       ↓
 6. 問題があれば自然言語でフィードバック
+```
+
+### 全自動モード（放置で量産）
+
+```
+1. Claude Code で /loop を起動
       ↓
-7. 完成！Issue をクローズして次のゲームへ
+2. PCを放置（5時間おきに自動実行）
+      ↓
+3. 状態ファイルに基づき次のゲームを自動実装
+      ↓
+4. PR作成 → マージ → Issue更新 → 次のゲームへ
+      ↓
+5. レートリミットで自然停止 → 次のループで再開
+      ↓
+6. あとは Unity Editor で SceneSetup を実行するだけ
 ```
 
 ## まとめ
 
-- **Claude Code + Unity** で、非エンジニアが「作って」と言うだけでゲームが完成する仕組みを1日で構築した
+- **Claude Code + Unity** で、非エンジニアが「作って」と言うだけでゲームが完成する仕組みを構築した
+- **`/implement-game` スキル** により、Issue取得からPRマージまでの全工程を1コマンドで自動化した
+- **`/loop` による連続実行** で、PC放置のまま数時間おきにゲームが量産される仕組みを実現した
 - **単一プロジェクト・シーン追加方式** により、100本のゲームを1つのUnityプロジェクトで管理できる
-- **SceneSetup EditorスクリプトSceneSetup** により、非エンジニアがインスペクタを触る場面をゼロにした
+- **SceneSetup Editorスクリプト** により、非エンジニアがインスペクタを触る場面をゼロにした
 - **GitHub Issues + Projects** で、スプレッドシート感覚の進捗管理を実現
-- Unity 6 の新Input System対応や、スプライトのアセット保存など、実装で得たハマりポイントをナレッジとして蓄積
+- ハマりポイントをスキル自体にルールとして組み込み、同じミスを繰り返さない仕組みにした
 
 ## この記事について
 
