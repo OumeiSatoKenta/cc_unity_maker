@@ -520,7 +520,7 @@
       "size": "S",
       "sceneName": "058_ThreadNeedle",
       "description": "揺れる針穴に糸を通すような精密タップゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "059",
