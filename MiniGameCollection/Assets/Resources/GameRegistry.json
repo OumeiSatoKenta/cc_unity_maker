@@ -349,7 +349,7 @@
                   "size": "M",
                   "sceneName": "039_BoomerangHero",
                   "description": "ブーメランを投げ軌道を指でなぞり操作して敵を倒す",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "040",
