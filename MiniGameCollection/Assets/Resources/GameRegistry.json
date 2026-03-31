@@ -232,7 +232,7 @@
                   "size": "S",
                   "sceneName": "026_SliceNinja",
                   "description": "飛んでくる物体をスワイプで切り爆弾は避ける忍者ゲーム",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "027",
