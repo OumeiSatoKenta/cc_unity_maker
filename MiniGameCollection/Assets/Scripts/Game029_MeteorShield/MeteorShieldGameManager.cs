@@ -4,43 +4,93 @@ namespace Game029_MeteorShield
 {
     public class MeteorShieldGameManager : MonoBehaviour
     {
-        [SerializeField] private ShieldManager _shieldManager;
-        [SerializeField] private MeteorShieldUI _ui;
+        [SerializeField, Tooltip("シールド管理コンポーネント")]
+        private ShieldManager _shieldManager;
 
-        private int _score;
-        private int _starHP;
-        private bool _isGameOver;
-        private const int MaxStarHP = 5;
+        [SerializeField, Tooltip("UI管理コンポーネント")]
+        private MeteorShieldUI _ui;
 
-        private void Start() { StartGame(); }
+        [SerializeField, Tooltip("星の最大HP")]
+        private int _maxHp = 3;
+
+        [SerializeField, Tooltip("クリアまでの時間(秒)")]
+        private float _clearTime = 60f;
+
+        private int _currentHp;
+        private float _elapsed;
+        private bool _isPlaying;
+
+        private void Start()
+        {
+            StartGame();
+        }
 
         public void StartGame()
         {
-            _score = 0; _starHP = MaxStarHP; _isGameOver = false;
-            if (_shieldManager != null) _shieldManager.StartGame();
-            if (_ui != null) { _ui.UpdateScore(_score); _ui.UpdateHP(_starHP); _ui.HideGameOverPanel(); }
-        }
+            _currentHp = _maxHp;
+            _elapsed = 0f;
+            _isPlaying = true;
 
-        public void OnMeteorDeflected()
-        {
-            if (_isGameOver) return;
-            _score += 10;
-            if (_ui != null) _ui.UpdateScore(_score);
-        }
-
-        public void OnStarHit()
-        {
-            if (_isGameOver) return;
-            _starHP--;
-            if (_ui != null) _ui.UpdateHP(_starHP);
-            if (_starHP <= 0)
+            if (_ui != null)
             {
-                _isGameOver = true;
-                if (_shieldManager != null) _shieldManager.StopGame();
-                if (_ui != null) _ui.ShowGameOverPanel(_score);
+                _ui.UpdateHp(_currentHp, _maxHp);
+                _ui.UpdateTime(_clearTime);
+                _ui.HidePanels();
+            }
+
+            if (_shieldManager != null)
+                _shieldManager.StartGame();
+        }
+
+        private void Update()
+        {
+            if (!_isPlaying) return;
+
+            _elapsed += Time.deltaTime;
+            float remaining = Mathf.Max(0f, _clearTime - _elapsed);
+
+            if (_ui != null)
+                _ui.UpdateTime(remaining);
+
+            if (_elapsed >= _clearTime)
+            {
+                OnTimeUp();
             }
         }
 
-        public void RestartGame() { StartGame(); }
+        public void OnMeteorHitStar()
+        {
+            if (!_isPlaying) return;
+
+            _currentHp--;
+            if (_ui != null)
+                _ui.UpdateHp(_currentHp, _maxHp);
+
+            if (_currentHp <= 0)
+            {
+                _isPlaying = false;
+                if (_shieldManager != null)
+                    _shieldManager.StopGame();
+                if (_ui != null)
+                    _ui.ShowGameOverPanel(_elapsed);
+            }
+        }
+
+        private void OnTimeUp()
+        {
+            _isPlaying = false;
+            if (_shieldManager != null)
+                _shieldManager.StopGame();
+            if (_ui != null)
+                _ui.ShowClearPanel(_currentHp, _maxHp);
+        }
+
+        public void RestartGame()
+        {
+            StartGame();
+        }
+
+        public float ClearTime => _clearTime;
+        public bool IsPlaying => _isPlaying;
     }
 }
