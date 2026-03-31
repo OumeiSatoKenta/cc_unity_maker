@@ -1,38 +1,42 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Game007_NumberFlow
 {
-    /// <summary>
-    /// NumberFlow の UI を管理する。
-    /// レベル・ステップ表示、クリアパネル表示を担当する。
-    /// ボタン連携はSceneSetupのUnityEventで直接配線する。
-    /// </summary>
     public class NumberFlowUI : MonoBehaviour
     {
-        [SerializeField] private Text _levelText;
-        [SerializeField] private Text _stepText;
+        [SerializeField] private TextMeshProUGUI _progressText;
+        [SerializeField] private TextMeshProUGUI _stageText;
         [SerializeField] private GameObject _clearPanel;
+        [SerializeField] private TextMeshProUGUI _clearText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _nextStageButton;
         [SerializeField] private NumberFlowGameManager _gameManager;
 
-        public void SetLevelText(string text)
+        private void Awake()
         {
-            if (_levelText != null) _levelText.text = text;
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.RestartGame(); });
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.NextStage(); });
         }
 
-        public void UpdateStep(int step, int max)
+        public void UpdateProgress(int current, int total)
         {
-            if (_stepText != null) _stepText.text = $"{step} / {max}";
+            if (_progressText != null)
+                _progressText.text = total > 0 ? $"{current}/{total}" : "";
         }
 
-        public void ShowClearPanel(int level)
+        public void UpdateStageText(int stageNum)
+        {
+            if (_stageText != null) _stageText.text = $"ステージ {stageNum}";
+        }
+
+        public void ShowClearPanel(int stageNum)
         {
             if (_clearPanel != null) _clearPanel.SetActive(true);
-        }
-
-        public void ShowClearPanel()
-        {
-            ShowClearPanel(0);
+            if (_clearText != null) _clearText.text = $"クリア!\nステージ {stageNum} 完了";
         }
 
         public void HideClearPanel()
