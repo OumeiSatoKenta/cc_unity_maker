@@ -2,69 +2,65 @@ using UnityEngine;
 
 namespace Game003_GravitySwitch
 {
-    /// <summary>
-    /// GravitySwitch のゲーム全体を制御する。
-    /// 状態管理、クリア判定、リスタートを担当する。
-    /// </summary>
     public class GravitySwitchGameManager : MonoBehaviour
     {
         [SerializeField] private GravityManager _gravityManager;
         [SerializeField] private GravitySwitchUI _ui;
 
+        private int _moveCount;
         private bool _isCleared;
+        private int _currentStage;
 
         private void Start()
         {
+            _currentStage = 0;
             StartGame();
         }
 
         public void StartGame()
         {
+            _moveCount = 0;
             _isCleared = false;
-            if (_gravityManager != null) _gravityManager.InitLevel(0);
-            if (_ui != null)
+            if (_gravityManager != null) _gravityManager.SetupStage(_currentStage);
+            if (_ui != null) _ui.UpdateMoveCount(_moveCount);
+            if (_ui != null) _ui.UpdateStageText(_currentStage + 1);
+            if (_ui != null) _ui.HideClearPanel();
+        }
+
+        public void OnGravityChanged()
+        {
+            if (_isCleared) return;
+
+            _moveCount++;
+            if (_ui != null) _ui.UpdateMoveCount(_moveCount);
+
+            if (_gravityManager != null && _gravityManager.IsGoalReached())
             {
-                _ui.UpdateMoveCount(0);
-                _ui.HideClearPanel();
+                _isCleared = true;
+                if (_ui != null) _ui.ShowClearPanel(_moveCount, _currentStage + 1);
             }
         }
 
-        public void OnMoved(int moveCount)
-        {
-            if (_ui != null) _ui.UpdateMoveCount(moveCount);
-        }
-
-        public void OnCleared(int moveCount)
+        public void ApplyGravityDirection(Vector2Int direction)
         {
             if (_isCleared) return;
-            _isCleared = true;
-            if (_ui != null) _ui.ShowClearPanel(moveCount);
+            if (_gravityManager != null && _gravityManager.ApplyGravity(direction))
+            {
+                OnGravityChanged();
+            }
         }
 
         public void RestartGame()
         {
-            _isCleared = false;
-            if (_gravityManager != null) _gravityManager.InitLevel(_gravityManager.CurrentLevel);
-            if (_ui != null)
-            {
-                _ui.UpdateMoveCount(0);
-                _ui.HideClearPanel();
-            }
+            StartGame();
         }
 
-        public void LoadNextLevel()
+        public void NextStage()
         {
-            _isCleared = false;
-            if (_gravityManager != null)
-            {
-                int next = (_gravityManager.CurrentLevel + 1) % GravityManager.LevelCount;
-                _gravityManager.InitLevel(next);
-            }
-            if (_ui != null)
-            {
-                _ui.UpdateMoveCount(0);
-                _ui.HideClearPanel();
-            }
+            _currentStage++;
+            if (_currentStage >= GravityManager.StageCount)
+                _currentStage = 0;
+            StartGame();
         }
     }
 }
