@@ -223,7 +223,7 @@
                   "size": "M",
                   "sceneName": "025_TowerDefend",
                   "description": "指でドラッグして壁を描き敵の進行を止めるタワーディフェンス",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "026",
