@@ -152,6 +152,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/047_SpinBalance.unity
     guid: 52fd5ca6299c44a069c174273682ad35
+  - enabled: 1
+    path: Assets/Scenes/048_GlassBall.unity
+    guid: 235de65383fbd4bc0b284a020dad442a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
