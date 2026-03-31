@@ -108,6 +108,7 @@ public class TopMenuManager : MonoBehaviour
         }
 
         var cardObj = Instantiate(_cardPrefab, _cardContainer);
+        cardObj.SetActive(true);
         var card = cardObj.GetComponent<GameCardUI>();
         if (card != null)
         {
