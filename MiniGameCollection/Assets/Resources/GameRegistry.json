@@ -295,7 +295,7 @@
                   "size": "S",
                   "sceneName": "033_AimSniper",
                   "description": "揺れるスコープでタイミングよくタップして動くターゲットを撃つ",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "034",
