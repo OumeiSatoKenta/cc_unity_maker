@@ -92,6 +92,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/027_DotDodge.unity
     guid: 0e998165a86ff4ee2811415abbd853b7
+  - enabled: 1
+    path: Assets/Scenes/028_RopeSwing.unity
+    guid: 116635730138744729f6da7d0d233122
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
