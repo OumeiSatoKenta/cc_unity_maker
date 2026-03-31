@@ -1,53 +1,59 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game006_ShadowMatch
 {
     public class ShadowMatchGameManager : MonoBehaviour
     {
-        [SerializeField] private RotationController _rotController;
+        [SerializeField] private ShadowManager _shadowManager;
         [SerializeField] private ShadowMatchUI _ui;
-        [SerializeField] private Transform _targetTransform; // static target silhouette
 
-        // Target angles for each level (degrees, Z rotation)
-        private static readonly float[] TargetAngles = { 50f, 130f, 220f };
+        private int _moveCount;
+        private bool _isCleared;
+        private int _currentStage;
 
-        public bool IsPlaying { get; private set; }
-
-        public UnityEvent<int> OnLevelCleared = new();
-
-        private int _currentLevel;
-
-        private void Start() => LoadLevel(0);
-
-        public void LoadLevel(int level)
+        private void Start()
         {
-            _currentLevel = Mathf.Clamp(level, 0, TargetAngles.Length - 1);
-            IsPlaying = true;
-
-            float angle = TargetAngles[_currentLevel];
-            if (_targetTransform)
-                _targetTransform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-            _rotController?.SetLevel(angle);
-            _ui?.SetLevelText($"Level {_currentLevel + 1} / {TargetAngles.Length}");
-            _ui?.HideClearPanel();
+            _currentStage = 0;
+            StartGame();
         }
 
-        public void OnSolved()
+        public void StartGame()
         {
-            IsPlaying = false;
-            OnLevelCleared?.Invoke(_currentLevel);
+            _moveCount = 0;
+            _isCleared = false;
+            if (_shadowManager != null) _shadowManager.SetupStage(_currentStage);
+            if (_ui != null)
+            {
+                _ui.UpdateMoveCount(_moveCount);
+                _ui.UpdateStageText(_currentStage + 1);
+                _ui.HideClearPanel();
+            }
         }
 
-        public void LoadNextLevel()
+        public void OnShapeRotated()
         {
-            LoadLevel((_currentLevel + 1) % TargetAngles.Length);
+            if (_isCleared) return;
+            _moveCount++;
+            if (_ui != null) _ui.UpdateMoveCount(_moveCount);
+
+            if (_shadowManager != null && _shadowManager.IsMatched())
+            {
+                _isCleared = true;
+                if (_ui != null) _ui.ShowClearPanel(_moveCount, _currentStage + 1);
+            }
         }
 
-        public void LoadMenu()
+        public void RestartGame()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
+            StartGame();
+        }
+
+        public void NextStage()
+        {
+            _currentStage++;
+            if (_currentStage >= ShadowManager.StageCount)
+                _currentStage = 0;
+            StartGame();
         }
     }
 }

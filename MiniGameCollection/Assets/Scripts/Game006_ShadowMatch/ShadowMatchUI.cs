@@ -1,44 +1,46 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Game006_ShadowMatch
 {
     public class ShadowMatchUI : MonoBehaviour
     {
-        [SerializeField] private Text _levelText;
-        [SerializeField] private Image _matchFill;
-        [SerializeField] private Text _matchText;
+        [SerializeField] private TextMeshProUGUI _moveCountText;
+        [SerializeField] private TextMeshProUGUI _stageText;
         [SerializeField] private GameObject _clearPanel;
+        [SerializeField] private TextMeshProUGUI _clearText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _nextStageButton;
         [SerializeField] private ShadowMatchGameManager _gameManager;
 
-        private void Start()
+        private void Awake()
         {
-            _gameManager.OnLevelCleared.AddListener(ShowClearPanel);
-            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.RestartGame(); });
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.NextStage(); });
         }
 
-        public void SetLevelText(string text)
+        public void UpdateMoveCount(int count)
         {
-            if (_levelText) _levelText.text = text;
+            if (_moveCountText != null) _moveCountText.text = $"操作: {count}";
         }
 
-        public void UpdateMatch(float match)
+        public void UpdateStageText(int stageNum)
         {
-            if (_matchFill) _matchFill.fillAmount = match;
-            if (_matchText) _matchText.text = $"{Mathf.RoundToInt(match * 100)}%";
+            if (_stageText != null) _stageText.text = $"ステージ {stageNum}";
         }
 
-        public void ShowClearPanel(int level)
+        public void ShowClearPanel(int moveCount, int stageNum)
         {
-            if (_clearPanel) _clearPanel.SetActive(true);
+            if (_clearPanel != null) _clearPanel.SetActive(true);
+            if (_clearText != null) _clearText.text = $"クリア!\nステージ {stageNum}\n{moveCount} 操作";
         }
 
         public void HideClearPanel()
         {
-            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_clearPanel != null) _clearPanel.SetActive(false);
         }
-
-        public void OnNextLevelClicked() => _gameManager?.LoadNextLevel();
-        public void OnMenuClicked() => _gameManager?.LoadMenu();
     }
 }
