@@ -4,88 +4,181 @@ using UnityEngine.InputSystem;
 
 namespace Game004_WordCrystal
 {
-    /// <summary>
-    /// 8個のクリスタルを管理し、タップ入力を一元処理する。
-    /// ラウンド開始時にターゲット単語を含む文字セットを配置する。
-    /// </summary>
     public class CrystalManager : MonoBehaviour
     {
-        [SerializeField] private WordCrystalGameManager _gameManager;
-        [SerializeField] private WordCrystalUI _ui;
-        [SerializeField] private List<CrystalView> _crystals = new();
+        [SerializeField] private int _gridWidth = 7;
+        [SerializeField] private int _gridHeight = 5;
+        [SerializeField] private float _cellSize = 1.0f;
+        [SerializeField] private GameObject _crystalPrefab;
 
-        private readonly List<char> _selectedLetters = new();
+        private CrystalController[,] _crystals;
+        private readonly List<GameObject> _stageObjects = new List<GameObject>();
 
-        // Common letter frequency distribution (ETAOIN SHRDLU ...)
-        private static readonly char[] CommonLetters =
-            "AAAAAABBCDDEEEEEEFFFGGHHHHIIIIIIJKLLLLMMNNNNNOOOOOOPPQRRRRRSSSSTTTTTUUUUVVWWXYYZ"
-            .ToCharArray();
+        private WordCrystalGameManager _gameManager;
+        private Camera _mainCamera;
 
-        public void GenerateRound()
+        private string _targetWord;
+        private int _currentLetterIndex;
+        private Sprite _crystalSprite;
+        private Sprite _brokenSprite;
+
+        public static int StageCount => 3;
+
+        private void Awake()
         {
-            string[] words = WordCrystalGameManager.WordList;
-            string target = words[Random.Range(0, words.Length)];
-            // Clamp to crystal count
-            if (target.Length > _crystals.Count) target = target.Substring(0, _crystals.Count);
-
-            var letters = new List<char>(target.ToCharArray());
-            while (letters.Count < _crystals.Count)
-                letters.Add(CommonLetters[Random.Range(0, CommonLetters.Length)]);
-
-            // Fisher-Yates shuffle
-            for (int i = letters.Count - 1; i > 0; i--)
-            {
-                int j = Random.Range(0, i + 1);
-                (letters[i], letters[j]) = (letters[j], letters[i]);
-            }
-
-            for (int i = 0; i < _crystals.Count; i++)
-                _crystals[i].Reset(letters[i]);
-
-            _selectedLetters.Clear();
-            _ui.UpdateCurrentWord("");
+            _gameManager = GetComponentInParent<WordCrystalGameManager>();
+            _mainCamera = Camera.main;
+            _crystalSprite = Resources.Load<Sprite>("Sprites/Game004_WordCrystal/crystal");
+            _brokenSprite = Resources.Load<Sprite>("Sprites/Game004_WordCrystal/crystal_broken");
         }
 
         private void Update()
         {
-            if (_gameManager == null || !_gameManager.IsPlaying) return;
-            if (!Mouse.current.leftButton.wasPressedThisFrame) return;
-
-            Vector2 worldPos = Camera.main.ScreenToWorldPoint(
-                Mouse.current.position.ReadValue());
-            Collider2D hit = Physics2D.OverlapPoint(worldPos);
-            if (hit == null) return;
-
-            var crystal = hit.GetComponent<CrystalView>();
-            if (crystal == null || crystal.IsRevealed) return;
-
-            crystal.Reveal();
-            _selectedLetters.Add(crystal.Letter);
-            _ui.UpdateCurrentWord(new string(_selectedLetters.ToArray()));
+            HandleInput();
         }
 
-        public void SubmitWord()
+        private void HandleInput()
         {
-            if (_selectedLetters.Count == 0) return;
-            string word = new string(_selectedLetters.ToArray());
-            bool valid = _gameManager.SubmitWord(word);
-            if (!valid)
+            var mouse = Mouse.current;
+            if (mouse == null || _mainCamera == null) return;
+
+            if (mouse.leftButton.wasPressedThisFrame)
             {
-                ClearSelection();
-                _ui.ShowInvalidFeedback();
+                Vector3 screenPos = mouse.position.ReadValue();
+                screenPos.z = -_mainCamera.transform.position.z;
+                Vector2 worldPos = _mainCamera.ScreenToWorldPoint(screenPos);
+                var hit = Physics2D.OverlapPoint(worldPos);
+                if (hit != null)
+                {
+                    var crystal = hit.GetComponent<CrystalController>();
+                    if (crystal != null && !crystal.IsBroken)
+                    {
+                        crystal.Break(_brokenSprite);
+                        CheckLetter(crystal.Letter);
+                    }
+                }
+            }
+        }
+
+        private void CheckLetter(char letter)
+        {
+            if (_currentLetterIndex >= _targetWord.Length) return;
+
+            if (char.ToUpper(letter) == char.ToUpper(_targetWord[_currentLetterIndex]))
+            {
+                _currentLetterIndex++;
+                if (_gameManager != null)
+                    _gameManager.OnCorrectLetter(_currentLetterIndex, _targetWord.Length);
+
+                if (_currentLetterIndex >= _targetWord.Length)
+                {
+                    if (_gameManager != null)
+                        _gameManager.OnWordCompleted();
+                }
             }
             else
             {
-                _selectedLetters.Clear();
+                if (_gameManager != null)
+                    _gameManager.OnMiss();
             }
         }
 
-        public void ClearSelection()
+        public void SetupStage(int stageIndex)
         {
-            foreach (var c in _crystals)
-                if (c.IsRevealed) c.Hide();
-            _selectedLetters.Clear();
-            _ui.UpdateCurrentWord("");
+            ClearStage();
+            _targetWord = GetTargetWord(stageIndex);
+            _currentLetterIndex = 0;
+            _crystals = new CrystalController[_gridWidth, _gridHeight];
+            BuildGrid();
+        }
+
+        private void ClearStage()
+        {
+            foreach (var obj in _stageObjects)
+            {
+                if (obj != null) Destroy(obj);
+            }
+            _stageObjects.Clear();
+        }
+
+        private void BuildGrid()
+        {
+            var letters = GenerateLetters();
+            int idx = 0;
+
+            for (int y = 0; y < _gridHeight; y++)
+            {
+                for (int x = 0; x < _gridWidth; x++)
+                {
+                    if (_crystalPrefab == null) continue;
+
+                    var obj = Instantiate(_crystalPrefab, transform);
+                    var gridPos = new Vector2Int(x, y);
+                    obj.transform.position = GridToWorld(gridPos);
+                    obj.name = $"Crystal_{x}_{y}";
+
+                    var ctrl = obj.GetComponent<CrystalController>();
+                    if (ctrl != null)
+                        ctrl.Initialize(gridPos, letters[idx], _crystalSprite);
+
+                    _crystals[x, y] = ctrl;
+                    _stageObjects.Add(obj);
+                    idx++;
+                }
+            }
+        }
+
+        private char[] GenerateLetters()
+        {
+            int total = _gridWidth * _gridHeight;
+            var letters = new char[total];
+            var rand = new System.Random();
+
+            // Place target word letters at random positions
+            var positions = new List<int>();
+            for (int i = 0; i < total; i++) positions.Add(i);
+            for (int i = positions.Count - 1; i > 0; i--)
+            {
+                int j = rand.Next(i + 1);
+                (positions[i], positions[j]) = (positions[j], positions[i]);
+            }
+
+            for (int i = 0; i < _targetWord.Length && i < positions.Count; i++)
+            {
+                letters[positions[i]] = char.ToUpper(_targetWord[i]);
+            }
+
+            // Fill remaining with random letters
+            for (int i = 0; i < total; i++)
+            {
+                if (letters[i] == '\0')
+                    letters[i] = (char)('A' + rand.Next(26));
+            }
+
+            return letters;
+        }
+
+        private string GetTargetWord(int stageIndex)
+        {
+            switch (stageIndex % StageCount)
+            {
+                case 0: return "CAT";
+                case 1: return "LIGHT";
+                case 2: return "PUZZLE";
+                default: return "CAT";
+            }
+        }
+
+        public string GetCurrentTargetWord()
+        {
+            return _targetWord;
+        }
+
+        public Vector3 GridToWorld(Vector2Int gridPos)
+        {
+            float offsetX = (_gridWidth - 1) * _cellSize * 0.5f;
+            float offsetY = (_gridHeight - 1) * _cellSize * 0.5f;
+            return new Vector3(gridPos.x * _cellSize - offsetX, gridPos.y * _cellSize - offsetY - 1f, 0f);
         }
     }
 }

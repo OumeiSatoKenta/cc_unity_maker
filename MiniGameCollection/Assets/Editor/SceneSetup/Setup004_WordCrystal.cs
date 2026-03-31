@@ -1,377 +1,276 @@
-using System.Collections.Generic;
-using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.UI;
+using TMPro;
 using Game004_WordCrystal;
 
-public class Setup004_WordCrystal
+public static class Setup004_WordCrystal
 {
     [MenuItem("Assets/Setup/004 WordCrystal")]
-    public static void Setup()
+    public static void CreateScene()
     {
         if (EditorApplication.isPlaying)
         {
-            Debug.LogError("Exit Play Mode before running setup.");
+            Debug.LogError("[Setup004_WordCrystal] Play モード中は実行できません。");
             return;
         }
 
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+        var jpFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansJP-Regular SDF.asset");
 
-        // ── Camera ──────────────────────────────────────────────
-        var camGo = new GameObject("Main Camera");
-        camGo.tag = "MainCamera";
-        var cam = camGo.AddComponent<Camera>();
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = new Color(0.06f, 0.04f, 0.14f);
-        cam.orthographic = true;
-        cam.orthographicSize = 5f;
-        camGo.AddComponent<AudioListener>();
-
-        // ── Sprites ──────────────────────────────────────────────
-        string spriteDir = "Assets/Resources/Sprites/Game004_WordCrystal";
-        Directory.CreateDirectory(spriteDir);
-
-        Sprite crystalHiddenSprite = GetOrCreateSprite(
-            spriteDir + "/crystal_hidden.png", MakeCrystalHiddenTexture());
-        Sprite crystalRevealedSprite = GetOrCreateSprite(
-            spriteDir + "/crystal_revealed.png", MakeCrystalRevealedTexture());
-
-        // ── GameManager (WordCrystalGameManager + CrystalManager) ─
-        var gmGo = new GameObject("GameManager");
-        var gameManager = gmGo.AddComponent<WordCrystalGameManager>();
-        var crystalManager = gmGo.AddComponent<CrystalManager>();
-
-        // ── Crystals (4 × 2 grid) ────────────────────────────────
-        float[] xs = { -2.25f, -0.75f, 0.75f, 2.25f };
-        float[] ys = { 1.5f, 0.0f };
-        var crystalViews = new List<CrystalView>();
-
-        for (int row = 0; row < 2; row++)
+        // Camera
+        var camera = Object.FindFirstObjectByType<Camera>();
+        if (camera != null)
         {
-            for (int col = 0; col < 4; col++)
+            camera.backgroundColor = new Color(0.05f, 0.06f, 0.12f, 1f);
+            camera.orthographic = true;
+            camera.orthographicSize = 5f;
+        }
+
+        // White sprite
+        string whiteTexPath = "Assets/Scripts/Game004_WordCrystal/WhiteSquare.png";
+        if (!System.IO.File.Exists(whiteTexPath))
+        {
+            var wTex = new Texture2D(4, 4);
+            var wPixels = new Color[16];
+            for (int i = 0; i < 16; i++) wPixels[i] = Color.white;
+            wTex.SetPixels(wPixels);
+            wTex.Apply();
+            System.IO.File.WriteAllBytes(whiteTexPath, wTex.EncodeToPNG());
+            Object.DestroyImmediate(wTex);
+            AssetDatabase.ImportAsset(whiteTexPath);
+            var wImporter = AssetImporter.GetAtPath(whiteTexPath) as TextureImporter;
+            if (wImporter != null)
             {
-                var cGo = new GameObject($"Crystal_{row * 4 + col}");
-                cGo.transform.position = new Vector3(xs[col], ys[row], 0f);
-
-                var sr = cGo.AddComponent<SpriteRenderer>();
-                sr.sprite = crystalHiddenSprite;
-                sr.sortingOrder = 0;
-
-                var col2d = cGo.AddComponent<BoxCollider2D>();
-                col2d.size = new Vector2(1.2f, 1.2f);
-
-                var cv = cGo.AddComponent<CrystalView>();
-
-                // Child TextMesh for letter display
-                var txtGo = new GameObject("Letter");
-                txtGo.transform.SetParent(cGo.transform);
-                txtGo.transform.localPosition = new Vector3(0f, 0f, -0.1f);
-                var tm = txtGo.AddComponent<TextMesh>();
-                tm.text = "";
-                tm.fontSize = 60;
-                tm.color = Color.white;
-                tm.anchor = TextAnchor.MiddleCenter;
-                tm.alignment = TextAlignment.Center;
-                tm.fontStyle = FontStyle.Bold;
-
-                // Wire sprite refs
-                var cvSo = new SerializedObject(cv);
-                cvSo.FindProperty("_crystalSprite").objectReferenceValue = crystalHiddenSprite;
-                cvSo.FindProperty("_revealedSprite").objectReferenceValue = crystalRevealedSprite;
-                cvSo.ApplyModifiedPropertiesWithoutUndo();
-
-                crystalViews.Add(cv);
+                wImporter.textureType = TextureImporterType.Sprite;
+                wImporter.spritePixelsPerUnit = 1;
+                wImporter.SaveAndReimport();
             }
         }
+        var whiteSprite = AssetDatabase.LoadAssetAtPath<Sprite>(whiteTexPath);
 
-        // ── Canvas (Screen Space Overlay) ────────────────────────
-        var canvasGo = new GameObject("Canvas");
-        var canvas = canvasGo.AddComponent<Canvas>();
+        // Sprites
+        string sp = "Assets/Resources/Sprites/Game004_WordCrystal/";
+        var crystalSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "crystal.png");
+        var boardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "board_background.png");
+
+        // Board background
+        var boardBgObj = new GameObject("BoardBackground");
+        var boardBgSr = boardBgObj.AddComponent<SpriteRenderer>();
+        boardBgSr.sprite = boardBgSprite != null ? boardBgSprite : whiteSprite;
+        boardBgSr.color = boardBgSprite != null ? Color.white : new Color(0.05f, 0.06f, 0.12f);
+        boardBgObj.transform.localScale = new Vector3(3.5f, 3.5f, 1f);
+        boardBgSr.sortingOrder = -10;
+
+        // Crystal prefab (with collider, CrystalController, TextMeshPro child)
+        string prefabDir = "Assets/Scripts/Game004_WordCrystal/";
+        var crystalObj = new GameObject("CrystalPrefab");
+        var csr = crystalObj.AddComponent<SpriteRenderer>();
+        csr.sprite = crystalSprite != null ? crystalSprite : whiteSprite;
+        csr.color = Color.white;
+        csr.sortingOrder = 5;
+        var col = crystalObj.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.9f, 0.9f);
+        crystalObj.AddComponent<CrystalController>();
+
+        // TextMeshPro child for letter display
+        var letterObj = new GameObject("LetterText");
+        letterObj.transform.SetParent(crystalObj.transform, false);
+        var tmp3d = letterObj.AddComponent<TextMeshPro>();
+        tmp3d.text = "";
+        tmp3d.fontSize = 6;
+        tmp3d.color = Color.white;
+        tmp3d.alignment = TextAlignmentOptions.Center;
+        tmp3d.sortingOrder = 10;
+        var letterRect = letterObj.GetComponent<RectTransform>();
+        letterRect.sizeDelta = new Vector2(1f, 1f);
+
+        var crystalPrefab = PrefabUtility.SaveAsPrefabAsset(crystalObj, prefabDir + "CrystalPrefab.prefab");
+        Object.DestroyImmediate(crystalObj);
+
+        // GameManager + CrystalManager
+        var gmObj = new GameObject("GameManager");
+        var gm = gmObj.AddComponent<WordCrystalGameManager>();
+
+        var boardObj = new GameObject("CrystalBoard");
+        boardObj.transform.SetParent(gmObj.transform);
+        var cm = boardObj.AddComponent<CrystalManager>();
+
+        var cmSO = new SerializedObject(cm);
+        cmSO.FindProperty("_gridWidth").intValue = 7;
+        cmSO.FindProperty("_gridHeight").intValue = 5;
+        cmSO.FindProperty("_cellSize").floatValue = 1.0f;
+        cmSO.FindProperty("_crystalPrefab").objectReferenceValue = crystalPrefab;
+        cmSO.ApplyModifiedProperties();
+
+        // Canvas
+        var canvasObj = new GameObject("Canvas");
+        var canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        var scaler = canvasGo.AddComponent<CanvasScaler>();
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(720, 1280);
-        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        scaler.matchWidthOrHeight = 0.5f;
-        canvasGo.AddComponent<GraphicRaycaster>();
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        canvasObj.AddComponent<GraphicRaycaster>();
 
-        // Timer text (top center)
-        var timerGo = MakeText(canvasGo.transform, "TimerText", "Time: 60", 36, Color.white);
-        SetAnchor(timerGo, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-            new Vector2(0f, -40f), new Vector2(400f, 60f));
+        // Word slots (top)
+        var wordSlotsObj = CreateText(canvasObj.transform, "WordSlotsText", "_ _ _", 48, jpFont,
+            new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1),
+            new Vector2(600, 80), new Vector2(0, -30));
+        wordSlotsObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
-        // Score text (top right)
-        var scoreGo = MakeText(canvasGo.transform, "ScoreText", "Score: 0", 30, Color.yellow,
-            TextAnchor.MiddleRight);
-        SetAnchor(scoreGo, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
-            new Vector2(-10f, -40f), new Vector2(280f, 60f));
+        // Miss count (top-left)
+        var missTextObj = CreateText(canvasObj.transform, "MissCountText", "ミス: 0/3", 28, jpFont,
+            new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(200, 40), new Vector2(20, -20));
 
-        // Current word display (above buttons)
-        var wordGo = MakeText(canvasGo.transform, "CurrentWordText", "", 46, Color.cyan);
-        SetAnchor(wordGo, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(0f, 290f), new Vector2(600f, 80f));
+        // Stage text (top-left below miss)
+        var stageTextObj = CreateText(canvasObj.transform, "StageText", "ステージ 1", 28, jpFont,
+            new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(200, 40), new Vector2(20, -60));
 
-        // Feedback text (center)
-        var feedbackGo = MakeText(canvasGo.transform, "FeedbackText", "Not a word!", 28, Color.red);
-        SetAnchor(feedbackGo, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(400f, 60f));
-        feedbackGo.SetActive(false);
+        // Menu button (top-right)
+        var menuBtnObj = CreateButton(canvasObj.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
+            new Vector2(1, 1), new Vector2(1, 1), new Vector2(1, 1),
+            new Vector2(240, 50), new Vector2(-20, -20),
+            new Color(0.3f, 0.3f, 0.4f, 0.9f));
 
-        // Submit button
-        var submitBtn = MakeButton(canvasGo.transform, "SubmitButton", "SUBMIT",
-            new Color(0.15f, 0.55f, 0.25f));
-        SetAnchor(submitBtn, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(0.5f, 0f), new Vector2(-130f, 200f), new Vector2(220f, 70f));
+        // Clear panel
+        var clearPanelObj = CreatePanel(canvasObj.transform, "ClearPanel");
+        var clearTextObj = CreateText(clearPanelObj.transform, "ClearText", "全クリア!", 48, jpFont,
+            new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.5f),
+            new Vector2(400, 150), Vector2.zero);
+        clearTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        var restartBtnObj = CreateButton(clearPanelObj.transform, "RestartButton", "もう一度", 28, jpFont,
+            new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.5f),
+            new Vector2(200, 60), Vector2.zero,
+            new Color(0.1f, 0.5f, 0.3f, 1f));
+        clearPanelObj.SetActive(false);
 
-        // Clear button
-        var clearBtn = MakeButton(canvasGo.transform, "ClearButton", "CLEAR",
-            new Color(0.55f, 0.25f, 0.15f));
-        SetAnchor(clearBtn, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(0.5f, 0f), new Vector2(130f, 200f), new Vector2(220f, 70f));
+        // GameOver panel
+        var gameOverPanelObj = CreatePanel(canvasObj.transform, "GameOverPanel");
+        var gameOverTextObj = CreateText(gameOverPanelObj.transform, "GameOverText", "ゲームオーバー", 48, jpFont,
+            new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.5f),
+            new Vector2(400, 150), Vector2.zero);
+        gameOverTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        var retryBtnObj = CreateButton(gameOverPanelObj.transform, "RetryButton", "リトライ", 28, jpFont,
+            new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.5f),
+            new Vector2(200, 60), Vector2.zero,
+            new Color(0.6f, 0.2f, 0.2f, 1f));
+        gameOverPanelObj.SetActive(false);
 
-        // ── Game Over Panel ───────────────────────────────────────
-        var gameOverPanel = new GameObject("GameOverPanel");
-        gameOverPanel.transform.SetParent(canvasGo.transform, false);
-        var panelImg = gameOverPanel.AddComponent<Image>();
-        panelImg.color = new Color(0f, 0f, 0f, 0.85f);
-        var panelRt = gameOverPanel.GetComponent<RectTransform>();
-        panelRt.anchorMin = Vector2.zero;
-        panelRt.anchorMax = Vector2.one;
-        panelRt.sizeDelta = Vector2.zero;
+        // WordCrystalUI
+        var uiObj = new GameObject("WordCrystalUI");
+        var wcUI = uiObj.AddComponent<WordCrystalUI>();
 
-        var gameOverTitle = MakeText(gameOverPanel.transform, "GameOverTitle", "GAME OVER", 52,
-            Color.white);
-        SetAnchor(gameOverTitle, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(0f, 150f), new Vector2(500f, 80f));
+        var uiSO = new SerializedObject(wcUI);
+        uiSO.FindProperty("_wordSlotsText").objectReferenceValue = wordSlotsObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_missCountText").objectReferenceValue = missTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_stageText").objectReferenceValue = stageTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_clearPanel").objectReferenceValue = clearPanelObj;
+        uiSO.FindProperty("_clearText").objectReferenceValue = clearTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_gameOverPanel").objectReferenceValue = gameOverPanelObj;
+        uiSO.FindProperty("_gameOverText").objectReferenceValue = gameOverTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_restartButton").objectReferenceValue = restartBtnObj.GetComponent<Button>();
+        uiSO.FindProperty("_retryButton").objectReferenceValue = retryBtnObj.GetComponent<Button>();
+        uiSO.FindProperty("_gameManager").objectReferenceValue = gm;
+        uiSO.ApplyModifiedProperties();
 
-        var finalScoreGo = MakeText(gameOverPanel.transform, "FinalScoreText", "Score: 0", 42,
-            Color.yellow);
-        SetAnchor(finalScoreGo, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(0f, 60f), new Vector2(500f, 70f));
+        menuBtnObj.AddComponent<BackToMenuButton>();
 
-        var retryBtn = MakeButton(gameOverPanel.transform, "RetryButton", "RETRY",
-            new Color(0.2f, 0.5f, 0.85f));
-        SetAnchor(retryBtn, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(-130f, -60f), new Vector2(220f, 70f));
+        // GameManager references
+        var gmSO = new SerializedObject(gm);
+        gmSO.FindProperty("_crystalManager").objectReferenceValue = cm;
+        gmSO.FindProperty("_ui").objectReferenceValue = wcUI;
+        gmSO.ApplyModifiedProperties();
 
-        var menuBtn = MakeButton(gameOverPanel.transform, "MenuButton", "MENU",
-            new Color(0.4f, 0.4f, 0.4f));
-        SetAnchor(menuBtn, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), new Vector2(130f, -60f), new Vector2(220f, 70f));
-
-        gameOverPanel.SetActive(false);
-
-        // ── WordCrystalUI ────────────────────────────────────────
-        var uiGo = new GameObject("WordCrystalUI");
-        var ui = uiGo.AddComponent<WordCrystalUI>();
-
+        // EventSystem
+        if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
         {
-            var so = new SerializedObject(ui);
-            so.FindProperty("_timerText").objectReferenceValue = timerGo.GetComponent<Text>();
-            so.FindProperty("_scoreText").objectReferenceValue = scoreGo.GetComponent<Text>();
-            so.FindProperty("_currentWordText").objectReferenceValue = wordGo.GetComponent<Text>();
-            so.FindProperty("_feedbackText").objectReferenceValue = feedbackGo.GetComponent<Text>();
-            so.FindProperty("_finalScoreText").objectReferenceValue =
-                finalScoreGo.GetComponent<Text>();
-            so.FindProperty("_gameOverPanel").objectReferenceValue = gameOverPanel;
-            so.FindProperty("_gameManager").objectReferenceValue = gameManager;
-            so.FindProperty("_crystalManager").objectReferenceValue = crystalManager;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            var eventObj = new GameObject("EventSystem");
+            eventObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventObj.AddComponent<InputSystemUIInputModule>();
         }
 
-        // Wire CrystalManager
-        {
-            var so = new SerializedObject(crystalManager);
-            so.FindProperty("_gameManager").objectReferenceValue = gameManager;
-            so.FindProperty("_ui").objectReferenceValue = ui;
-            var listProp = so.FindProperty("_crystals");
-            listProp.arraySize = crystalViews.Count;
-            for (int i = 0; i < crystalViews.Count; i++)
-                listProp.GetArrayElementAtIndex(i).objectReferenceValue = crystalViews[i];
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        // Wire GameManager
-        {
-            var so = new SerializedObject(gameManager);
-            so.FindProperty("_crystalManager").objectReferenceValue = crystalManager;
-            so.FindProperty("_ui").objectReferenceValue = ui;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        // Wire button onClick events
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            submitBtn.GetComponent<Button>().onClick, ui.OnSubmitClicked);
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            clearBtn.GetComponent<Button>().onClick, ui.OnClearClicked);
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            retryBtn.GetComponent<Button>().onClick, ui.OnRestartClicked);
-        UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(
-            menuBtn.GetComponent<Button>().onClick, ui.OnMenuClicked);
-
-        // ── EventSystem ──────────────────────────────────────────
-        var esGo = new GameObject("EventSystem");
-        esGo.AddComponent<EventSystem>();
-        esGo.AddComponent<InputSystemUIInputModule>();
-
-        // ── Save Scene ───────────────────────────────────────────
-        string scenesDir = "Assets/Scenes";
-        Directory.CreateDirectory(scenesDir);
-        string scenePath = $"{scenesDir}/004_WordCrystal.unity";
+        string scenePath = "Assets/Scenes/004_WordCrystal.unity";
         EditorSceneManager.SaveScene(scene, scenePath);
         AddSceneToBuildSettings(scenePath);
-        AssetDatabase.Refresh();
-
-        Debug.Log("[Setup004] WordCrystal scene created at " + scenePath);
+        Debug.Log("[Setup004_WordCrystal] WordCrystal シーンを作成しました: " + scenePath);
     }
 
-    // ── Helpers ──────────────────────────────────────────────────
-
-    private static Sprite GetOrCreateSprite(string path, Texture2D tex)
+    private static GameObject CreatePanel(Transform parent, string name)
     {
-        if (!File.Exists(path))
-        {
-            File.WriteAllBytes(path, tex.EncodeToPNG());
-            AssetDatabase.ImportAsset(path);
-            var ti = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (ti != null)
-            {
-                ti.textureType = TextureImporterType.Sprite;
-                ti.spriteImportMode = SpriteImportMode.Single;
-                EditorUtility.SetDirty(ti);
-                AssetDatabase.ImportAsset(path);
-            }
-        }
-        Object.DestroyImmediate(tex);
-        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        obj.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.85f);
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.2f, 0.2f);
+        rect.anchorMax = new Vector2(0.8f, 0.8f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        return obj;
     }
 
-    private static Texture2D MakeCrystalHiddenTexture()
+    private static GameObject CreateText(Transform parent, string name, string text, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
+        Vector2 sizeDelta, Vector2 anchoredPos)
     {
-        int size = 64;
-        var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-        var pixels = new Color[size * size];
-        Vector2 center = new Vector2(size / 2f, size / 2f);
-        // Diamond/crystal shape in purple-blue gradient
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 0; x < size; x++)
-            {
-                float dx = Mathf.Abs(x - center.x) / (size * 0.45f);
-                float dy = Mathf.Abs(y - center.y) / (size * 0.45f);
-                float dist = dx + dy; // Manhattan diamond shape
-                if (dist <= 1f)
-                {
-                    float t = 1f - dist;
-                    Color core = Color.Lerp(new Color(0.3f, 0.1f, 0.8f), new Color(0.6f, 0.3f, 1f), t);
-                    // Highlight
-                    if (x > center.x - 5 && x < center.x + 5 && y > center.y + 5 && y < center.y + 15)
-                        core = Color.Lerp(core, Color.white, 0.5f);
-                    pixels[y * size + x] = core;
-                }
-                else
-                {
-                    pixels[y * size + x] = Color.clear;
-                }
-            }
-        }
-        tex.SetPixels(pixels);
-        tex.Apply();
-        return tex;
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        var tmp = obj.AddComponent<TextMeshProUGUI>();
+        tmp.text = text;
+        tmp.fontSize = fontSize;
+        tmp.color = Color.white;
+        if (font != null) tmp.font = font;
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.pivot = pivot;
+        rect.sizeDelta = sizeDelta;
+        rect.anchoredPosition = anchoredPos;
+        return obj;
     }
 
-    private static Texture2D MakeCrystalRevealedTexture()
+    private static GameObject CreateButton(Transform parent, string name, string label, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
+        Vector2 sizeDelta, Vector2 anchoredPos, Color bgColor)
     {
-        int size = 64;
-        var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-        var pixels = new Color[size * size];
-        Vector2 center = new Vector2(size / 2f, size / 2f);
-        Color revealedColor = new Color(0.9f, 0.75f, 0.2f); // gold
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 0; x < size; x++)
-            {
-                float dx = Mathf.Abs(x - center.x) / (size * 0.45f);
-                float dy = Mathf.Abs(y - center.y) / (size * 0.45f);
-                float dist = dx + dy;
-                if (dist <= 1f)
-                {
-                    float t = 1f - dist;
-                    Color c = Color.Lerp(new Color(0.7f, 0.5f, 0.1f), revealedColor, t);
-                    pixels[y * size + x] = c;
-                }
-                else
-                {
-                    pixels[y * size + x] = Color.clear;
-                }
-            }
-        }
-        tex.SetPixels(pixels);
-        tex.Apply();
-        return tex;
-    }
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        obj.AddComponent<Image>().color = bgColor;
+        obj.AddComponent<Button>();
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.pivot = pivot;
+        rect.sizeDelta = sizeDelta;
+        rect.anchoredPosition = anchoredPos;
 
-    private static GameObject MakeText(Transform parent, string name, string text,
-        int fontSize, Color color, TextAnchor anchor = TextAnchor.MiddleCenter)
-    {
-        var go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        var t = go.AddComponent<Text>();
-        t.text = text;
-        t.fontSize = fontSize;
-        t.color = color;
-        t.alignment = anchor;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        t.resizeTextForBestFit = false;
-        return go;
-    }
-
-    private static GameObject MakeButton(Transform parent, string name, string label, Color bgColor)
-    {
-        var go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        var img = go.AddComponent<Image>();
-        img.color = bgColor;
-        go.AddComponent<Button>();
-
-        var lblGo = new GameObject("Label");
-        lblGo.transform.SetParent(go.transform, false);
-        var t = lblGo.AddComponent<Text>();
-        t.text = label;
-        t.fontSize = 26;
-        t.color = Color.white;
-        t.alignment = TextAnchor.MiddleCenter;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        var lblRt = lblGo.GetComponent<RectTransform>();
-        lblRt.anchorMin = Vector2.zero;
-        lblRt.anchorMax = Vector2.one;
-        lblRt.sizeDelta = Vector2.zero;
-        return go;
-    }
-
-    private static void SetAnchor(GameObject go, Vector2 anchorMin, Vector2 anchorMax,
-        Vector2 pivot, Vector2 anchoredPos, Vector2 sizeDelta)
-    {
-        var rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = anchorMin;
-        rt.anchorMax = anchorMax;
-        rt.pivot = pivot;
-        rt.anchoredPosition = anchoredPos;
-        rt.sizeDelta = sizeDelta;
+        var textObj = new GameObject("Text", typeof(RectTransform));
+        textObj.transform.SetParent(obj.transform, false);
+        var tmp = textObj.AddComponent<TextMeshProUGUI>();
+        tmp.text = label;
+        tmp.fontSize = fontSize;
+        tmp.color = Color.white;
+        tmp.alignment = TextAlignmentOptions.Center;
+        if (font != null) tmp.font = font;
+        var textRect = textObj.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+        return obj;
     }
 
     private static void AddSceneToBuildSettings(string scenePath)
     {
-        var scenes = EditorBuildSettings.scenes;
+        var scenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
         foreach (var s in scenes)
+        {
             if (s.path == scenePath) return;
-        var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
-        System.Array.Copy(scenes, newScenes, scenes.Length);
-        newScenes[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
-        EditorBuildSettings.scenes = newScenes;
+        }
+        scenes.Add(new EditorBuildSettingsScene(scenePath, true));
+        EditorBuildSettings.scenes = scenes.ToArray();
     }
 }
