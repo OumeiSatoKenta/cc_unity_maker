@@ -1,56 +1,46 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Game012_BridgeBuilder
 {
     public class BridgeBuilderUI : MonoBehaviour
     {
-        [SerializeField] private Text _levelText;
-        [SerializeField] private Text _budgetText;
+        [SerializeField] private TextMeshProUGUI _planksText;
+        [SerializeField] private TextMeshProUGUI _stageText;
         [SerializeField] private GameObject _clearPanel;
-        [SerializeField] private GameObject _buildButtons;
-        [SerializeField] private Button _testButton;
+        [SerializeField] private TextMeshProUGUI _clearText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _nextStageButton;
         [SerializeField] private BridgeBuilderGameManager _gameManager;
-        [SerializeField] private BridgeManager _bridgeManager;
 
-        private void Start()
+        private void Awake()
         {
-            _gameManager.OnLevelCleared.AddListener(_ => ShowClearPanel());
-            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.RestartGame(); });
+            if (_nextStageButton != null)
+                _nextStageButton.onClick.AddListener(() => { if (_gameManager != null) _gameManager.NextStage(); });
         }
 
-        public void SetLevelText(string text)
+        public void UpdatePlanksText(int remaining)
         {
-            if (_levelText) _levelText.text = text;
+            if (_planksText != null) _planksText.text = $"残り板: {remaining}";
         }
 
-        public void SetBudgetText(int remaining)
+        public void UpdateStageText(int stageNum)
         {
-            if (_budgetText) _budgetText.text = $"Parts: {remaining}";
+            if (_stageText != null) _stageText.text = $"ステージ {stageNum}";
         }
 
-        public void SetTestMode(bool testing)
+        public void ShowClearPanel(int stageNum)
         {
-            if (_buildButtons) _buildButtons.SetActive(!testing);
-            if (_testButton) _testButton.interactable = !testing;
-        }
-
-        public void ShowClearPanel()
-        {
-            if (_clearPanel) _clearPanel.SetActive(true);
+            if (_clearPanel != null) _clearPanel.SetActive(true);
+            if (_clearText != null) _clearText.text = $"クリア!\nステージ {stageNum}\n橋が完成!";
         }
 
         public void HideClearPanel()
         {
-            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_clearPanel != null) _clearPanel.SetActive(false);
         }
-
-        public void OnPlankSelected() => _bridgeManager?.SelectPartType(0);
-        public void OnSupportSelected() => _bridgeManager?.SelectPartType(1);
-        public void OnTestClicked() => _gameManager?.StartTest();
-        public void OnUndoClicked() => _bridgeManager?.UndoLastPart();
-        public void OnResetClicked() => _gameManager?.ResetLevel();
-        public void OnNextLevelClicked() => _gameManager?.LoadNextLevel();
-        public void OnMenuClicked() => _gameManager?.LoadMenu();
     }
 }

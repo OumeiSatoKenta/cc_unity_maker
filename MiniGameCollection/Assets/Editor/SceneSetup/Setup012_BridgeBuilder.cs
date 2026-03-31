@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.InputSystem.UI;
+using TMPro;
 using Game012_BridgeBuilder;
 
 public static class Setup012_BridgeBuilder
@@ -12,281 +13,168 @@ public static class Setup012_BridgeBuilder
     {
         if (EditorApplication.isPlaying)
         {
-            Debug.LogError("[Setup012] Play モード中は実行できません。");
+            Debug.LogError("[Setup012_BridgeBuilder] Play モード中は実行できません。");
             return;
         }
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+        var jpFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansJP-Regular SDF.asset");
 
-        // --- Camera ---
         var camera = Object.FindFirstObjectByType<Camera>();
         if (camera != null)
         {
-            camera.backgroundColor = new Color(0.55f, 0.82f, 0.95f, 1f); // sky blue
+            camera.backgroundColor = new Color(0.4f, 0.6f, 0.85f, 1f);
             camera.orthographic = true;
-            camera.orthographicSize = 6f;
+            camera.orthographicSize = 4f;
         }
 
-        // --- Sprites ---
-        EnsureSprite("Assets/Resources/Sprites/Game012_BridgeBuilder/plank.png", 64, 16,
-            new Color(0.65f, 0.45f, 0.2f));
-        EnsureSprite("Assets/Resources/Sprites/Game012_BridgeBuilder/support.png", 8, 48,
-            new Color(0.5f, 0.5f, 0.55f));
-        EnsureSprite("Assets/Resources/Sprites/Game012_BridgeBuilder/cliff.png", 128, 128,
-            new Color(0.45f, 0.35f, 0.25f));
-        EnsureSprite("Assets/Resources/Sprites/Game012_BridgeBuilder/car.png", 48, 24,
-            new Color(0.85f, 0.2f, 0.2f));
-        EnsureSprite("Assets/Resources/Sprites/Game012_BridgeBuilder/bg_sky.png", 256, 128,
-            new Color(0.55f, 0.82f, 0.95f));
+        string whiteTexPath = "Assets/Scripts/Game012_BridgeBuilder/WhiteSquare.png";
+        if (!System.IO.File.Exists(whiteTexPath))
+        {
+            var wTex = new Texture2D(4, 4);
+            var px = new Color[16]; for (int i = 0; i < 16; i++) px[i] = Color.white;
+            wTex.SetPixels(px); wTex.Apply();
+            System.IO.File.WriteAllBytes(whiteTexPath, wTex.EncodeToPNG());
+            Object.DestroyImmediate(wTex);
+            AssetDatabase.ImportAsset(whiteTexPath);
+            var imp = AssetImporter.GetAtPath(whiteTexPath) as TextureImporter;
+            if (imp != null) { imp.textureType = TextureImporterType.Sprite; imp.spritePixelsPerUnit = 1; imp.SaveAndReimport(); }
+        }
+        var whiteSprite = AssetDatabase.LoadAssetAtPath<Sprite>(whiteTexPath);
 
-        var cliffSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-            "Assets/Resources/Sprites/Game012_BridgeBuilder/cliff.png");
-        var carSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-            "Assets/Resources/Sprites/Game012_BridgeBuilder/car.png");
+        string sp = "Assets/Resources/Sprites/Game012_BridgeBuilder/";
+        var slotSprite = AssetDatabase.LoadAssetAtPath<Sprite>(sp + "slot_empty.png");
 
-        // --- Cliffs (left and right) ---
-        var leftCliff = new GameObject("LeftCliff");
-        var leftSr = leftCliff.AddComponent<SpriteRenderer>();
-        leftSr.sprite = cliffSprite;
-        leftSr.sortingOrder = 2;
-        leftCliff.transform.position = new Vector3(-5.5f, -3f, 0f);
-        leftCliff.transform.localScale = new Vector3(4f, 4f, 1f);
+        string pd = "Assets/Scripts/Game012_BridgeBuilder/";
+        var slotObj = new GameObject("SlotPrefab");
+        var ssr = slotObj.AddComponent<SpriteRenderer>();
+        ssr.sprite = slotSprite != null ? slotSprite : whiteSprite;
+        ssr.sortingOrder = 5;
+        var col = slotObj.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.9f, 0.9f);
+        slotObj.AddComponent<BridgeSlot>();
+        var slotPrefab = PrefabUtility.SaveAsPrefabAsset(slotObj, pd + "SlotPrefab.prefab");
+        Object.DestroyImmediate(slotObj);
 
-        var rightCliff = new GameObject("RightCliff");
-        var rightSr = rightCliff.AddComponent<SpriteRenderer>();
-        rightSr.sprite = cliffSprite;
-        rightSr.sortingOrder = 2;
-        rightCliff.transform.position = new Vector3(5.5f, -3f, 0f);
-        rightCliff.transform.localScale = new Vector3(4f, 4f, 1f);
-
-        // --- Gap indicator ---
-        var gapBg = new GameObject("GapBackground");
-        var gapSr = gapBg.AddComponent<SpriteRenderer>();
-        gapSr.sprite = cliffSprite;
-        gapSr.color = new Color(0.2f, 0.35f, 0.55f, 0.3f);
-        gapSr.sortingOrder = 1;
-        gapBg.transform.position = new Vector3(0f, -2f, 0f);
-        gapBg.transform.localScale = new Vector3(6f, 3f, 1f);
-
-        // --- Car ---
-        var carObj = new GameObject("Car");
-        var carSr = carObj.AddComponent<SpriteRenderer>();
-        carSr.sprite = carSprite;
-        carSr.sortingOrder = 10;
-        carObj.transform.position = new Vector3(-4.5f, -0.5f, 0f);
-        carObj.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
-        carObj.SetActive(false);
-
-        // --- Bridge Parent ---
-        var bridgeParent = new GameObject("BridgeParent");
-
-        // --- GameManager ---
         var gmObj = new GameObject("GameManager");
-        var gameManager = gmObj.AddComponent<BridgeBuilderGameManager>();
-        var bridgeManager = gmObj.AddComponent<BridgeManager>();
+        var gm = gmObj.AddComponent<BridgeBuilderGameManager>();
+        var boardObj = new GameObject("BridgeBoard");
+        boardObj.transform.SetParent(gmObj.transform);
+        var bm = boardObj.AddComponent<BridgeManager>();
 
-        // --- Canvas ---
+        var bmSO = new SerializedObject(bm);
+        bmSO.FindProperty("_gridWidth").intValue = 6;
+        bmSO.FindProperty("_gridHeight").intValue = 4;
+        bmSO.FindProperty("_cellSize").floatValue = 1.0f;
+        bmSO.FindProperty("_slotPrefab").objectReferenceValue = slotPrefab;
+        bmSO.ApplyModifiedProperties();
+
         var canvasObj = new GameObject("Canvas");
         var canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 100;
         var scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080, 1920);
+        scaler.referenceResolution = new Vector2(1920, 1080);
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        // --- EventSystem ---
-        var esObj = new GameObject("EventSystem");
-        esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
-        esObj.AddComponent<InputSystemUIInputModule>();
+        var planksText = CreateText(canvasObj.transform, "PlanksText", "残り板: 0", 32, jpFont,
+            new Vector2(0,1), new Vector2(0,1), new Vector2(0,1), new Vector2(250,50), new Vector2(20,-20));
+        var stageText = CreateText(canvasObj.transform, "StageText", "ステージ 1", 32, jpFont,
+            new Vector2(0.5f,1), new Vector2(0.5f,1), new Vector2(0.5f,1), new Vector2(300,50), new Vector2(0,-20));
+        stageText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        var hintText = CreateText(canvasObj.transform, "HintText", "空きマスをタップして板を配置。橋を完成させよう", 20, jpFont,
+            new Vector2(0.5f,0), new Vector2(0.5f,0), new Vector2(0.5f,0), new Vector2(600,40), new Vector2(0,20));
+        hintText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        hintText.GetComponent<TextMeshProUGUI>().color = new Color(0.2f,0.3f,0.5f);
+        var menuBtn = CreateButton(canvasObj.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
+            new Vector2(1,1), new Vector2(1,1), new Vector2(1,1), new Vector2(240,50), new Vector2(-20,-20),
+            new Color(0.3f,0.3f,0.4f,0.9f));
 
-        // --- UI Elements ---
-        // Level text
-        var levelTextObj = CreateUIText(canvasObj.transform, "LevelText",
-            new Vector2(0, 900), new Vector2(400, 60), "Level 1 / 3", 32,
-            TextAnchor.MiddleCenter, Color.white);
-        var levelText = levelTextObj.GetComponent<Text>();
-
-        // Budget text
-        var budgetTextObj = CreateUIText(canvasObj.transform, "BudgetText",
-            new Vector2(0, 840), new Vector2(300, 50), "Parts: 5", 28,
-            TextAnchor.MiddleCenter, Color.white);
-        var budgetText = budgetTextObj.GetComponent<Text>();
-
-        // Build buttons parent
-        var buildBtnsObj = new GameObject("BuildButtons");
-        buildBtnsObj.transform.SetParent(canvasObj.transform, false);
-        var buildBtnsRt = buildBtnsObj.AddComponent<RectTransform>();
-        buildBtnsRt.anchoredPosition = new Vector2(0, -750);
-        buildBtnsRt.sizeDelta = new Vector2(800, 80);
-
-        // Plank button
-        var plankBtn = CreateUIButton(buildBtnsObj.transform, "PlankBtn",
-            new Vector2(-200, 0), new Vector2(180, 70), "Plank",
-            new Color(0.65f, 0.45f, 0.2f));
-
-        // Support button
-        var supportBtn = CreateUIButton(buildBtnsObj.transform, "SupportBtn",
-            new Vector2(0, 0), new Vector2(180, 70), "Support",
-            new Color(0.5f, 0.5f, 0.55f));
-
-        // Undo button
-        var undoBtn = CreateUIButton(buildBtnsObj.transform, "UndoBtn",
-            new Vector2(200, 0), new Vector2(180, 70), "Undo",
-            new Color(0.7f, 0.3f, 0.3f));
-
-        // Test button
-        var testBtn = CreateUIButton(canvasObj.transform, "TestBtn",
-            new Vector2(0, -850), new Vector2(300, 80), "TEST",
-            new Color(0.2f, 0.7f, 0.3f));
-
-        // Clear panel
-        var clearPanel = new GameObject("ClearPanel");
+        var clearPanel = new GameObject("ClearPanel", typeof(RectTransform));
         clearPanel.transform.SetParent(canvasObj.transform, false);
-        var clearRt = clearPanel.AddComponent<RectTransform>();
-        clearRt.anchoredPosition = Vector2.zero;
-        clearRt.sizeDelta = new Vector2(600, 400);
-        var clearImg = clearPanel.AddComponent<Image>();
-        clearImg.color = new Color(0f, 0f, 0f, 0.85f);
-
-        CreateUIText(clearPanel.transform, "ClearText",
-            new Vector2(0, 100), new Vector2(400, 80), "CLEAR!", 48,
-            TextAnchor.MiddleCenter, new Color(0.2f, 0.9f, 0.3f));
-
-        var nextBtn = CreateUIButton(clearPanel.transform, "NextBtn",
-            new Vector2(0, -20), new Vector2(250, 70), "Next Level",
-            new Color(0.2f, 0.5f, 0.9f));
-
-        var menuBtn = CreateUIButton(clearPanel.transform, "MenuBtn",
-            new Vector2(0, -110), new Vector2(250, 70), "Menu",
-            new Color(0.5f, 0.5f, 0.5f));
-
+        clearPanel.AddComponent<Image>().color = new Color(0,0,0,0.8f);
+        var cr = clearPanel.GetComponent<RectTransform>();
+        cr.anchorMin = new Vector2(0.2f,0.2f); cr.anchorMax = new Vector2(0.8f,0.8f);
+        cr.offsetMin = cr.offsetMax = Vector2.zero;
+        var clearText = CreateText(clearPanel.transform, "ClearText", "クリア!", 48, jpFont,
+            new Vector2(0.5f,0.65f), new Vector2(0.5f,0.65f), new Vector2(0.5f,0.5f), new Vector2(400,150), Vector2.zero);
+        clearText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        var restartBtn = CreateButton(clearPanel.transform, "RestartButton", "もう一度", 28, jpFont,
+            new Vector2(0.3f,0.15f), new Vector2(0.3f,0.15f), new Vector2(0.5f,0.5f), new Vector2(200,60), Vector2.zero,
+            new Color(0.1f,0.5f,0.3f,1f));
+        var nextBtn = CreateButton(clearPanel.transform, "NextStageButton", "次のステージ", 28, jpFont,
+            new Vector2(0.7f,0.15f), new Vector2(0.7f,0.15f), new Vector2(0.5f,0.5f), new Vector2(220,60), Vector2.zero,
+            new Color(0.2f,0.4f,0.7f,1f));
         clearPanel.SetActive(false);
 
-        // --- Wire up UI component ---
-        var uiComp = canvasObj.AddComponent<BridgeBuilderUI>();
+        var uiObj = new GameObject("BridgeBuilderUI");
+        var bbUI = uiObj.AddComponent<BridgeBuilderUI>();
+        var uiSO = new SerializedObject(bbUI);
+        uiSO.FindProperty("_planksText").objectReferenceValue = planksText.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_stageText").objectReferenceValue = stageText.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_clearPanel").objectReferenceValue = clearPanel;
+        uiSO.FindProperty("_clearText").objectReferenceValue = clearText.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_restartButton").objectReferenceValue = restartBtn.GetComponent<Button>();
+        uiSO.FindProperty("_nextStageButton").objectReferenceValue = nextBtn.GetComponent<Button>();
+        uiSO.FindProperty("_gameManager").objectReferenceValue = gm;
+        uiSO.ApplyModifiedProperties();
 
-        // Use SerializedObject to set references
-        var so = new SerializedObject(uiComp);
-        so.FindProperty("_levelText").objectReferenceValue = levelText;
-        so.FindProperty("_budgetText").objectReferenceValue = budgetText;
-        so.FindProperty("_clearPanel").objectReferenceValue = clearPanel;
-        so.FindProperty("_buildButtons").objectReferenceValue = buildBtnsObj;
-        so.FindProperty("_testButton").objectReferenceValue = testBtn.GetComponent<Button>();
-        so.FindProperty("_gameManager").objectReferenceValue = gameManager;
-        so.FindProperty("_bridgeManager").objectReferenceValue = bridgeManager;
-        so.ApplyModifiedPropertiesWithoutUndo();
+        menuBtn.AddComponent<BackToMenuButton>();
 
-        // Wire up GameManager
-        var gmSo = new SerializedObject(gameManager);
-        gmSo.FindProperty("_bridgeManager").objectReferenceValue = bridgeManager;
-        gmSo.FindProperty("_ui").objectReferenceValue = uiComp;
-        gmSo.ApplyModifiedPropertiesWithoutUndo();
+        var gmSO = new SerializedObject(gm);
+        gmSO.FindProperty("_bridgeManager").objectReferenceValue = bm;
+        gmSO.FindProperty("_ui").objectReferenceValue = bbUI;
+        gmSO.ApplyModifiedProperties();
 
-        // Wire up BridgeManager
-        var bmSo = new SerializedObject(bridgeManager);
-        bmSo.FindProperty("_gameManager").objectReferenceValue = gameManager;
-        bmSo.FindProperty("_ui").objectReferenceValue = uiComp;
-        bmSo.FindProperty("_bridgeParent").objectReferenceValue = bridgeParent.transform;
-        bmSo.FindProperty("_carTransform").objectReferenceValue = carObj.transform;
-        bmSo.FindProperty("_carRenderer").objectReferenceValue = carSr;
-        bmSo.ApplyModifiedPropertiesWithoutUndo();
+        if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+        {
+            var eventObj = new GameObject("EventSystem");
+            eventObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventObj.AddComponent<InputSystemUIInputModule>();
+        }
 
-        // Wire up button events
-        WireButton(plankBtn, uiComp, "OnPlankSelected");
-        WireButton(supportBtn, uiComp, "OnSupportSelected");
-        WireButton(undoBtn, uiComp, "OnUndoClicked");
-        WireButton(testBtn, uiComp, "OnTestClicked");
-        WireButton(nextBtn, uiComp, "OnNextLevelClicked");
-        WireButton(menuBtn, uiComp, "OnMenuClicked");
-
-        // --- Save ---
         string scenePath = "Assets/Scenes/012_BridgeBuilder.unity";
         EditorSceneManager.SaveScene(scene, scenePath);
         AddSceneToBuildSettings(scenePath);
-        Debug.Log("[Setup012] BridgeBuilder scene created at " + scenePath);
+        Debug.Log("[Setup012_BridgeBuilder] BridgeBuilder シーンを作成しました: " + scenePath);
     }
 
-    private static void EnsureSprite(string path, int w, int h, Color color)
+    private static GameObject CreateText(Transform parent, string name, string text, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPos)
     {
-        string dir = System.IO.Path.GetDirectoryName(path);
-        if (!System.IO.Directory.Exists(dir))
-            System.IO.Directory.CreateDirectory(dir);
-
-        if (!System.IO.File.Exists(path))
-        {
-            var tex = new Texture2D(w, h);
-            var pixels = new Color[w * h];
-            for (int i = 0; i < pixels.Length; i++) pixels[i] = color;
-            tex.SetPixels(pixels);
-            tex.Apply();
-            System.IO.File.WriteAllBytes(path, tex.EncodeToPNG());
-            Object.DestroyImmediate(tex);
-            AssetDatabase.ImportAsset(path);
-        }
-
-        var importer = AssetImporter.GetAtPath(path) as TextureImporter;
-        if (importer != null && importer.textureType != TextureImporterType.Sprite)
-        {
-            importer.textureType = TextureImporterType.Sprite;
-            importer.spritePixelsPerUnit = 32;
-            importer.SaveAndReimport();
-        }
-    }
-
-    private static GameObject CreateUIText(Transform parent, string name,
-        Vector2 pos, Vector2 size, string text, int fontSize,
-        TextAnchor alignment, Color color)
-    {
-        var obj = new GameObject(name);
+        var obj = new GameObject(name, typeof(RectTransform));
         obj.transform.SetParent(parent, false);
-        var rt = obj.AddComponent<RectTransform>();
-        rt.anchoredPosition = pos;
-        rt.sizeDelta = size;
-        var t = obj.AddComponent<Text>();
-        t.text = text;
-        t.fontSize = fontSize;
-        t.alignment = alignment;
-        t.color = color;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        var tmp = obj.AddComponent<TextMeshProUGUI>();
+        tmp.text = text; tmp.fontSize = fontSize; tmp.color = Color.white;
+        if (font != null) tmp.font = font;
+        var r = obj.GetComponent<RectTransform>();
+        r.anchorMin = anchorMin; r.anchorMax = anchorMax; r.pivot = pivot; r.sizeDelta = sizeDelta; r.anchoredPosition = anchoredPos;
         return obj;
     }
 
-    private static GameObject CreateUIButton(Transform parent, string name,
-        Vector2 pos, Vector2 size, string label, Color bgColor)
+    private static GameObject CreateButton(Transform parent, string name, string label, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPos, Color bgColor)
     {
-        var obj = new GameObject(name);
+        var obj = new GameObject(name, typeof(RectTransform));
         obj.transform.SetParent(parent, false);
-        var rt = obj.AddComponent<RectTransform>();
-        rt.anchoredPosition = pos;
-        rt.sizeDelta = size;
-        var img = obj.AddComponent<Image>();
-        img.color = bgColor;
+        obj.AddComponent<Image>().color = bgColor;
         obj.AddComponent<Button>();
-
-        CreateUIText(obj.transform, "Label", Vector2.zero, size, label, 24,
-            TextAnchor.MiddleCenter, Color.white);
-
+        var r = obj.GetComponent<RectTransform>();
+        r.anchorMin = anchorMin; r.anchorMax = anchorMax; r.pivot = pivot; r.sizeDelta = sizeDelta; r.anchoredPosition = anchoredPos;
+        var tObj = new GameObject("Text", typeof(RectTransform));
+        tObj.transform.SetParent(obj.transform, false);
+        var tmp = tObj.AddComponent<TextMeshProUGUI>();
+        tmp.text = label; tmp.fontSize = fontSize; tmp.color = Color.white; tmp.alignment = TextAlignmentOptions.Center;
+        if (font != null) tmp.font = font;
+        var tr = tObj.GetComponent<RectTransform>();
+        tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one; tr.offsetMin = tr.offsetMax = Vector2.zero;
         return obj;
-    }
-
-    private static void WireButton(GameObject btnObj, Object target, string method)
-    {
-        var btn = btnObj.GetComponent<Button>();
-        if (btn == null) return;
-        var action = new UnityEngine.Events.UnityAction(() => { });
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(
-            btn.onClick,
-            System.Delegate.CreateDelegate(typeof(UnityEngine.Events.UnityAction), target, method)
-                as UnityEngine.Events.UnityAction);
     }
 
     private static void AddSceneToBuildSettings(string scenePath)
     {
-        var scenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(
-            EditorBuildSettings.scenes);
-        foreach (var s in scenes)
-            if (s.path == scenePath) return;
+        var scenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+        foreach (var s in scenes) if (s.path == scenePath) return;
         scenes.Add(new EditorBuildSettingsScene(scenePath, true));
         EditorBuildSettings.scenes = scenes.ToArray();
     }
