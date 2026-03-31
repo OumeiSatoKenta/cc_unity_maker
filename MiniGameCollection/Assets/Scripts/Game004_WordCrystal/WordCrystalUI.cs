@@ -1,77 +1,83 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Game004_WordCrystal
 {
     public class WordCrystalUI : MonoBehaviour
     {
-        [SerializeField] private Text _timerText;
-        [SerializeField] private Text _scoreText;
-        [SerializeField] private Text _currentWordText;
-        [SerializeField] private Text _feedbackText;
-        [SerializeField] private Text _finalScoreText;
+        [SerializeField] private TextMeshProUGUI _wordSlotsText;
+        [SerializeField] private TextMeshProUGUI _missCountText;
+        [SerializeField] private TextMeshProUGUI _stageText;
+        [SerializeField] private GameObject _clearPanel;
+        [SerializeField] private TextMeshProUGUI _clearText;
         [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private TextMeshProUGUI _gameOverText;
+        [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _retryButton;
         [SerializeField] private WordCrystalGameManager _gameManager;
-        [SerializeField] private CrystalManager _crystalManager;
 
-        private Coroutine _feedbackCoroutine;
-
-        private void Start()
+        private void Awake()
         {
-            _gameManager.OnScoreChanged.AddListener(UpdateScore);
-            _gameManager.OnTimeChanged.AddListener(UpdateTimer);
-            _gameManager.OnGameOver.AddListener(ShowGameOverPanel);
-            if (_gameOverPanel) _gameOverPanel.SetActive(false);
-            if (_feedbackText) _feedbackText.gameObject.SetActive(false);
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(OnRestartClicked);
+            if (_retryButton != null)
+                _retryButton.onClick.AddListener(OnRestartClicked);
         }
 
-        public void UpdateScore(int score)
+        public void UpdateWordSlots(string targetWord, int filledCount)
         {
-            if (_scoreText) _scoreText.text = $"Score: {score}";
-        }
-
-        public void UpdateTimer(float time)
-        {
-            if (_timerText) _timerText.text = $"Time: {Mathf.CeilToInt(time)}";
-        }
-
-        public void UpdateCurrentWord(string word)
-        {
-            if (_currentWordText) _currentWordText.text = word;
-        }
-
-        public void ShowInvalidFeedback()
-        {
-            if (_feedbackCoroutine != null) StopCoroutine(_feedbackCoroutine);
-            _feedbackCoroutine = StartCoroutine(FeedbackCoroutine("Not a word!"));
-        }
-
-        private IEnumerator FeedbackCoroutine(string msg)
-        {
-            if (_feedbackText)
+            if (_wordSlotsText == null) return;
+            string display = "";
+            for (int i = 0; i < targetWord.Length; i++)
             {
-                _feedbackText.text = msg;
-                _feedbackText.gameObject.SetActive(true);
-                yield return new WaitForSeconds(1.5f);
-                _feedbackText.gameObject.SetActive(false);
+                if (i < filledCount)
+                    display += targetWord[i] + " ";
+                else
+                    display += "_ ";
             }
+            _wordSlotsText.text = display.TrimEnd();
         }
 
-        public void ShowGameOverPanel()
+        public void UpdateMissCount(int misses, int maxMisses)
         {
-            if (_gameOverPanel) _gameOverPanel.SetActive(true);
-            if (_finalScoreText) _finalScoreText.text = $"Score: {_gameManager.GetScore()}";
+            if (_missCountText != null)
+                _missCountText.text = $"ミス: {misses}/{maxMisses}";
+        }
+
+        public void UpdateStageText(int stageNum)
+        {
+            if (_stageText != null)
+                _stageText.text = $"ステージ {stageNum}";
+        }
+
+        public void ShowClearPanel(int totalStages)
+        {
+            if (_clearPanel != null) _clearPanel.SetActive(true);
+            if (_clearText != null)
+                _clearText.text = $"全クリア!\n{totalStages} ステージ完了";
+        }
+
+        public void HideClearPanel()
+        {
+            if (_clearPanel != null) _clearPanel.SetActive(false);
+        }
+
+        public void ShowGameOverPanel(int stageNum)
+        {
+            if (_gameOverPanel != null) _gameOverPanel.SetActive(true);
+            if (_gameOverText != null)
+                _gameOverText.text = $"ゲームオーバー\nステージ {stageNum} で失敗";
         }
 
         public void HideGameOverPanel()
         {
-            if (_gameOverPanel) _gameOverPanel.SetActive(false);
+            if (_gameOverPanel != null) _gameOverPanel.SetActive(false);
         }
 
-        public void OnSubmitClicked() => _crystalManager?.SubmitWord();
-        public void OnClearClicked() => _crystalManager?.ClearSelection();
-        public void OnRestartClicked() => _gameManager?.RestartGame();
-        public void OnMenuClicked() => _gameManager?.LoadMenu();
+        private void OnRestartClicked()
+        {
+            if (_gameManager != null) _gameManager.RestartGame();
+        }
     }
 }
