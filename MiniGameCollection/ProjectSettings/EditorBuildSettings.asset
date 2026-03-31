@@ -116,6 +116,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/035_WaveRider.unity
     guid: 5be9f5b622254446eb7e6ea857cdb542
+  - enabled: 1
+    path: Assets/Scenes/036_CoinStack.unity
+    guid: aa81d104ac00a4a9aa2ebb9a08028c86
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
