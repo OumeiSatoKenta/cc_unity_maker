@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: f5658b5d91cd74108a324dc564b05e29
+guid: dd6ebae6003c942b6ac66c15124f7094
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8030835215644163416
-    second: car_0
+      213: -2599116650747471989
+    second: finish_0
+  - first:
+      213: 74618482292291527
+    second: finish_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +116,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: car_0
+      name: finish_0
       rect:
         serializedVersion: 2
         x: 1
-        y: 2
-        width: 63
-        height: 91
+        y: 0
+        width: 9
+        height: 61
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +131,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8a205d9abedbc8090800000000000000
-      internalID: -8030835215644163416
+      spriteID: b87d4664d251eebd0800000000000000
+      internalID: -2599116650747471989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: finish_1
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 23
+        width: 55
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c7f5b24d19190100800000000000000
+      internalID: 74618482292291527
       vertices: []
       indices: 
       edges: []
@@ -148,7 +173,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      car_0: -8030835215644163416
+      finish_0: -2599116650747471989
+      finish_1: 74618482292291527
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

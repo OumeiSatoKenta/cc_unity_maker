@@ -4,38 +4,91 @@ namespace Game030_FingerRacer
 {
     public class FingerRacerGameManager : MonoBehaviour
     {
-        [SerializeField] private RaceManager _raceManager;
-        [SerializeField] private FingerRacerUI _ui;
+        [SerializeField, Tooltip("レース管理コンポーネント")]
+        private RaceManager _raceManager;
 
-        private bool _isGameOver;
+        [SerializeField, Tooltip("UI管理コンポーネント")]
+        private FingerRacerUI _ui;
 
-        private void Start() { StartGame(); }
+        [SerializeField, Tooltip("制限時間(秒)")]
+        private float _timeLimit = 30f;
+
+        public enum GameState { Drawing, Racing, Clear, GameOver }
+
+        private GameState _state;
+        private float _raceTime;
+
+        private void Start()
+        {
+            StartGame();
+        }
 
         public void StartGame()
         {
-            _isGameOver = false;
-            if (_raceManager != null) _raceManager.StartGame();
-            if (_ui != null) { _ui.UpdateCheckpoints(0, 5); _ui.UpdateTime(15f); _ui.HideResultPanel(); _ui.ShowHint(true); }
+            _state = GameState.Drawing;
+            _raceTime = 0f;
+
+            if (_raceManager != null)
+                _raceManager.StartDrawing();
+
+            if (_ui != null)
+            {
+                _ui.ShowDrawingPhase();
+                _ui.HidePanels();
+            }
         }
 
-        public void OnCheckpointHit(int hit, int total)
+        private void Update()
         {
-            if (_isGameOver) return;
-            if (_ui != null) _ui.UpdateCheckpoints(hit, total);
+            if (_state != GameState.Racing) return;
+
+            _raceTime += Time.deltaTime;
+            float remaining = Mathf.Max(0f, _timeLimit - _raceTime);
+
+            if (_ui != null)
+                _ui.UpdateTime(remaining);
+
+            if (_raceTime >= _timeLimit)
+                OnTimeOut();
         }
 
-        public void OnTimeUpdate(float remaining)
+        public void OnRacingStarted()
         {
-            if (_ui != null) { _ui.UpdateTime(remaining); _ui.ShowHint(false); }
+            _state = GameState.Racing;
+            _raceTime = 0f;
+
+            if (_ui != null)
+                _ui.ShowRacingPhase(_timeLimit);
         }
 
-        public void OnRaceEnd(int checkpointsHit)
+        public void OnRaceComplete()
         {
-            _isGameOver = true;
-            if (_raceManager != null) _raceManager.StopGame();
-            if (_ui != null) _ui.ShowResultPanel(checkpointsHit);
+            if (_state != GameState.Racing) return;
+
+            _state = GameState.Clear;
+            if (_raceManager != null)
+                _raceManager.StopGame();
+            if (_ui != null)
+                _ui.ShowClearPanel(_raceTime);
         }
 
-        public void RestartGame() { StartGame(); }
+        public void OnTimeOut()
+        {
+            if (_state != GameState.Racing) return;
+
+            _state = GameState.GameOver;
+            if (_raceManager != null)
+                _raceManager.StopGame();
+            if (_ui != null)
+                _ui.ShowGameOverPanel();
+        }
+
+        public void RestartGame()
+        {
+            StartGame();
+        }
+
+        public float TimeLimit => _timeLimit;
+        public GameState State => _state;
     }
 }

@@ -6,169 +6,221 @@ namespace Game030_FingerRacer
 {
     public class RaceManager : MonoBehaviour
     {
-        [SerializeField] private GameObject _carPrefab;
-        [SerializeField] private GameObject _checkpointPrefab;
-        [SerializeField] private float _carSpeed = 5f;
-        [SerializeField] private float _raceTime = 15f;
+        [SerializeField, Tooltip("車のTransform")]
+        private Transform _carTransform;
 
-        private GameObject _carObj;
-        private readonly List<Vector2> _path = new List<Vector2>();
-        private readonly List<GameObject> _checkpoints = new List<GameObject>();
-        private readonly List<GameObject> _trailObjects = new List<GameObject>();
-        private int _pathIndex;
-        private int _checkpointsHit;
-        private int _totalCheckpoints;
-        private float _timeRemaining;
-        private bool _isDrawing;
-        private bool _isRacing;
-        private bool _isRunning;
+        [SerializeField, Tooltip("ゴールマーカーのTransform")]
+        private Transform _finishLineTransform;
+
+        [SerializeField, Tooltip("基本走行速度 (units/s)")]
+        private float _baseSpeed = 3f;
+
+        [SerializeField, Tooltip("最小パス長 (units)")]
+        private float _minPathLength = 5f;
 
         private FingerRacerGameManager _gameManager;
         private Camera _mainCamera;
+        private LineRenderer _lineRenderer;
+        private List<Vector3> _pathPoints = new List<Vector3>();
+        private float _totalPathLength;
+
+        private bool _isDrawing;
+        private bool _isRacing;
+        private float _progress; // 0〜1
 
         private void Awake()
         {
             _gameManager = GetComponentInParent<FingerRacerGameManager>();
             _mainCamera = Camera.main;
+
+            _lineRenderer = GetComponent<LineRenderer>();
+            if (_lineRenderer == null)
+                _lineRenderer = gameObject.AddComponent<LineRenderer>();
+
+            _lineRenderer.startWidth = 0.2f;
+            _lineRenderer.endWidth = 0.2f;
+            _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            _lineRenderer.startColor = new Color(0.5f, 0.5f, 0.5f, 0.8f);
+            _lineRenderer.endColor = new Color(0.5f, 0.5f, 0.5f, 0.8f);
+            _lineRenderer.sortingOrder = 5;
+        }
+
+        public void StartDrawing()
+        {
+            _isDrawing = true;
+            _isRacing = false;
+            _pathPoints.Clear();
+            _totalPathLength = 0f;
+            _progress = 0f;
+            _lineRenderer.positionCount = 0;
+
+            if (_carTransform != null)
+                _carTransform.gameObject.SetActive(false);
+
+            if (_finishLineTransform != null)
+                _finishLineTransform.gameObject.SetActive(false);
+        }
+
+        public void StopGame()
+        {
+            _isDrawing = false;
+            _isRacing = false;
         }
 
         private void Update()
         {
-            if (!_isRunning) return;
-
-            if (!_isRacing)
-                HandleDrawing();
-            else
-                UpdateRace();
+            if (_isDrawing)
+            {
+                HandleDrawInput();
+            }
+            else if (_isRacing)
+            {
+                UpdateCarMovement();
+            }
         }
 
-        private void HandleDrawing()
+        private void HandleDrawInput()
         {
             var mouse = Mouse.current;
-            if (mouse == null || _mainCamera == null) return;
+            if (mouse == null) return;
 
-            if (mouse.leftButton.wasPressedThisFrame)
+            if (mouse.leftButton.isPressed)
             {
-                _isDrawing = true;
-                _path.Clear();
-                ClearTrail();
-            }
+                Vector3 screenPos = mouse.position.ReadValue();
+                screenPos.z = -_mainCamera.transform.position.z;
+                Vector3 worldPos = _mainCamera.ScreenToWorldPoint(screenPos);
+                worldPos.z = 0f;
 
-            if (_isDrawing && mouse.leftButton.isPressed)
-            {
-                Vector3 sp = mouse.position.ReadValue();
-                sp.z = -_mainCamera.transform.position.z;
-                Vector2 worldPos = _mainCamera.ScreenToWorldPoint(sp);
-
-                if (_path.Count == 0 || Vector2.Distance(worldPos, _path[_path.Count - 1]) > 0.2f)
-                    _path.Add(worldPos);
-            }
-
-            if (mouse.leftButton.wasReleasedThisFrame && _isDrawing)
-            {
-                _isDrawing = false;
-                if (_path.Count > 5)
-                    StartRace();
-            }
-        }
-
-        private void StartRace()
-        {
-            _isRacing = true;
-            _pathIndex = 0;
-            _timeRemaining = _raceTime;
-
-            if (_carPrefab != null && _path.Count > 0)
-            {
-                _carObj = Instantiate(_carPrefab, transform);
-                _carObj.transform.position = _path[0];
-            }
-        }
-
-        private void UpdateRace()
-        {
-            _timeRemaining -= Time.deltaTime;
-            if (_gameManager != null) _gameManager.OnTimeUpdate(_timeRemaining);
-
-            if (_timeRemaining <= 0f)
-            {
-                _isRunning = false;
-                if (_gameManager != null) _gameManager.OnRaceEnd(_checkpointsHit);
-                return;
-            }
-
-            if (_carObj == null || _pathIndex >= _path.Count) return;
-
-            Vector2 target = _path[_pathIndex];
-            Vector2 current = _carObj.transform.position;
-            Vector2 newPos = Vector2.MoveTowards(current, target, _carSpeed * Time.deltaTime);
-            _carObj.transform.position = newPos;
-
-            // Rotation
-            Vector2 dir = (target - current).normalized;
-            if (dir.sqrMagnitude > 0.001f)
-            {
-                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                _carObj.transform.rotation = Quaternion.Euler(0, 0, angle);
-            }
-
-            if (Vector2.Distance(newPos, target) < 0.1f)
-                _pathIndex++;
-
-            // Check checkpoints
-            for (int i = _checkpoints.Count - 1; i >= 0; i--)
-            {
-                if (_checkpoints[i] == null) continue;
-                if (Vector2.Distance(newPos, _checkpoints[i].transform.position) < 0.5f)
+                if (_pathPoints.Count == 0)
                 {
-                    Destroy(_checkpoints[i]);
-                    _checkpoints.RemoveAt(i);
-                    _checkpointsHit++;
-                    if (_gameManager != null) _gameManager.OnCheckpointHit(_checkpointsHit, _totalCheckpoints);
+                    _pathPoints.Add(worldPos);
+                    UpdateLineRenderer();
+                }
+                else
+                {
+                    float dist = Vector3.Distance(_pathPoints[_pathPoints.Count - 1], worldPos);
+                    if (dist >= 0.1f)
+                    {
+                        _totalPathLength += dist;
+                        _pathPoints.Add(worldPos);
+                        UpdateLineRenderer();
+                    }
                 }
             }
 
-            if (_pathIndex >= _path.Count)
+            if (mouse.leftButton.wasReleasedThisFrame)
             {
-                _isRunning = false;
-                if (_gameManager != null) _gameManager.OnRaceEnd(_checkpointsHit);
+                CheckPathAndStartRace();
             }
         }
 
-        public void StartGame()
+        private void CheckPathAndStartRace()
         {
-            ClearAll();
-            _isRacing = false;
+            if (_totalPathLength < _minPathLength)
+            {
+                // パスが短すぎるのでリセット
+                _pathPoints.Clear();
+                _totalPathLength = 0f;
+                _lineRenderer.positionCount = 0;
+                return;
+            }
+
+            StartRacing();
+        }
+
+        private void StartRacing()
+        {
             _isDrawing = false;
-            _checkpointsHit = 0;
-            _isRunning = true;
+            _isRacing = true;
+            _progress = 0f;
 
-            // Spawn checkpoints randomly
-            _totalCheckpoints = 5;
-            for (int i = 0; i < _totalCheckpoints; i++)
+            // 車をパスの始点に移動
+            if (_carTransform != null && _pathPoints.Count > 0)
             {
-                if (_checkpointPrefab == null) continue;
-                var obj = Instantiate(_checkpointPrefab, transform);
-                obj.transform.position = new Vector3(Random.Range(-4f, 4f), Random.Range(-3f, 3f), 0);
-                _checkpoints.Add(obj);
+                _carTransform.position = _pathPoints[0];
+                _carTransform.gameObject.SetActive(true);
+            }
+
+            // ゴールをパスの終点に配置
+            if (_finishLineTransform != null && _pathPoints.Count > 0)
+            {
+                _finishLineTransform.position = _pathPoints[_pathPoints.Count - 1];
+                _finishLineTransform.gameObject.SetActive(true);
+            }
+
+            if (_gameManager != null)
+                _gameManager.OnRacingStarted();
+        }
+
+        private void UpdateCarMovement()
+        {
+            if (_carTransform == null || _pathPoints.Count < 2) return;
+
+            float speed = CalculateCurrentSpeed();
+            float distToMove = speed * Time.deltaTime;
+
+            // 現在のパス上の位置をdistToMove分進める
+            float totalLength = _totalPathLength;
+            float coveredLength = _progress * totalLength;
+            coveredLength += distToMove;
+            _progress = Mathf.Clamp01(coveredLength / totalLength);
+
+            // パス上の実際のワールド座標を計算
+            Vector3 newPos = GetPositionOnPath(_progress);
+            Vector3 dir = (newPos - _carTransform.position).normalized;
+            _carTransform.position = newPos;
+
+            // 車の向きを進行方向に合わせる
+            if (dir != Vector3.zero)
+                _carTransform.up = dir;
+
+            if (_progress >= 1f)
+            {
+                _isRacing = false;
+                _gameManager?.OnRaceComplete();
             }
         }
 
-        public void StopGame() { _isRunning = false; }
-
-        private void ClearTrail()
+        private float CalculateCurrentSpeed()
         {
-            foreach (var t in _trailObjects) if (t != null) Destroy(t);
-            _trailObjects.Clear();
+            if (_pathPoints.Count < 3) return _baseSpeed;
+            int idx = Mathf.RoundToInt(_progress * (_pathPoints.Count - 1));
+            idx = Mathf.Clamp(idx, 1, _pathPoints.Count - 2);
+
+            Vector2 dir1 = (_pathPoints[idx] - _pathPoints[idx - 1]).normalized;
+            Vector2 dir2 = (_pathPoints[idx + 1] - _pathPoints[idx]).normalized;
+            float angle = Vector2.Angle(dir1, dir2);
+            float curveFactor = 1f - Mathf.Clamp01(angle / 180f) * 0.5f;
+
+            return _baseSpeed * curveFactor;
         }
 
-        private void ClearAll()
+        private Vector3 GetPositionOnPath(float t)
         {
-            ClearTrail();
-            foreach (var c in _checkpoints) if (c != null) Destroy(c);
-            _checkpoints.Clear();
-            _path.Clear();
-            if (_carObj != null) { Destroy(_carObj); _carObj = null; }
+            if (_pathPoints.Count == 0) return Vector3.zero;
+            if (_pathPoints.Count == 1) return _pathPoints[0];
+
+            float targetLength = t * _totalPathLength;
+            float accumulated = 0f;
+
+            for (int i = 1; i < _pathPoints.Count; i++)
+            {
+                float segLen = Vector3.Distance(_pathPoints[i - 1], _pathPoints[i]);
+                if (accumulated + segLen >= targetLength)
+                {
+                    float segT = (targetLength - accumulated) / segLen;
+                    return Vector3.Lerp(_pathPoints[i - 1], _pathPoints[i], segT);
+                }
+                accumulated += segLen;
+            }
+
+            return _pathPoints[_pathPoints.Count - 1];
+        }
+
+        private void UpdateLineRenderer()
+        {
+            _lineRenderer.positionCount = _pathPoints.Count;
+            _lineRenderer.SetPositions(_pathPoints.ToArray());
         }
     }
 }
