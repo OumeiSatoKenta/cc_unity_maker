@@ -268,7 +268,7 @@
                   "size": "M",
                   "sceneName": "030_FingerRacer",
                   "description": "指でなぞったコースを車が走るフィンガーレース",
-                  "implemented": false
+                  "implemented": true
             },
             {
                   "id": "031",
