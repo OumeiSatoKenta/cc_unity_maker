@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game007_NumberFlow
 {
@@ -8,75 +7,53 @@ namespace Game007_NumberFlow
         [SerializeField] private NumberFlowManager _flowManager;
         [SerializeField] private NumberFlowUI _ui;
 
-        public bool IsPlaying { get; private set; }
+        private bool _isCleared;
+        private int _currentStage;
 
-        public UnityEvent<int> OnLevelCleared = new();
-
-        private int _currentLevel;
-
-        // ── Level data ──────────────────────────────────────────────
-        // grid[row, col] = number (1-16)
-        private static readonly int[][,] Levels =
+        private void Start()
         {
-            // Level 1 – snake pattern (easy)
-            new int[4, 4]
+            _currentStage = 0;
+            StartGame();
+        }
+
+        public void StartGame()
+        {
+            _isCleared = false;
+            if (_flowManager != null) _flowManager.SetupStage(_currentStage);
+            if (_ui != null)
             {
-                {  1,  2,  3,  4 },
-                { 12, 13, 14,  5 },
-                { 11, 16, 15,  6 },
-                { 10,  9,  8,  7 },
-            },
-            // Level 2 – spiral-ish (medium)
-            new int[4, 4]
-            {
-                {  1, 16, 15, 14 },
-                {  2, 11, 12, 13 },
-                {  3, 10,  7,  6 },
-                {  4,  9,  8,  5 },
-            },
-            // Level 3 – zigzag (harder)
-            new int[4, 4]
-            {
-                {  1,  2, 15, 14 },
-                {  4,  3, 16, 13 },
-                {  5,  8,  9, 12 },
-                {  6,  7, 10, 11 },
-            },
-        };
-
-        private void Start() => LoadLevel(0);
-
-        public void LoadLevel(int level)
-        {
-            _currentLevel = Mathf.Clamp(level, 0, Levels.Length - 1);
-            IsPlaying = true;
-            _flowManager.LoadGrid(Levels[_currentLevel]);
-            _ui?.SetLevelText($"Level {_currentLevel + 1} / {Levels.Length}");
-            _ui?.HideClearPanel();
+                _ui.UpdateProgress(0, 0);
+                _ui.UpdateStageText(_currentStage + 1);
+                _ui.HideClearPanel();
+            }
         }
 
-        public void OnCleared()
+        public void OnCellPlaced(int current, int total)
         {
-            IsPlaying = false;
-            _ui?.ShowClearPanel(_currentLevel);
-            OnLevelCleared?.Invoke(_currentLevel);
+            if (_isCleared) return;
+            if (_ui != null) _ui.UpdateProgress(current, total);
         }
 
-        public void ResetLevel()
+        public void OnPuzzleSolved()
         {
-            IsPlaying = true;
-            _flowManager.ResetGrid();
-            _ui?.HideClearPanel();
+            if (_isCleared) return;
+            _isCleared = true;
+            if (_ui != null) _ui.ShowClearPanel(_currentStage + 1);
         }
 
-        public void LoadNextLevel()
+        public void RestartGame()
         {
-            LoadLevel((_currentLevel + 1) % Levels.Length);
+            if (_flowManager != null) _flowManager.ResetPath();
+            _isCleared = false;
+            if (_ui != null) _ui.UpdateProgress(0, 0);
         }
 
-        public void LoadMenu()
+        public void NextStage()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
+            _currentStage++;
+            if (_currentStage >= NumberFlowManager.StageCount)
+                _currentStage = 0;
+            StartGame();
         }
     }
 }
