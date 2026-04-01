@@ -763,7 +763,7 @@
       "size": "L",
       "sceneName": "085_MechPet",
       "description": "メカのパーツを組み合わせて独自のロボットペットを育てる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "086",
