@@ -511,7 +511,7 @@
       "size": "S",
       "sceneName": "057_CandyDrop",
       "description": "落下するキャンディを積み上げる物理パズル",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "058",
@@ -520,7 +520,7 @@
       "size": "S",
       "sceneName": "058_ThreadNeedle",
       "description": "揺れる針穴に糸を通すような精密タップゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "059",
@@ -529,7 +529,7 @@
       "size": "S",
       "sceneName": "059_WaterJug",
       "description": "ジャグを傾けて指定量の水を正確に計る操作ゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "060",
@@ -538,7 +538,7 @@
       "size": "S",
       "sceneName": "060_MeltIce",
       "description": "太陽光を鏡で反射させて的の氷を溶かすカジュアルゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "061",

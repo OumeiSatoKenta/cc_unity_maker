@@ -176,6 +176,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/055_DustSweep.unity
     guid: 63ac16b51a8b74025ba8dde24e9936d4
+  - enabled: 1
+    path: Assets/Scenes/056_InflateFloat.unity
+    guid: fd4102b9e91164f69afb5b658777dc08
+  - enabled: 1
+    path: Assets/Scenes/057_CandyDrop.unity
+    guid: 545a3a72f1e584ae9be66804ca29ba65
+  - enabled: 1
+    path: Assets/Scenes/058_ThreadNeedle.unity
+    guid: 445b3953856fc4daa84421bef7d9d43a
+  - enabled: 1
+    path: Assets/Scenes/059_WaterJug.unity
+    guid: 434ac1aeec3554e05b197a675c4259f7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
