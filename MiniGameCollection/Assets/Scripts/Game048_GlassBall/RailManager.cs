@@ -6,11 +6,11 @@ namespace Game048_GlassBall
 {
     public class RailManager : MonoBehaviour
     {
-        [SerializeField, Tooltip("ゲーム状態管理")] private GlassBallGameManager _gameManager;
         [SerializeField, Tooltip("インク最大量")] private float _inkMax = 100f;
         [SerializeField, Tooltip("レール幅")] private float _railWidth = 0.15f;
 
         private Camera _mainCamera;
+        private Material _railMaterial;
         private float _inkRemaining;
         private bool _isActive;
         private bool _isDrawing;
@@ -21,7 +21,16 @@ namespace Game048_GlassBall
         private const float MinPointDistance = 0.2f;
         private const float InkCostPerUnit = 5f;
 
-        private void Awake() { _mainCamera = Camera.main; }
+        private void Awake()
+        {
+            _mainCamera = Camera.main;
+            _railMaterial = new Material(Shader.Find("Sprites/Default"));
+        }
+
+        private void OnDestroy()
+        {
+            if (_railMaterial != null) Destroy(_railMaterial);
+        }
 
         public void StartGame()
         {
@@ -61,7 +70,7 @@ namespace Game048_GlassBall
             _currentLine = _currentRail.AddComponent<LineRenderer>();
             _currentLine.startWidth = _railWidth;
             _currentLine.endWidth = _railWidth;
-            _currentLine.material = new Material(Shader.Find("Sprites/Default"));
+            _currentLine.sharedMaterial = _railMaterial;
             _currentLine.startColor = new Color(0.6f, 0.8f, 1f, 0.8f);
             _currentLine.endColor = new Color(0.4f, 0.6f, 0.9f, 0.8f);
             _currentLine.sortingOrder = 5;
@@ -120,6 +129,6 @@ namespace Game048_GlassBall
             return _mainCamera.ScreenToWorldPoint(mp);
         }
 
-        public float InkRatio => _inkRemaining / _inkMax;
+        public float InkRatio => _inkMax > 0f ? _inkRemaining / _inkMax : 0f;
     }
 }

@@ -71,7 +71,6 @@ public static class Setup048_GlassBall
         var rmObj = new GameObject("RailManager"); rmObj.transform.SetParent(gmObj.transform);
         var rm = rmObj.AddComponent<RailManager>();
         var rmSO = new SerializedObject(rm);
-        rmSO.FindProperty("_gameManager").objectReferenceValue = gm;
         rmSO.FindProperty("_inkMax").floatValue = 100f;
         rmSO.FindProperty("_railWidth").floatValue = 0.15f;
         rmSO.ApplyModifiedProperties();
@@ -144,7 +143,6 @@ public static class Setup048_GlassBall
         var gmSO = new SerializedObject(gm);
         gmSO.FindProperty("_railManager").objectReferenceValue = rm;
         gmSO.FindProperty("_ui").objectReferenceValue = ui;
-        gmSO.FindProperty("_ball").objectReferenceValue = ballObj.transform;
         gmSO.FindProperty("_impactMax").floatValue = 100f;
         gmSO.ApplyModifiedProperties();
 
