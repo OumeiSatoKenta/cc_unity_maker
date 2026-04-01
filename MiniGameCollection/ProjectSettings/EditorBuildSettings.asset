@@ -245,6 +245,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/078_EchoBack.unity
     guid: ef7955bf7c948431bb27fd94dfae60f6
+  - enabled: 1
+    path: Assets/Scenes/079_SilentBeat.unity
+    guid: 103ae414e87214faeacf02d990df344d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

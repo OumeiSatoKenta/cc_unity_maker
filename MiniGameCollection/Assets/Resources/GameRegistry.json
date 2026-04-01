@@ -718,7 +718,7 @@
       "size": "L",
       "sceneName": "080_FreqFight",
       "description": "周波数（音程）を合わせると敵にダメージを与える音楽バトル",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "081",
