@@ -421,7 +421,7 @@
       "size": "S",
       "sceneName": "047_SpinBalance",
       "description": "画面を回転させて端から落ちないようコマを保持し続ける",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "048",
