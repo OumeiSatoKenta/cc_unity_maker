@@ -754,7 +754,7 @@
       "size": "M",
       "sceneName": "084_GardenZen",
       "description": "禅の庭を自由にデザインし石と砂紋で癒やしの空間を作る",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "085",

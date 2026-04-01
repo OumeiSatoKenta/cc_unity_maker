@@ -257,6 +257,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/082_AquaPet.unity
     guid: e3fab7228d90b406b8fdec651fa89f90
+  - enabled: 1
+    path: Assets/Scenes/083_StarChef.unity
+    guid: 161f2884bcdb246c4a879228cbcf4cb2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
