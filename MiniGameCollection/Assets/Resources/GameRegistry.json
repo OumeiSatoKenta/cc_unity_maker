@@ -673,7 +673,7 @@
       "size": "M",
       "sceneName": "075_SoundGarden",
       "description": "植物をタップして育てると音楽が生まれるインタラクティブアート",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "076",

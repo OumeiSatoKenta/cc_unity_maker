@@ -230,6 +230,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/073_MelodyMaze.unity
     guid: b85e849d46f4a405eb755f398b3d49d3
+  - enabled: 1
+    path: Assets/Scenes/074_NoteRain.unity
+    guid: 15a3fd20e8e9d4137b3192de0d028ee9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
