@@ -42,6 +42,11 @@ namespace Game047_SpinBalance
             _pieceMat = new PhysicsMaterial2D("PieceMat") { friction = 0.6f, bounciness = 0.1f };
         }
 
+        private void OnDestroy()
+        {
+            if (_pieceMat != null) Destroy(_pieceMat);
+        }
+
         public void StartGame()
         {
             _currentAngle = 0f;
@@ -133,7 +138,6 @@ namespace Game047_SpinBalance
         {
             _pieces.Remove(p);
             Destroy(p.gameObject);
-            _gameManager.OnPieceFallen();
         }
 
         public int CurrentPieceCount => _pieces.Count;
