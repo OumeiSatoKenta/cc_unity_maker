@@ -340,7 +340,7 @@
       "size": "S",
       "sceneName": "038_FlyBird",
       "description": "ワンタップ操作で障害物の隙間をすり抜けて飛び続ける",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "039",
