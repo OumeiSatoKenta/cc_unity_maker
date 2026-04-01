@@ -655,7 +655,7 @@
       "size": "M",
       "sceneName": "073_MelodyMaze",
       "description": "音符を繋げてメロディを完成させる音楽パズル",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "074",
