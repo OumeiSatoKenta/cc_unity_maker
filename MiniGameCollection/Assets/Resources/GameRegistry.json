@@ -394,7 +394,7 @@
       "size": "S",
       "sceneName": "044_TiltMaze",
       "description": "デバイスを傾けてボールを迷路の出口へ転がす",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "045",
