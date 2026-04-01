@@ -556,7 +556,7 @@
       "size": "M",
       "sceneName": "062_MagicForest",
       "description": "木をタップして育て森を広げる放置育成",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "063",
