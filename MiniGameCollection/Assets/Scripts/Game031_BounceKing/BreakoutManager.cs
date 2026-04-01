@@ -107,6 +107,7 @@ namespace Game031_BounceKing
 
                     blockObj.AddComponent<SpriteRenderer>();
                     var col2d = blockObj.AddComponent<BoxCollider2D>();
+                    col2d.size = Vector2.one; // localScale(0.88, 0.35)適用でワールドサイズ(0.88, 0.35)になる
                     var rb = blockObj.AddComponent<Rigidbody2D>();
                     rb.bodyType = RigidbodyType2D.Static;
 
@@ -129,8 +130,11 @@ namespace Game031_BounceKing
             sr.sprite = _ballSprite;
             sr.sortingOrder = 5;
 
+            // RequireComponentに依存せず明示的にコンポーネントを追加してから初期化
+            ballObj.AddComponent<Rigidbody2D>();
+            ballObj.AddComponent<CircleCollider2D>();
             _ball = ballObj.AddComponent<BallController>();
-            _ball.SetMaterial(_bouncyMaterial);
+            _ball.Initialize(_bouncyMaterial);
             _waitingForLaunch = true;
         }
 
@@ -156,9 +160,9 @@ namespace Game031_BounceKing
 
         private void UpdateBallLaunch()
         {
-            if (!_waitingForLaunch || Mouse.current == null) return;
+            if (!_waitingForLaunch) return;
 
-            if (Mouse.current.leftButton.wasPressedThisFrame)
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             {
                 _waitingForLaunch = false;
                 if (_ball != null)

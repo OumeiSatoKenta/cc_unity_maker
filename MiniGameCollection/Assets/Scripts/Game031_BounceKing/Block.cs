@@ -7,22 +7,25 @@ namespace Game031_BounceKing
     {
         private int _hp;
         private int _maxHp;
-        // 引数: (このBlock, 獲得ポイント) — BreakoutManager側でリストから即時除外するためselfを渡す
+        private bool _isDead; // 同フレーム内の多重Hit防止
         private System.Action<Block, int> _onDestroyed;
 
         public void Initialize(int hp, Sprite sprite, System.Action<Block, int> onDestroyed)
         {
             _hp = hp;
             _maxHp = hp;
+            _isDead = false;
             _onDestroyed = onDestroyed;
             GetComponent<SpriteRenderer>().sprite = sprite;
         }
 
         public void Hit()
         {
+            if (_isDead) return; // 多重呼び出し防止
             _hp--;
             if (_hp <= 0)
             {
+                _isDead = true;
                 // コールバック前にDestroyするとUnityの遅延破棄でnullにならず
                 // Count==0チェックが正しく動かないため、先にコールバックを呼ぶ
                 // BreakoutManager側でリストからthisを削除してからCount確認する
