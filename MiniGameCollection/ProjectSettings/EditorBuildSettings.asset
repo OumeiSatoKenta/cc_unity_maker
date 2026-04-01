@@ -197,6 +197,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/062_MagicForest.unity
     guid: dc7c1e20519894560b74be108f6c89ca
+  - enabled: 1
+    path: Assets/Scenes/063_StarMiner.unity
+    guid: 39be6c98df1fa45879301f115c12b12f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
