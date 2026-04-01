@@ -664,7 +664,7 @@
       "size": "M",
       "sceneName": "074_NoteRain",
       "description": "降ってくる音符を正確にキャッチして演奏を完成させる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "075",

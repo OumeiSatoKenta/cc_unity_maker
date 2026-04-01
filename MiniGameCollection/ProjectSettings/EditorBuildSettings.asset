@@ -227,6 +227,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/072_DrumKit.unity
     guid: fb591f28b07084fb4909e975a6cbfd2d
+  - enabled: 1
+    path: Assets/Scenes/073_MelodyMaze.unity
+    guid: b85e849d46f4a405eb755f398b3d49d3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
