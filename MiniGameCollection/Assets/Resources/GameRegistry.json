@@ -853,7 +853,7 @@
       "size": "L",
       "sceneName": "095_SilentWorld",
       "description": "音が存在しない世界で視覚だけを頼りに進む実験的アドベンチャー",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "096",
