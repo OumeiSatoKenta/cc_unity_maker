@@ -889,7 +889,7 @@
       "size": "S",
       "sceneName": "099_TouchMemory",
       "description": "タッチした順番を記憶して同じパターンを再現するメモリーゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "100",

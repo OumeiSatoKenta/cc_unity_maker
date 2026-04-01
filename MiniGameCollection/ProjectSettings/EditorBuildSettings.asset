@@ -302,6 +302,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/097_PixelEvolution.unity
     guid: 1867b2d01d9514900a740880cc71fa48
+  - enabled: 1
+    path: Assets/Scenes/098_InfiniteLoop.unity
+    guid: ae7ece39c39b24a0ba1e2d340781bc2f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
