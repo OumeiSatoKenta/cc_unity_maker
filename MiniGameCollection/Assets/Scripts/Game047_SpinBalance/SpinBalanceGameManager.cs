@@ -54,11 +54,6 @@ namespace Game047_SpinBalance
             }
         }
 
-        public void OnPieceFallen()
-        {
-            // BalanceManager handles count; Update() reads it each frame
-        }
-
         public void RestartGame()
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
