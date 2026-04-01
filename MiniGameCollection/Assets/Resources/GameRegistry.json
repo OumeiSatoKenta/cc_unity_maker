@@ -475,7 +475,7 @@
       "size": "S",
       "sceneName": "053_SlideBlitz",
       "description": "スライドパズルをいかに速く解けるかのタイムアタック",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "054",
