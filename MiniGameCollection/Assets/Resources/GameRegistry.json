@@ -565,7 +565,7 @@
       "size": "M",
       "sceneName": "063_StarMiner",
       "description": "星を採掘して宇宙船をアップグレードする放置ゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "064",

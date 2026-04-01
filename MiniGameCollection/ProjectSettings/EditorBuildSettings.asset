@@ -194,6 +194,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/061_CookieFactory.unity
     guid: 812f743b7ab1d48e0b376e4ced734a36
+  - enabled: 1
+    path: Assets/Scenes/062_MagicForest.unity
+    guid: dc7c1e20519894560b74be108f6c89ca
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
