@@ -305,6 +305,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/098_InfiniteLoop.unity
     guid: ae7ece39c39b24a0ba1e2d340781bc2f
+  - enabled: 1
+    path: Assets/Scenes/099_TouchMemory.unity
+    guid: 57f97703661ee494e8d0db05f24ba122
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

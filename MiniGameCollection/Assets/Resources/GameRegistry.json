@@ -898,7 +898,7 @@
       "size": "M",
       "sceneName": "100_DreamRun",
       "description": "シュールな夢の中を走り続けるナラティブランゲーム",
-      "implemented": false
+      "implemented": true
     }
   ]
 }
