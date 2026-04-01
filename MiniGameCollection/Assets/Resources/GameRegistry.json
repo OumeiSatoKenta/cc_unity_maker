@@ -781,7 +781,7 @@
       "size": "L",
       "sceneName": "087_DreamCatcher",
       "description": "夢の破片を集めて自分だけの夢の世界を構築する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "088",

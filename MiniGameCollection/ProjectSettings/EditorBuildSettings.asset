@@ -266,6 +266,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/085_MechPet.unity
     guid: 62e86d011be334403aeeb98b1fc86ee7
+  - enabled: 1
+    path: Assets/Scenes/086_CityBonsai.unity
+    guid: 5b118219059ec40a8b8fd491ab28d8ae
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
