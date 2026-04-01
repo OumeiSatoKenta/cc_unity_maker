@@ -18,6 +18,7 @@ namespace Game033_AimSniper
             _minX = minX;
             _maxX = maxX;
             _isDead = false;
+            _movingRight = true;
             _onKilled = onKilled;
 
             var sr = GetComponent<SpriteRenderer>();

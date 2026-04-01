@@ -93,14 +93,16 @@ namespace Game033_AimSniper
 
         private void CheckShoot()
         {
-            if (Mouse.current == null) return;
+            if (_scopeTransform == null || Mouse.current == null) return;
             if (!Mouse.current.leftButton.wasPressedThisFrame) return;
             if (_gameManager.RemainingBullets <= 0) return;
 
-            Vector2 scopeCenter = _scopeTransform.position;
+            // OnShot を先に呼び弾数を消費してから命中判定
+            // （最後の弾で最後の敵を撃った場合、AddHit→Clear→_isPlaying=false で
+            //   後続の OnShot がスキップされるのを防ぐ）
+            _gameManager.OnShot();
 
-            // 命中判定
-            bool hit = false;
+            Vector2 scopeCenter = _scopeTransform.position;
             var colliders = Physics2D.OverlapCircleAll(scopeCenter, HitRadius);
             foreach (var col in colliders)
             {
@@ -108,15 +110,9 @@ namespace Game033_AimSniper
                 if (target != null)
                 {
                     target.Hit();
-                    hit = true;
                     break; // 1発で1体のみ
                 }
             }
-
-            _gameManager.OnShot();
-
-            // 命中時は AddHit は OnTargetKilled コールバック経由で呼ばれる
-            // OnShot が先に呼ばれるので弾数カウントが正確
         }
 
         private void OnTargetKilled(Target target)
