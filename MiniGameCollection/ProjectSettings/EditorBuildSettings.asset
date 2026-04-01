@@ -287,6 +287,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/092_MirrorWorld.unity
     guid: 47f807f835ff04986ba74e57420d745f
+  - enabled: 1
+    path: Assets/Scenes/093_ColorPerception.unity
+    guid: 8e79c4a9d265847bd9014c02810e525a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
