@@ -6,8 +6,6 @@ namespace Game048_GlassBall
     {
         [SerializeField, Tooltip("レール管理")] private RailManager _railManager;
         [SerializeField, Tooltip("UI管理")] private GlassBallUI _ui;
-        [SerializeField, Tooltip("ボール")] private Transform _ball;
-
         [SerializeField, Tooltip("衝撃上限")] private float _impactMax = 100f;
 
         private float _impactGauge;
