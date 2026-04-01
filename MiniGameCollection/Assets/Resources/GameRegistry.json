@@ -826,7 +826,7 @@
       "size": "M",
       "sceneName": "092_MirrorWorld",
       "description": "画面上下が鏡像になっており逆向きに操作するギミックゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "093",
