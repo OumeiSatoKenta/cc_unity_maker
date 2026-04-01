@@ -37,12 +37,7 @@ namespace Game031_BounceKing
             }
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            if (collision.gameObject.GetComponent<BallController>() != null)
-            {
-                Hit();
-            }
-        }
+        // 衝突検出はBallController(Dynamic)側で行うため、ここでは実装しない
+        // StaticなRigidbody2DはOnCollisionEnter2Dを受け取れないためBallController側に移動
     }
 }
