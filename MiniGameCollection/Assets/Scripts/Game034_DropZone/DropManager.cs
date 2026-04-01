@@ -173,7 +173,8 @@ namespace Game034_DropZone
                 _gameManager.OnWrongDrop();
             }
 
-            // 次のアイテム生成（少し遅延）
+            // 次のアイテム生成（既存Invokeをキャンセルしてから再発行）
+            CancelInvoke(nameof(SpawnNextItem));
             if (_gameManager.IsPlaying)
                 Invoke(nameof(SpawnNextItem), 0.4f);
         }
