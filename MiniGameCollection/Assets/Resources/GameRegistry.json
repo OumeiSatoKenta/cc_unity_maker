@@ -592,7 +592,7 @@
       "size": "M",
       "sceneName": "066_RoboFactory",
       "description": "ロボットが自動で資源を集めて都市を建設する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "067",
