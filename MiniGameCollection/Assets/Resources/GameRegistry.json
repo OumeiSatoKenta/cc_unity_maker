@@ -628,7 +628,7 @@
       "size": "L",
       "sceneName": "070_NanoLab",
       "description": "ナノマシンを増殖させて科学技術を段階的に進化させる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "071",
