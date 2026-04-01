@@ -412,7 +412,7 @@
       "size": "S",
       "sceneName": "046_SqueezePop",
       "description": "絞ると色が出るチューブで画面全体を塗りつぶす",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "047",
