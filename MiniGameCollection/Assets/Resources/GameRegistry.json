@@ -448,7 +448,7 @@
       "size": "S",
       "sceneName": "050_BubbleSort",
       "description": "浮かんでくる色バブルを色ごとに分けて並べる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "051",
