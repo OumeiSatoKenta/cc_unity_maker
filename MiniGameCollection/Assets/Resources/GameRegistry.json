@@ -331,7 +331,7 @@
       "size": "M",
       "sceneName": "037_ZapChain",
       "description": "敵に触れると電撃が連鎖して多数をまとめて倒す",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "038",
