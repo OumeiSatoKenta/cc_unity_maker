@@ -32,7 +32,7 @@ namespace Game034_DropZone
 
         public void AccelerateFall()
         {
-            _fallSpeed *= 3f;
+            _fallSpeed = Mathf.Min(_fallSpeed * 3f, 30f);
         }
 
         public void Stop()
