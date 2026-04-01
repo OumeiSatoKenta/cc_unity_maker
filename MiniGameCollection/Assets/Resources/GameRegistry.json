@@ -502,7 +502,7 @@
       "size": "S",
       "sceneName": "056_InflateFloat",
       "description": "風船を膨らませ障害物をかわしながら空を飛ぶ",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "057",

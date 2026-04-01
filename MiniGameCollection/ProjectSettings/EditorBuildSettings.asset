@@ -173,6 +173,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/054_FruitSlash.unity
     guid: ed0548cadb307432ba06d70d6c2922f6
+  - enabled: 1
+    path: Assets/Scenes/055_DustSweep.unity
+    guid: 63ac16b51a8b74025ba8dde24e9936d4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
