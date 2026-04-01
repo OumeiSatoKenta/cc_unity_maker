@@ -313,7 +313,7 @@
       "size": "M",
       "sceneName": "035_WaveRider",
       "description": "波に乗ってサーフィンし岩を避けながらトリックでスコアを稼ぐ",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "036",
