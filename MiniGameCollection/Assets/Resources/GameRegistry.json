@@ -367,7 +367,7 @@
       "size": "S",
       "sceneName": "041_StackJump",
       "description": "タイミングよくタップしてプラットフォームを積み上げ高さを競う",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "042",
