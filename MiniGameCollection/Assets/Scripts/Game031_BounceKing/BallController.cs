@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Game031_BounceKing
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(CircleCollider2D))]
     public class BallController : MonoBehaviour
     {
         private const float Speed = 7f;
@@ -11,28 +10,31 @@ namespace Game031_BounceKing
         private CircleCollider2D _col;
         private bool _isActive;
 
-        private void Awake()
+        /// <summary>SpawnBall側から呼ぶ初期化メソッド</summary>
+        public void Initialize(PhysicsMaterial2D mat)
         {
             _rb = GetComponent<Rigidbody2D>();
+            _col = GetComponent<CircleCollider2D>();
+
+            if (_rb == null) { Debug.LogError("[BallController] Rigidbody2D not found"); return; }
+
             _rb.gravityScale = 0f;
             _rb.linearDamping = 0f;
             _rb.angularDamping = 0f;
             _rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
-            _col = GetComponent<CircleCollider2D>();
-            _col.radius = 0.5f;
-        }
+            if (_col != null) _col.radius = 0.5f;
 
-        /// <summary>PhysicsMaterial2Dを設定する（Awake後に呼ぶこと）</summary>
-        public void SetMaterial(PhysicsMaterial2D mat)
-        {
-            if (mat == null) return;
-            _rb.sharedMaterial = mat;
-            _col.sharedMaterial = mat;
+            if (mat != null)
+            {
+                _rb.sharedMaterial = mat;
+                if (_col != null) _col.sharedMaterial = mat;
+            }
         }
 
         public void Launch(Vector2 direction)
         {
+            if (_rb == null) _rb = GetComponent<Rigidbody2D>();
             _isActive = true;
             _rb.linearVelocity = direction.normalized * Speed;
         }
@@ -40,28 +42,30 @@ namespace Game031_BounceKing
         public void Stop()
         {
             _isActive = false;
-            _rb.linearVelocity = Vector2.zero;
+            if (_rb != null) _rb.linearVelocity = Vector2.zero;
         }
 
         private void FixedUpdate()
         {
-            if (!_isActive) return;
+            if (!_isActive || _rb == null) return;
 
-            // 物理演算による速度ドリフトを補正して一定速を維持
+            // 速度を一定に保つ
             float currentSpeed = _rb.linearVelocity.magnitude;
             if (currentSpeed > 0.1f && Mathf.Abs(currentSpeed - Speed) > 0.5f)
-            {
                 _rb.linearVelocity = _rb.linearVelocity.normalized * Speed;
-            }
-        }
 
-        // ボール(Dynamic)側で衝突を検出する
-        // StaticなRigidbody2DはOnCollisionEnter2Dを受け取れないため、Dynamic側に実装
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            if (!_isActive) return;
-            var block = collision.gameObject.GetComponent<Block>();
-            if (block != null) block.Hit();
+            // OverlapCircleでブロック衝突を手動検出（OnCollisionEnter2Dの代替）
+            if (_col != null)
+            {
+                float worldRadius = _col.radius * transform.lossyScale.x;
+                var hits = Physics2D.OverlapCircleAll(transform.position, worldRadius);
+                foreach (var hit in hits)
+                {
+                    if (hit.gameObject == gameObject) continue; // 自分自身を除外
+                    var block = hit.GetComponent<Block>();
+                    if (block != null) block.Hit();
+                }
+            }
         }
 
         public bool IsActive => _isActive;
