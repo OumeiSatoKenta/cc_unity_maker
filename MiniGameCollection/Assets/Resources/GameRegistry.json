@@ -691,7 +691,7 @@
       "size": "M",
       "sceneName": "077_BeatRunner",
       "description": "BGMのビートに合わせてジャンプするリズムランゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "078",

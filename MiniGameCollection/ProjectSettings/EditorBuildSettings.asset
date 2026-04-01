@@ -236,6 +236,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/075_SoundGarden.unity
     guid: 426ea440c93004f98a213b13f3ff0ee9
+  - enabled: 1
+    path: Assets/Scenes/076_ChordCatch.unity
+    guid: 3ff81c6d6082c4653bf4a34f55b20ef4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
