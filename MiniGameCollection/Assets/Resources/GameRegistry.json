@@ -709,7 +709,7 @@
       "size": "S",
       "sceneName": "079_SilentBeat",
       "description": "無音の画面でリズムを感じ取り正確なタイミングでタップ",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "080",
