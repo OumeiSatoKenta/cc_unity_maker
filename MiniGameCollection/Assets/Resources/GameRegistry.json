@@ -745,7 +745,7 @@
       "size": "M",
       "sceneName": "083_StarChef",
       "description": "星を使って宇宙レシピの料理を作るお料理育成ゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "084",
