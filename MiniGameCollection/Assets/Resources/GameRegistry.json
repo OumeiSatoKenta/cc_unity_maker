@@ -817,7 +817,7 @@
       "size": "L",
       "sceneName": "091_TimeBlender",
       "description": "過去と未来を自由に切り替えて謎を解くタイムトラベルパズル",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "092",
