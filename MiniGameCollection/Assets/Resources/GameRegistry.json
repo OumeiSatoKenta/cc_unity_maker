@@ -322,7 +322,7 @@
       "size": "S",
       "sceneName": "036_CoinStack",
       "description": "落下するコインをタイミングよく積み上げ崩れないタワーを作る",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "037",
