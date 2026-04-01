@@ -835,7 +835,7 @@
       "size": "M",
       "sceneName": "093_ColorPerception",
       "description": "色覚の違いをテーマにした視点切替パズル",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "094",
