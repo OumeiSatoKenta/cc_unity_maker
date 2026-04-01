@@ -286,7 +286,7 @@
       "size": "M",
       "sceneName": "032_SpinCutter",
       "description": "回転する刃の軌道をコントロールして敵を一掃する",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "033",
