@@ -790,7 +790,7 @@
       "size": "L",
       "sceneName": "088_AlchemyPet",
       "description": "錬金術で素材を変換してユニークなペットを生み出す",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "089",
