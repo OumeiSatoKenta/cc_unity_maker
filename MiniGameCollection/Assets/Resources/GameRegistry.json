@@ -844,7 +844,7 @@
       "size": "M",
       "sceneName": "094_GravityPainter",
       "description": "重力方向を変えながら絵の具が流れて絵が完成するアート体験",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "095",
