@@ -862,7 +862,7 @@
       "size": "M",
       "sceneName": "096_DualControl",
       "description": "2つのキャラを同時に別々に操作する二刀流アクション",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "097",
@@ -871,7 +871,7 @@
       "size": "L",
       "sceneName": "097_PixelEvolution",
       "description": "ピクセルが世代を経るごとに進化して複雑な生命体になるシム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "098",
