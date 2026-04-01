@@ -772,7 +772,7 @@
       "size": "L",
       "sceneName": "086_CityBonsai",
       "description": "盆栽の中に小さな都市を育てる箱庭シミュレーション",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "087",
