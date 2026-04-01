@@ -272,6 +272,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/087_DreamCatcher.unity
     guid: 8457bf8c660ec4f66abf49fc5d377d5a
+  - enabled: 1
+    path: Assets/Scenes/088_AlchemyPet.unity
+    guid: 6b4d3e01b0a88402aab9b85c9f95efff
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
