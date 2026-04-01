@@ -39,7 +39,9 @@ namespace Game032_SpinCutter
             if (_killedCount >= _totalEnemies)
             {
                 _isPlaying = false;
-                int stars = _launchesUsed <= 1 ? 3 : (_launchesUsed == 2 ? 2 : 1);
+                // AddKill はOnLaunchUsed より前に呼ばれるため+1して発射中の1回を含める
+                int effectiveLaunches = _launchesUsed + 1;
+                int stars = effectiveLaunches <= 1 ? 3 : (effectiveLaunches == 2 ? 2 : 1);
                 _ui.ShowClear(stars);
             }
         }

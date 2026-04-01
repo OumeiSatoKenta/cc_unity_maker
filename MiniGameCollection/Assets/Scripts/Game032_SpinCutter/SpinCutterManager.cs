@@ -100,7 +100,8 @@ namespace Game032_SpinCutter
             sr.sprite = _bladeSprite;
             sr.sortingOrder = 5;
 
-            bladeObj.AddComponent<CircleCollider2D>();
+            var bladeCol = bladeObj.AddComponent<CircleCollider2D>();
+            bladeCol.isTrigger = true; // 物理衝突せず検出のみ
             _blade = bladeObj.AddComponent<BladeController>();
             _blade.Initialize(_pivot, OnBladeFinished);
         }
