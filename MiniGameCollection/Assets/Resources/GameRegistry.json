@@ -376,7 +376,7 @@
       "size": "S",
       "sceneName": "042_ColorDrop",
       "description": "色付きの雨粒を同色のバケツにスワイプで振り分ける",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "043",
