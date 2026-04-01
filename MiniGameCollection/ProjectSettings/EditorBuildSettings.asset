@@ -188,6 +188,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/059_WaterJug.unity
     guid: 434ac1aeec3554e05b197a675c4259f7
+  - enabled: 1
+    path: Assets/Scenes/060_MeltIce.unity
+    guid: f379e06bf014540adacedd2ad6409133
+  - enabled: 1
+    path: Assets/Scenes/061_CookieFactory.unity
+    guid: 812f743b7ab1d48e0b376e4ced734a36
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

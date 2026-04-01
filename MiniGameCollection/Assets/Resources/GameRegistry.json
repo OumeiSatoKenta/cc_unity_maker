@@ -547,7 +547,7 @@
       "size": "M",
       "sceneName": "061_CookieFactory",
       "description": "クッキーを焼いて工場を拡大するクリッカー",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "062",
