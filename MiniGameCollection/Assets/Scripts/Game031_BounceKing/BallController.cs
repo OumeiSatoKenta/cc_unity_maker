@@ -55,6 +55,15 @@ namespace Game031_BounceKing
             }
         }
 
+        // ボール(Dynamic)側で衝突を検出する
+        // StaticなRigidbody2DはOnCollisionEnter2Dを受け取れないため、Dynamic側に実装
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (!_isActive) return;
+            var block = collision.gameObject.GetComponent<Block>();
+            if (block != null) block.Hit();
+        }
+
         public bool IsActive => _isActive;
     }
 }
