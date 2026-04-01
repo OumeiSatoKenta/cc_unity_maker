@@ -637,7 +637,7 @@
       "size": "M",
       "sceneName": "071_BeatTiles",
       "description": "落ちてくるタイルをリズムに合わせてタップするリズムゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "072",
