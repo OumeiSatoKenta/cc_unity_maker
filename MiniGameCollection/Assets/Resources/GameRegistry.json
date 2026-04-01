@@ -277,7 +277,7 @@
       "size": "S",
       "sceneName": "031_BounceKing",
       "description": "ボールをバウンドさせてブロックを全破壊するブレイクアウト",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "032",
