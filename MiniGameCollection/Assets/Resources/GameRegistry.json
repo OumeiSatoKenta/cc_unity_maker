@@ -700,7 +700,7 @@
       "size": "S",
       "sceneName": "078_EchoBack",
       "description": "再生された音楽パターンを正確に再現する音楽記憶ゲーム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "079",
