@@ -212,6 +212,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/067_TapDojo.unity
     guid: 53160e73644634fdc94459f501906d65
+  - enabled: 1
+    path: Assets/Scenes/068_CloudFarm.unity
+    guid: 18e0e3048c2b24b32881acab95dc3265
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
