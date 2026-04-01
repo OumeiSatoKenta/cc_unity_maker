@@ -736,7 +736,7 @@
       "size": "M",
       "sceneName": "082_AquaPet",
       "description": "水槽の魚を育てて鑑賞する仮想アクアリウム",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "083",
