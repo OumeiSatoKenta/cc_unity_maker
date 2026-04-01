@@ -610,7 +610,7 @@
       "size": "M",
       "sceneName": "068_CloudFarm",
       "description": "雲の上の農場で野菜を育てて市場に出荷する放置農業",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "069",
