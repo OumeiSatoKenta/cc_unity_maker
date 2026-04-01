@@ -682,7 +682,7 @@
       "size": "M",
       "sceneName": "076_ChordCatch",
       "description": "和音を聞き取り対応するボタンを素早くタップする",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "077",
