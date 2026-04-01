@@ -33,7 +33,6 @@ namespace Game100_DreamRun
         private readonly List<int> _obstacleLanes = new List<int>();
         private readonly List<GameObject> _orbs = new List<GameObject>();
         private readonly List<int> _orbLanes = new List<int>();
-        private readonly List<GameObject> _toDestroy = new List<GameObject>();
 
         public void StartRun()
         {
@@ -184,11 +183,11 @@ namespace Game100_DreamRun
 
         private void UpdateObjects()
         {
+            if (_character == null) return;
             float speed = _obstacleSpeed * Time.deltaTime;
-            Vector3 charPos = _character != null ? _character.transform.position : Vector3.zero;
+            Vector3 charPos = _character.transform.position;
 
             // 障害物移動と衝突判定
-            _toDestroy.Clear();
             for (int i = _obstacles.Count - 1; i >= 0; i--)
             {
                 if (_obstacles[i] == null) { _obstacles.RemoveAt(i); _obstacleLanes.RemoveAt(i); continue; }

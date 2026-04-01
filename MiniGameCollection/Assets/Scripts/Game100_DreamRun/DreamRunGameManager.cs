@@ -15,6 +15,7 @@ namespace Game100_DreamRun
         private int _fragments;
         private float _distance;
         private bool _isPlaying;
+        private Camera _mainCamera;
 
         private static readonly string[] StoryTexts =
         {
@@ -29,6 +30,7 @@ namespace Game100_DreamRun
         {
             if (_runManager == null) { Debug.LogError("[DreamRunGM] _runManager が未アサイン"); return; }
             if (_ui == null) { Debug.LogError("[DreamRunGM] _ui が未アサイン"); return; }
+            _mainCamera = Camera.main;
             StartNewGame();
         }
 
@@ -52,10 +54,13 @@ namespace Game100_DreamRun
             _ui.UpdateDistance(_distance);
 
             // 背景色を距離に応じて変化
-            float t = Mathf.PingPong(_distance * 0.02f, 1f);
-            Camera.main.backgroundColor = Color.Lerp(
-                new Color(0.3f, 0.15f, 0.5f),
-                new Color(0.1f, 0.2f, 0.5f), t);
+            if (_mainCamera != null)
+            {
+                float t = Mathf.PingPong(_distance * 0.02f, 1f);
+                _mainCamera.backgroundColor = Color.Lerp(
+                    new Color(0.3f, 0.15f, 0.5f),
+                    new Color(0.1f, 0.2f, 0.5f), t);
+            }
         }
 
         public void OnHitObstacle()
@@ -92,7 +97,7 @@ namespace Game100_DreamRun
         private System.Collections.IEnumerator DelayClear()
         {
             yield return new WaitForSeconds(3f);
-            _ui.ShowClearPanel(_distance, _fragments);
+            if (_ui != null) _ui.ShowClearPanel(_distance, _fragments);
         }
 
         private void UpdateDisplay()
