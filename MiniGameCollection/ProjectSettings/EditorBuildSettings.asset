@@ -281,6 +281,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/090_StarshipCrew.unity
     guid: fc9ce07d2ea844283b1b552f02c2cc29
+  - enabled: 1
+    path: Assets/Scenes/091_TimeBlender.unity
+    guid: 4177f5d4182d24123ad3ea4c9a0a1878
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
