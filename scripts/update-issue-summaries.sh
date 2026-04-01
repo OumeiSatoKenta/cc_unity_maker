@@ -75,6 +75,40 @@ while IFS= read -r line; do
 - ${SCREEN4}"
   fi
 
+  # game-summaries.jsonl の拡張フィールドを読み取る（存在しない場合は空文字）
+  CLEAR_COND=$(echo "$line" | jq -r '.clear_condition // empty')
+  GAMEOVER_COND=$(echo "$line" | jq -r '.gameover_condition // empty')
+  SCORE_CRITERIA=$(echo "$line" | jq -r '.score_criteria // empty')
+
+  # 操作フローテーブル行を生成
+  OPS_TABLE=""
+  OPS_COUNT=$(echo "$line" | jq -r '.operations | length // 0' 2>/dev/null || echo "0")
+  if [[ "$OPS_COUNT" -gt 0 ]]; then
+    for i in $(seq 0 $((OPS_COUNT - 1))); do
+      OP_NAME=$(echo "$line" | jq -r ".operations[$i].name // empty")
+      OP_INPUT=$(echo "$line" | jq -r ".operations[$i].input // empty")
+      OP_AFTER=$(echo "$line" | jq -r ".operations[$i].after // empty")
+      OPS_TABLE="${OPS_TABLE}
+| ${OP_NAME} | ${OP_INPUT} | ${OP_AFTER} |"
+    done
+  fi
+
+  # UI要素テーブル行を生成
+  UI_TABLE=""
+  UI_COUNT=$(echo "$line" | jq -r '.ui_elements | length // 0' 2>/dev/null || echo "0")
+  if [[ "$UI_COUNT" -gt 0 ]]; then
+    for i in $(seq 0 $((UI_COUNT - 1))); do
+      UI_NAME=$(echo "$line" | jq -r ".ui_elements[$i].name // empty")
+      UI_TYPE=$(echo "$line" | jq -r ".ui_elements[$i].type // empty")
+      UI_RANGE=$(echo "$line" | jq -r ".ui_elements[$i].range // empty")
+      UI_NOTE=$(echo "$line" | jq -r ".ui_elements[$i].note // empty")
+      UI_TABLE="${UI_TABLE}
+| ${UI_NAME} | ${UI_TYPE} | ${UI_RANGE} | ${UI_NOTE} |"
+    done
+  fi
+
+  UNITY_NOTES=$(echo "$line" | jq -r '.unity_notes // empty')
+
   # Issue本文を生成
   BODY="## ゲーム情報
 
@@ -108,6 +142,36 @@ ${SCREENS_LIST}
 
 ---
 
+## 操作仕様・ゲームフロー
+
+| 操作 | 入力方法 | 操作後の動作 |
+|------|---------|-------------|${OPS_TABLE:-"
+| | | |"}
+
+---
+
+## クリア / ゲームオーバー条件
+
+**クリア条件**: ${CLEAR_COND}
+
+**ゲームオーバー条件**: ${GAMEOVER_COND}
+
+---
+
+## スコア・評価基準
+
+${SCORE_CRITERIA:-"<!-- 実装時に決定 -->"}
+
+---
+
+## UI 要素一覧
+
+| 要素 | 種類 | 初期値/範囲 | 備考 |
+|------|------|-----------|------|${UI_TABLE:-"
+| | | | |"}
+
+---
+
 ## 必要な GameObject 一覧
 
 <!-- Claude Codeが仕様展開時に記入 -->
@@ -118,19 +182,9 @@ ${SCREENS_LIST}
 
 ---
 
-## クリア / ゲームオーバー条件
+## Unity 実装上の注意
 
-<!-- Claude Codeが仕様展開時に記入 -->
-
-**クリア条件**:
-
-**ゲームオーバー条件**:
-
----
-
-## Unity 実装方針
-
-<!-- Claude Codeが仕様展開時に記入 -->
+${UNITY_NOTES:-"<!-- Claude Codeが仕様展開時に記入 -->"}
 
 ---
 
