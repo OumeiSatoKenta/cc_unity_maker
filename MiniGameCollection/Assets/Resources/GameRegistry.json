@@ -601,7 +601,7 @@
       "size": "M",
       "sceneName": "067_TapDojo",
       "description": "道場でひたすらタップ修行して武道家を最強へ育てる",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "068",
