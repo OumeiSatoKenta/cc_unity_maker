@@ -242,6 +242,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/077_BeatRunner.unity
     guid: 1cf3c003a351549a9aad9bd48e846530
+  - enabled: 1
+    path: Assets/Scenes/078_EchoBack.unity
+    guid: ef7955bf7c948431bb27fd94dfae60f6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
