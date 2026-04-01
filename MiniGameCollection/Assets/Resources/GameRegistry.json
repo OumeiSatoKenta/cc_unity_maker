@@ -808,7 +808,7 @@
       "size": "L",
       "sceneName": "090_StarshipCrew",
       "description": "宇宙船クルーを育成して銀河探検ミッションをこなす",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "091",
