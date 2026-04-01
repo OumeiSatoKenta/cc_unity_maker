@@ -218,6 +218,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/069_DungeonDigger.unity
     guid: ccb032a117ade4567b231038da4fd5d5
+  - enabled: 1
+    path: Assets/Scenes/070_NanoLab.unity
+    guid: e53873443aa494775917f446c49a497f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
