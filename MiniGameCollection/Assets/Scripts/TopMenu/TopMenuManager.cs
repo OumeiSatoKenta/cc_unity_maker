@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -24,8 +25,11 @@ public class TopMenuManager : MonoBehaviour
     private string _currentCategory = "puzzle";
     private readonly List<GameObject> _currentCards = new List<GameObject>();
 
+    private const string CategoryPrefsKey = "last_selected_category";
+
     private static readonly (string id, string label)[] Categories =
     {
+        ("favorite", "★お気に入り"),
         ("puzzle", "パズル"),
         ("action", "アクション"),
         ("casual", "カジュアル"),
@@ -37,6 +41,7 @@ public class TopMenuManager : MonoBehaviour
 
     private void Start()
     {
+        _currentCategory = PlayerPrefs.GetString(CategoryPrefsKey, "puzzle");
         CreateTabs();
         ShowCategory(_currentCategory);
     }
@@ -83,6 +88,8 @@ public class TopMenuManager : MonoBehaviour
     public void ShowCategory(string category)
     {
         _currentCategory = category;
+        PlayerPrefs.SetString(CategoryPrefsKey, category);
+        PlayerPrefs.Save();
         ClearCards();
         UpdateTabHighlight();
 
@@ -92,7 +99,26 @@ public class TopMenuManager : MonoBehaviour
             return;
         }
 
-        var games = GameRegistry.Instance.GetGamesByCategory(category);
+        List<GameEntry> games;
+        if (category == "favorite")
+        {
+            // お気に入りタブ: FavoriteManagerからIDリストを取得してフィルタ
+            games = new List<GameEntry>();
+            if (FavoriteManager.Instance != null)
+            {
+                var favoriteIds = FavoriteManager.Instance.GetFavoriteIds();
+                foreach (string id in favoriteIds)
+                {
+                    var game = GameRegistry.Instance.GetGameById(id);
+                    if (game != null) games.Add(game);
+                }
+            }
+        }
+        else
+        {
+            games = GameRegistry.Instance.GetGamesByCategory(category);
+        }
+
         foreach (var game in games)
         {
             CreateCard(game);

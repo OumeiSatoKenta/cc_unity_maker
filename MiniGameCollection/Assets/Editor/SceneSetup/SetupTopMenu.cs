@@ -27,6 +27,10 @@ public static class SetupTopMenu
         var registryObj = new GameObject("GameRegistry");
         registryObj.AddComponent<GameRegistry>();
 
+        // --- FavoriteManager オブジェクト ---
+        var favoriteObj = new GameObject("FavoriteManager");
+        favoriteObj.AddComponent<FavoriteManager>();
+
         // --- Canvas ---
         var canvasObj = new GameObject("Canvas");
         var canvas = canvasObj.AddComponent<Canvas>();
@@ -189,6 +193,27 @@ public static class SetupTopMenu
         sizeObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Right;
         sizeObj.GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 0.8f, 0.4f, 1f);
 
+        // お気に入りボタン（右上）
+        var favBtnObj = new GameObject("FavoriteButton", typeof(RectTransform));
+        favBtnObj.transform.SetParent(cardObj.transform, false);
+        var favBtn = favBtnObj.AddComponent<Button>();
+        var favBtnImg = favBtnObj.AddComponent<Image>();
+        favBtnImg.color = new Color(0, 0, 0, 0); // 透明背景
+        var favBtnRect = favBtnObj.GetComponent<RectTransform>();
+        favBtnRect.anchorMin = new Vector2(1, 1);
+        favBtnRect.anchorMax = new Vector2(1, 1);
+        favBtnRect.pivot = new Vector2(1, 1);
+        favBtnRect.sizeDelta = new Vector2(44, 44);
+        favBtnRect.anchoredPosition = new Vector2(-4, -4);
+
+        var favIconObj = CreateText(favBtnObj.transform, "FavIcon", "☆", 28,
+            Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        var favIconRect = favIconObj.GetComponent<RectTransform>();
+        favIconRect.offsetMin = Vector2.zero;
+        favIconRect.offsetMax = Vector2.zero;
+        favIconObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        favIconObj.GetComponent<TextMeshProUGUI>().color = new Color(0.6f, 0.6f, 0.6f);
+
         // GameCardUI コンポーネント
         var card = cardObj.AddComponent<GameCardUI>();
         var cardSO = new SerializedObject(card);
@@ -197,6 +222,8 @@ public static class SetupTopMenu
         cardSO.FindProperty("_sizeText").objectReferenceValue = sizeObj.GetComponent<TextMeshProUGUI>();
         cardSO.FindProperty("_button").objectReferenceValue = button;
         cardSO.FindProperty("_background").objectReferenceValue = bg;
+        cardSO.FindProperty("_favoriteButton").objectReferenceValue = favBtn;
+        cardSO.FindProperty("_favoriteIconText").objectReferenceValue = favIconObj.GetComponent<TextMeshProUGUI>();
         cardSO.ApplyModifiedProperties();
 
         return cardObj;
