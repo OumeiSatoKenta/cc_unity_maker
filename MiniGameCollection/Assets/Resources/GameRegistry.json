@@ -899,6 +899,15 @@
       "sceneName": "100_DreamRun",
       "description": "シュールな夢の中を走り続けるナラティブランゲーム",
       "implemented": true
+    },
+    {
+      "id": "101",
+      "title": "ChainReactor",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "101_ChainReactor",
+      "description": "1つの爆発が連鎖反応を起こすパズル。最小手数で全オーブを起爆せよ",
+      "implemented": true
     }
   ]
 }
