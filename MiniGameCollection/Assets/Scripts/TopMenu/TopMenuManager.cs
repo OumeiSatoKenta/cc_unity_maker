@@ -99,10 +99,11 @@ public class TopMenuManager : MonoBehaviour
             return;
         }
 
+        string collection = SceneLoader.CurrentCollection;
+
         List<GameEntry> games;
         if (category == "favorite")
         {
-            // お気に入りタブ: FavoriteManagerからIDリストを取得してフィルタ
             games = new List<GameEntry>();
             if (FavoriteManager.Instance != null)
             {
@@ -110,13 +111,32 @@ public class TopMenuManager : MonoBehaviour
                 foreach (string id in favoriteIds)
                 {
                     var game = GameRegistry.Instance.GetGameById(id);
-                    if (game != null) games.Add(game);
+                    if (game != null)
+                    {
+                        // お気に入りタブでもコレクションが "favorite" の場合は全横断
+                        if (collection == "favorite" || game.collection == collection)
+                            games.Add(game);
+                    }
+                }
+            }
+        }
+        else if (collection == "favorite")
+        {
+            // コレクション選択で「お気に入り」を選んだ場合: カテゴリでフィルタ
+            games = new List<GameEntry>();
+            if (FavoriteManager.Instance != null)
+            {
+                var favoriteIds = FavoriteManager.Instance.GetFavoriteIds();
+                foreach (string id in favoriteIds)
+                {
+                    var game = GameRegistry.Instance.GetGameById(id);
+                    if (game != null && game.category == category) games.Add(game);
                 }
             }
         }
         else
         {
-            games = GameRegistry.Instance.GetGamesByCategory(category);
+            games = GameRegistry.Instance.GetGamesByCategoryAndCollection(category, collection);
         }
 
         foreach (var game in games)

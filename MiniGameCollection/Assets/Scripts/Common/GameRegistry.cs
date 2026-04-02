@@ -77,4 +77,28 @@ public class GameRegistry : MonoBehaviour
     {
         return _registryData.games.FirstOrDefault(g => g.id == id);
     }
+
+    /// <summary>
+    /// 指定コレクションのゲーム一覧を返す。
+    /// </summary>
+    public List<GameEntry> GetGamesByCollection(string collection)
+    {
+        return _registryData.games.Where(g => g.collection == collection).ToList();
+    }
+
+    /// <summary>
+    /// 指定コレクション+カテゴリのゲーム一覧を返す。
+    /// </summary>
+    public List<GameEntry> GetGamesByCategoryAndCollection(string category, string collection)
+    {
+        return _registryData.games.Where(g => g.category == category && g.collection == collection).ToList();
+    }
+
+    /// <summary>
+    /// コレクション一覧を取得する。
+    /// </summary>
+    public List<string> GetCollections()
+    {
+        return _registryData.games.Select(g => g.collection ?? "classic").Distinct().ToList();
+    }
 }

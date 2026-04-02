@@ -39,6 +39,24 @@ public static class SetupTopMenu
         canvasObj.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920, 1080);
         canvasObj.AddComponent<GraphicRaycaster>();
 
+        // --- コレクション選択に戻るボタン ---
+        var backBtn = new GameObject("BackToCollectionButton", typeof(RectTransform));
+        backBtn.transform.SetParent(canvasObj.transform, false);
+        backBtn.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.3f, 0.9f);
+        backBtn.AddComponent<Button>();
+        backBtn.AddComponent<BackToCollectionButton>();
+        var backRect = backBtn.GetComponent<RectTransform>();
+        backRect.anchorMin = new Vector2(0, 1);
+        backRect.anchorMax = new Vector2(0, 1);
+        backRect.pivot = new Vector2(0, 1);
+        backRect.sizeDelta = new Vector2(50, 50);
+        backRect.anchoredPosition = new Vector2(10, -10);
+        var backText = CreateText(backBtn.transform, "Text", "←", 32,
+            Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        var btRect = backText.GetComponent<RectTransform>();
+        btRect.offsetMin = Vector2.zero; btRect.offsetMax = Vector2.zero;
+        backText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
         // --- タイトル ---
         var titleObj = CreateText(canvasObj.transform, "Title", "ミニゲーム集", 48,
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),

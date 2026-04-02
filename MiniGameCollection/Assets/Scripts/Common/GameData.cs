@@ -15,6 +15,7 @@ public class GameEntry
     public string sceneName;
     public string description;
     public bool implemented;
+    public string collection; // "classic" (v1: 001-101) / "remake" (v2: 102-200+)
 }
 
 [Serializable]
