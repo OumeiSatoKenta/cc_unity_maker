@@ -1057,7 +1057,7 @@
       "size": "S",
       "sceneName": "005v2_PipeConnect",
       "description": "水道管パーツを回転させて水源から出口まで繋げる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
