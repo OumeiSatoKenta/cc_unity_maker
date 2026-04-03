@@ -317,6 +317,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/101_ChainReactor.unity
     guid: 3f732b29b70f74462855dded84781cd9
+  - enabled: 1
+    path: Assets/Scenes/001v2_BlockFlow.unity
+    guid: 4cb237800feb34ee9a6026eacc8f1e48
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
