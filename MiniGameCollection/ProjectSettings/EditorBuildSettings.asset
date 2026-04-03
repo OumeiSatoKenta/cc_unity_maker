@@ -338,6 +338,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/008v2_IcePath.unity
     guid: d08b0fc9e04fd400cb0ffd6ab91fea66
+  - enabled: 1
+    path: Assets/Scenes/009v2_ColorMix.unity
+    guid: 18736a24a1c0d4903992f0d593ffdfc8
+  - enabled: 1
+    path: Assets/Scenes/010v2_GearSync.unity
+    guid: c89b073bcae5e47c1bbc3ed44a366f3c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
