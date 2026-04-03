@@ -71,7 +71,7 @@ public static class SetupTopMenu
         titleObj.GetComponent<TextMeshProUGUI>().fontSizeMin = 24;
         titleObj.GetComponent<TextMeshProUGUI>().fontSizeMax = 40;
 
-        // --- カテゴリタブコンテナ（横スクロール対応）タイトル直下 ---
+        // --- カテゴリタブ横スクロールエリア（タイトル直下、高さ固定56px）---
         var tabScrollObj = new GameObject("TabScroll", typeof(RectTransform));
         tabScrollObj.transform.SetParent(canvasObj.transform, false);
         var tabScrollRect = tabScrollObj.GetComponent<RectTransform>();
@@ -79,17 +79,31 @@ public static class SetupTopMenu
         tabScrollRect.anchorMax = new Vector2(1, 1);
         tabScrollRect.pivot = new Vector2(0.5f, 1f);
         tabScrollRect.anchoredPosition = new Vector2(0, -76);
-        tabScrollRect.sizeDelta = new Vector2(0, 52);
+        tabScrollRect.sizeDelta = new Vector2(0, 56);
+
+        var tabScrollImage = tabScrollObj.AddComponent<Image>();
+        tabScrollImage.color = new Color(0.12f, 0.12f, 0.18f, 1f);
+        var tabScrollMask = tabScrollObj.AddComponent<Mask>();
+        tabScrollMask.showMaskGraphic = true;
 
         var tabScroll = tabScrollObj.AddComponent<ScrollRect>();
         tabScroll.horizontal = true;
         tabScroll.vertical = false;
         tabScroll.movementType = ScrollRect.MovementType.Elastic;
-        tabScrollObj.AddComponent<Image>().color = new Color(0, 0, 0, 0);
-        tabScrollObj.AddComponent<Mask>().showMaskGraphic = false;
+        tabScroll.scrollSensitivity = 30f;
 
+        // Viewport（ScrollRect直下に配置）
+        var tabViewportObj = new GameObject("Viewport", typeof(RectTransform));
+        tabViewportObj.transform.SetParent(tabScrollObj.transform, false);
+        var tabViewportRect = tabViewportObj.GetComponent<RectTransform>();
+        tabViewportRect.anchorMin = Vector2.zero;
+        tabViewportRect.anchorMax = Vector2.one;
+        tabViewportRect.offsetMin = Vector2.zero;
+        tabViewportRect.offsetMax = Vector2.zero;
+
+        // TabContainer（Viewport直下）
         var tabContainerObj = new GameObject("TabContainer", typeof(RectTransform));
-        tabContainerObj.transform.SetParent(tabScrollObj.transform, false);
+        tabContainerObj.transform.SetParent(tabViewportObj.transform, false);
         var tabRect = tabContainerObj.GetComponent<RectTransform>();
         tabRect.anchorMin = new Vector2(0, 0);
         tabRect.anchorMax = new Vector2(0, 1);
@@ -107,7 +121,7 @@ public static class SetupTopMenu
         tabFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         tabScroll.content = tabRect;
-        tabScroll.viewport = tabScrollObj.GetComponent<RectTransform>();
+        tabScroll.viewport = tabViewportRect;
 
         // --- スクロールエリア ---
         var scrollObj = new GameObject("ScrollView", typeof(RectTransform));
@@ -116,7 +130,7 @@ public static class SetupTopMenu
         scrollRect.anchorMin = new Vector2(0, 0);
         scrollRect.anchorMax = new Vector2(1, 1);
         scrollRect.offsetMin = new Vector2(0, 0);
-        scrollRect.offsetMax = new Vector2(0, -132);
+        scrollRect.offsetMax = new Vector2(0, -136);
 
         var scrollView = scrollObj.AddComponent<ScrollRect>();
         scrollView.horizontal = false;
