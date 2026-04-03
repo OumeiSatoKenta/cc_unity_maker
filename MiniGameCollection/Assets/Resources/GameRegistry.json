@@ -1047,7 +1047,7 @@
       "size": "M",
       "sceneName": "004v2_WordCrystal",
       "description": "クリスタルを砕くと文字が出て英単語を作る",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
