@@ -4,7 +4,6 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.InputSystem.UI;
 using TMPro;
-using System.IO;
 using Game002_MirrorMaze;
 
 public static class Setup002_MirrorMaze
@@ -12,292 +11,302 @@ public static class Setup002_MirrorMaze
     [MenuItem("Assets/Setup/002 MirrorMaze")]
     public static void CreateScene()
     {
-        if (EditorApplication.isPlaying) { Debug.LogError("[Setup002] Play モード中は実行できません。"); return; }
+        if (EditorApplication.isPlaying)
+        {
+            Debug.LogError("[Setup002_MirrorMaze] Play モード中は実行できません。");
+            return;
+        }
+
         var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+
         var jpFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansJP-Regular SDF.asset");
-        string sp = "Assets/Resources/Sprites/Game002_MirrorMaze/";
 
-        // カメラ
+        // --- カメラ設定 ---
         var camera = Object.FindFirstObjectByType<Camera>();
-        if (camera != null) { camera.backgroundColor = new Color(0.04f, 0.05f, 0.12f); camera.orthographic = true; camera.orthographicSize = 6f; }
+        if (camera != null)
+        {
+            camera.backgroundColor = new Color(0.08f, 0.10f, 0.16f, 1f);
+            camera.orthographic = true;
+            camera.orthographicSize = 5f;
+        }
 
-        // スプライト
-        Sprite bgSprite = LoadSprite(sp + "background.png");
+        // --- 白スプライト（グリッド線・プレハブ用） ---
+        string whiteTexPath = "Assets/Scripts/Game002_MirrorMaze/WhiteSquare.png";
+        if (!System.IO.File.Exists(whiteTexPath))
+        {
+            var wTex = new Texture2D(4, 4);
+            var wPixels = new Color[16];
+            for (int i = 0; i < 16; i++) wPixels[i] = Color.white;
+            wTex.SetPixels(wPixels);
+            wTex.Apply();
+            System.IO.File.WriteAllBytes(whiteTexPath, wTex.EncodeToPNG());
+            Object.DestroyImmediate(wTex);
+            AssetDatabase.ImportAsset(whiteTexPath);
+            var wImporter = AssetImporter.GetAtPath(whiteTexPath) as TextureImporter;
+            if (wImporter != null)
+            {
+                wImporter.textureType = TextureImporterType.Sprite;
+                wImporter.spritePixelsPerUnit = 1;
+                wImporter.SaveAndReimport();
+            }
+        }
+        var whiteSprite = AssetDatabase.LoadAssetAtPath<Sprite>(whiteTexPath);
 
-        // 背景
-        var bgObj = new GameObject("Background");
-        var bgSr = bgObj.AddComponent<SpriteRenderer>();
-        bgSr.sprite = bgSprite;
-        bgSr.sortingOrder = -10;
-        bgObj.transform.localScale = bgSprite != null ? new Vector3(0.025f, 0.025f, 1f) : new Vector3(14f, 14f, 1f);
+        // --- スプライト読み込み ---
+        string spritePath = "Assets/Resources/Sprites/Game002_MirrorMaze/";
+        var boardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "board_background.png");
+        var cellEmptySprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "cell_empty.png");
+        var mirrorSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "mirror.png");
+        var mirrorSlotSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "mirror_slot.png");
+        var wallSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "wall.png");
+        var laserSourceSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "laser_source.png");
+        var goalSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "goal.png");
+        var laserBeamSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath + "laser_beam.png");
 
-        // GameManager
-        var gmObj = new GameObject("GameManager");
-        var gm = gmObj.AddComponent<MirrorMazeGameManager>();
+        // --- 盤面背景 ---
+        var boardBgObj = new GameObject("BoardBackground");
+        var boardBgSr = boardBgObj.AddComponent<SpriteRenderer>();
+        boardBgSr.sprite = boardBgSprite != null ? boardBgSprite : whiteSprite;
+        boardBgSr.color = boardBgSprite != null ? Color.white : new Color(0.08f, 0.10f, 0.16f, 1f);
+        boardBgObj.transform.localScale = new Vector3(3.0f, 3.0f, 1f);
+        boardBgSr.sortingOrder = -10;
 
-        // StageManager
-        var smObj = new GameObject("StageManager");
-        smObj.transform.SetParent(gmObj.transform);
-        var sm = smObj.AddComponent<StageManager>();
+        // --- プレハブ生成 ---
+        string prefabDir = "Assets/Scripts/Game002_MirrorMaze/";
 
-        // GridManager
-        var gridObj = new GameObject("GridManager");
-        gridObj.transform.SetParent(gmObj.transform);
-        var grid = gridObj.AddComponent<GridManager>();
+        var mirrorObjInScene = CreateSpritePrefab(prefabDir + "MirrorPrefab.prefab", mirrorSprite, whiteSprite, 10, true);
+        mirrorObjInScene.AddComponent<MirrorController>();
+        var mirrorPrefab = PrefabUtility.SaveAsPrefabAsset(mirrorObjInScene, prefabDir + "MirrorPrefab.prefab");
+        Object.DestroyImmediate(mirrorObjInScene);
 
-        // Canvas
+        var wallPrefab = CreateSimplePrefab(prefabDir + "WallPrefab.prefab", "WallPrefab", wallSprite, whiteSprite, 5);
+        var laserSourcePrefab = CreateSimplePrefab(prefabDir + "LaserSourcePrefab.prefab", "LaserSourcePrefab", laserSourceSprite, whiteSprite, 8);
+        var goalPrefab = CreateSimplePrefab(prefabDir + "GoalPrefab.prefab", "GoalPrefab", goalSprite, whiteSprite, 8);
+        var emptyCellPrefab = CreateSimplePrefab(prefabDir + "EmptyCellPrefab.prefab", "EmptyCellPrefab", cellEmptySprite, whiteSprite, -5);
+        var mirrorSlotPrefab = CreateSimplePrefab(prefabDir + "MirrorSlotPrefab.prefab", "MirrorSlotPrefab", mirrorSlotSprite, whiteSprite, -3);
+
+        // LaserBeam プレハブ
+        var laserBeamObj = new GameObject("LaserBeamPrefab");
+        var lbSr = laserBeamObj.AddComponent<SpriteRenderer>();
+        lbSr.sprite = laserBeamSprite != null ? laserBeamSprite : whiteSprite;
+        lbSr.color = laserBeamSprite != null ? Color.white : new Color(1f, 0.15f, 0.15f, 0.9f);
+        lbSr.sortingOrder = 15;
+        var laserBeamPrefab = PrefabUtility.SaveAsPrefabAsset(laserBeamObj, prefabDir + "LaserBeamPrefab.prefab");
+        Object.DestroyImmediate(laserBeamObj);
+
+        // --- GameManager + MazeManager ---
+        var gameManagerObj = new GameObject("GameManager");
+        var gameManager = gameManagerObj.AddComponent<MirrorMazeGameManager>();
+
+        var boardObj = new GameObject("MazeBoard");
+        boardObj.transform.SetParent(gameManagerObj.transform);
+        var mazeManager = boardObj.AddComponent<MazeManager>();
+
+        var mazeSO = new SerializedObject(mazeManager);
+        mazeSO.FindProperty("_gridWidth").intValue = 7;
+        mazeSO.FindProperty("_gridHeight").intValue = 7;
+        mazeSO.FindProperty("_cellSize").floatValue = 1.0f;
+        mazeSO.FindProperty("_mirrorPrefab").objectReferenceValue = mirrorPrefab;
+        mazeSO.FindProperty("_wallPrefab").objectReferenceValue = wallPrefab;
+        mazeSO.FindProperty("_laserSourcePrefab").objectReferenceValue = laserSourcePrefab;
+        mazeSO.FindProperty("_goalPrefab").objectReferenceValue = goalPrefab;
+        mazeSO.FindProperty("_laserBeamPrefab").objectReferenceValue = laserBeamPrefab;
+        mazeSO.FindProperty("_emptyCellPrefab").objectReferenceValue = emptyCellPrefab;
+        mazeSO.FindProperty("_mirrorSlotPrefab").objectReferenceValue = mirrorSlotPrefab;
+        mazeSO.ApplyModifiedProperties();
+
+        // --- Canvas (UI) ---
         var canvasObj = new GameObject("Canvas");
         var canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         var scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080, 1920);
+        scaler.referenceResolution = new Vector2(1920, 1080);
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        // HUD - ステージ（上部中央）
-        var stageText = CT(canvasObj.transform, "StageText", "Stage 1 / 5", 32, jpFont,
+        // 手数テキスト（左上）
+        var moveTextObj = CreateText(canvasObj.transform, "MoveCountText", "手数: 0", 32, jpFont,
+            new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(250, 50), new Vector2(20, -20));
+
+        // ステージテキスト（中央上）
+        var stageTextObj = CreateText(canvasObj.transform, "StageText", "ステージ 1", 32, jpFont,
             new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1),
-            new Vector2(300, 40), new Vector2(0, -15));
-        stageText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+            new Vector2(300, 50), new Vector2(0, -20));
+        stageTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
-        // スコア（上部右）
-        var scoreText = CT(canvasObj.transform, "ScoreText", "Score: 0", 28, jpFont,
+        // メニューへ戻るボタン（右上）
+        var menuBtnObj = CreateButton(canvasObj.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
             new Vector2(1, 1), new Vector2(1, 1), new Vector2(1, 1),
-            new Vector2(250, 40), new Vector2(-15, -55));
-        scoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Right;
-        scoreText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.9f, 0.5f);
+            new Vector2(240, 50), new Vector2(-20, -20),
+            new Color(0.3f, 0.3f, 0.4f, 0.9f));
 
-        // 発射ボタン（下部中央）
-        var fireBtn = CB(canvasObj.transform, "FireButton", "発射", 32, jpFont,
-            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
-            new Vector2(200, 60), new Vector2(0, 100), new Color(0.8f, 0.15f, 0.1f));
+        // クリアパネル（中央）
+        var clearPanelObj = new GameObject("ClearPanel", typeof(RectTransform));
+        clearPanelObj.transform.SetParent(canvasObj.transform, false);
+        var clearBg = clearPanelObj.AddComponent<Image>();
+        clearBg.color = new Color(0f, 0f, 0f, 0.8f);
+        var clearRect = clearPanelObj.GetComponent<RectTransform>();
+        clearRect.anchorMin = new Vector2(0.2f, 0.2f);
+        clearRect.anchorMax = new Vector2(0.8f, 0.8f);
+        clearRect.offsetMin = Vector2.zero;
+        clearRect.offsetMax = Vector2.zero;
 
-        // リセットボタン（下部左）
-        var resetBtn = CB(canvasObj.transform, "ResetButton", "リセット", 26, jpFont,
-            new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0),
-            new Vector2(180, 55), new Vector2(20, 100), new Color(0.3f, 0.35f, 0.5f, 0.9f));
-
-        // メニューボタン（下部左下）
-        var menuBtn = CB(canvasObj.transform, "MenuButton", "メニューへ戻る", 24, jpFont,
-            new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0),
-            new Vector2(240, 50), new Vector2(20, 20), new Color(0.3f, 0.3f, 0.4f, 0.9f));
-
-        // ステージクリアパネル
-        var scPanel = CreatePanel(canvasObj.transform, "StageClearPanel", new Color(0.05f, 0.1f, 0.2f, 0.95f));
-        var scText = CT(scPanel.transform, "SCText", "", 36, jpFont,
+        var clearTextObj = CreateText(clearPanelObj.transform, "ClearText", "クリア!", 48, jpFont,
             new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.5f),
-            new Vector2(500, 60), Vector2.zero);
-        scText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        var scScoreText = CT(scPanel.transform, "SCScore", "", 28, jpFont,
-            new Vector2(0.5f, 0.45f), new Vector2(0.5f, 0.45f), new Vector2(0.5f, 0.5f),
-            new Vector2(300, 40), Vector2.zero);
-        scScoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        scScoreText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.9f, 0.5f);
-        var nextBtn = CB(scPanel.transform, "NextStageButton", "次のステージへ", 30, jpFont,
-            new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.5f),
-            new Vector2(260, 60), Vector2.zero, new Color(0.1f, 0.4f, 0.7f));
-        scPanel.SetActive(false);
+            new Vector2(400, 150), Vector2.zero);
+        clearTextObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
-        // クリアパネル
-        var clearPanel = CreatePanel(canvasObj.transform, "ClearPanel", new Color(0.05f, 0.12f, 0.18f, 0.95f));
-        var clearText = CT(clearPanel.transform, "ClearText", "全ステージクリア！", 38, jpFont,
-            new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.5f),
-            new Vector2(500, 60), Vector2.zero);
-        clearText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        clearText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.9f, 0.3f);
-        var finalScoreText = CT(clearPanel.transform, "FinalScore", "", 30, jpFont,
-            new Vector2(0.5f, 0.45f), new Vector2(0.5f, 0.45f), new Vector2(0.5f, 0.5f),
-            new Vector2(400, 50), Vector2.zero);
-        finalScoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        var clearMenuBtn = CB(clearPanel.transform, "ClearMenuButton", "メニューへ戻る", 28, jpFont,
+        var restartBtnObj = CreateButton(clearPanelObj.transform, "RestartButton", "もう一度", 28, jpFont,
+            new Vector2(0.2f, 0.15f), new Vector2(0.2f, 0.15f), new Vector2(0.5f, 0.5f),
+            new Vector2(200, 60), Vector2.zero,
+            new Color(0.1f, 0.5f, 0.3f, 1f));
+
+        var nextStageBtnObj = CreateButton(clearPanelObj.transform, "NextStageButton", "次のステージ", 28, jpFont,
             new Vector2(0.5f, 0.15f), new Vector2(0.5f, 0.15f), new Vector2(0.5f, 0.5f),
-            new Vector2(260, 60), Vector2.zero, new Color(0.2f, 0.4f, 0.3f));
-        clearPanel.SetActive(false);
+            new Vector2(220, 60), Vector2.zero,
+            new Color(0.2f, 0.4f, 0.7f, 1f));
 
-        // ゲームオーバーパネル
-        var goPanel = CreatePanel(canvasObj.transform, "GameOverPanel", new Color(0.2f, 0.05f, 0.05f, 0.95f));
-        var goText = CT(goPanel.transform, "GOText", "レーザーがゴールに届きませんでした", 28, jpFont,
-            new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.5f),
-            new Vector2(500, 80), Vector2.zero);
-        goText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        var retryBtn = CB(goPanel.transform, "RetryButton", "リトライ", 30, jpFont,
-            new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.2f), new Vector2(0.5f, 0.5f),
-            new Vector2(220, 60), Vector2.zero, new Color(0.5f, 0.15f, 0.1f));
-        goPanel.SetActive(false);
+        var clearMenuBtnObj = CreateButton(clearPanelObj.transform, "ClearMenuButton", "メニューへ", 28, jpFont,
+            new Vector2(0.8f, 0.15f), new Vector2(0.8f, 0.15f), new Vector2(0.5f, 0.5f),
+            new Vector2(200, 60), Vector2.zero,
+            new Color(0.3f, 0.3f, 0.5f, 1f));
 
-        // InstructionPanel
-        var ipPanel = CreatePanel(canvasObj.transform, "InstructionPanel", new Color(0.02f, 0.05f, 0.15f, 0.97f));
-        var ipRect = ipPanel.GetComponent<RectTransform>();
-        ipRect.anchorMin = Vector2.zero; ipRect.anchorMax = Vector2.one;
-        ipRect.offsetMin = ipRect.offsetMax = Vector2.zero;
+        clearPanelObj.SetActive(false);
 
-        var ipTitle = CT(ipPanel.transform, "IPTitle", "", 42, jpFont,
-            new Vector2(0.5f, 0.8f), new Vector2(0.5f, 0.8f), new Vector2(0.5f, 0.5f),
-            new Vector2(600, 60), Vector2.zero);
-        ipTitle.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        ipTitle.GetComponent<TextMeshProUGUI>().color = new Color(0.3f, 0.8f, 1f);
-
-        var ipDesc = CT(ipPanel.transform, "IPDesc", "", 28, jpFont,
-            new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.65f), new Vector2(0.5f, 0.5f),
-            new Vector2(600, 50), Vector2.zero);
-        ipDesc.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-
-        var ipControls = CT(ipPanel.transform, "IPControls", "", 24, jpFont,
-            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(600, 60), Vector2.zero);
-        ipControls.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        ipControls.GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 0.9f, 1f);
-
-        var ipGoal = CT(ipPanel.transform, "IPGoal", "", 24, jpFont,
-            new Vector2(0.5f, 0.38f), new Vector2(0.5f, 0.38f), new Vector2(0.5f, 0.5f),
-            new Vector2(600, 60), Vector2.zero);
-        ipGoal.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        ipGoal.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.9f, 0.6f);
-
-        var ipStartBtn = CB(ipPanel.transform, "StartButton", "はじめる", 34, jpFont,
-            new Vector2(0.5f, 0.18f), new Vector2(0.5f, 0.18f), new Vector2(0.5f, 0.5f),
-            new Vector2(260, 70), Vector2.zero, new Color(0.1f, 0.5f, 0.8f));
-
-        // ？ボタン（右下、再表示用）
-        var helpBtn = CB(canvasObj.transform, "HelpButton", "?", 28, jpFont,
-            new Vector2(1, 0), new Vector2(1, 0), new Vector2(1, 0),
-            new Vector2(55, 55), new Vector2(-20, 20), new Color(0.3f, 0.3f, 0.5f, 0.8f));
-
-        // InstructionPanel コンポーネント
-        var ipObj = new GameObject("InstructionPanelController");
-        ipObj.transform.SetParent(gmObj.transform);
-        var ip = ipObj.AddComponent<InstructionPanel>();
-        var ipSO = new SerializedObject(ip);
-        ipSO.FindProperty("_panelRoot").objectReferenceValue = ipPanel;
-        ipSO.FindProperty("_titleText").objectReferenceValue = ipTitle.GetComponent<TextMeshProUGUI>();
-        ipSO.FindProperty("_descriptionText").objectReferenceValue = ipDesc.GetComponent<TextMeshProUGUI>();
-        ipSO.FindProperty("_controlsText").objectReferenceValue = ipControls.GetComponent<TextMeshProUGUI>();
-        ipSO.FindProperty("_goalText").objectReferenceValue = ipGoal.GetComponent<TextMeshProUGUI>();
-        ipSO.FindProperty("_startButton").objectReferenceValue = ipStartBtn.GetComponent<Button>();
-        ipSO.FindProperty("_helpButton").objectReferenceValue = helpBtn.GetComponent<Button>();
-        ipSO.ApplyModifiedProperties();
-
-        // MirrorMazeUI
+        // --- MirrorMazeUI ---
         var uiObj = new GameObject("MirrorMazeUI");
-        uiObj.transform.SetParent(gmObj.transform);
-        var ui = uiObj.AddComponent<MirrorMazeUI>();
-        var uiSO = new SerializedObject(ui);
-        uiSO.FindProperty("_gameManager").objectReferenceValue = gm;
-        uiSO.FindProperty("_stageText").objectReferenceValue = stageText.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_scoreText").objectReferenceValue = scoreText.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_fireButton").objectReferenceValue = fireBtn.GetComponent<Button>();
-        uiSO.FindProperty("_resetButton").objectReferenceValue = resetBtn.GetComponent<Button>();
-        uiSO.FindProperty("_menuButton").objectReferenceValue = menuBtn.GetComponent<Button>();
-        uiSO.FindProperty("_stageClearPanel").objectReferenceValue = scPanel;
-        uiSO.FindProperty("_stageClearText").objectReferenceValue = scText.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_stageScoreText").objectReferenceValue = scScoreText.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_nextStageButton").objectReferenceValue = nextBtn.GetComponent<Button>();
-        uiSO.FindProperty("_clearPanel").objectReferenceValue = clearPanel;
-        uiSO.FindProperty("_finalScoreText").objectReferenceValue = finalScoreText.GetComponent<TextMeshProUGUI>();
-        uiSO.FindProperty("_clearMenuButton").objectReferenceValue = clearMenuBtn.GetComponent<Button>();
-        uiSO.FindProperty("_gameOverPanel").objectReferenceValue = goPanel;
-        uiSO.FindProperty("_retryButton").objectReferenceValue = retryBtn.GetComponent<Button>();
+        var mirrorMazeUI = uiObj.AddComponent<MirrorMazeUI>();
+
+        var uiSO = new SerializedObject(mirrorMazeUI);
+        uiSO.FindProperty("_moveCountText").objectReferenceValue = moveTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_stageText").objectReferenceValue = stageTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_clearPanel").objectReferenceValue = clearPanelObj;
+        uiSO.FindProperty("_clearText").objectReferenceValue = clearTextObj.GetComponent<TextMeshProUGUI>();
+        uiSO.FindProperty("_restartButton").objectReferenceValue = restartBtnObj.GetComponent<Button>();
+        uiSO.FindProperty("_nextStageButton").objectReferenceValue = nextStageBtnObj.GetComponent<Button>();
+        uiSO.FindProperty("_gameManager").objectReferenceValue = gameManager;
         uiSO.ApplyModifiedProperties();
 
-        // GridManager 配線
-        var gridSO = new SerializedObject(grid);
-        gridSO.FindProperty("_gameManager").objectReferenceValue = gm;
-        gridSO.ApplyModifiedProperties();
+        // メニューへ戻るボタン（右上）に BackToMenuButton を追加
+        menuBtnObj.AddComponent<BackToMenuButton>();
 
-        // GameManager 配線
-        var gmSO = new SerializedObject(gm);
-        gmSO.FindProperty("_stageManager").objectReferenceValue = sm;
-        gmSO.FindProperty("_instructionPanel").objectReferenceValue = ip;
-        gmSO.FindProperty("_gridManager").objectReferenceValue = grid;
-        gmSO.FindProperty("_ui").objectReferenceValue = ui;
+        // --- GameManager の参照設定 ---
+        var gmSO = new SerializedObject(gameManager);
+        gmSO.FindProperty("_mazeManager").objectReferenceValue = mazeManager;
+        gmSO.FindProperty("_ui").objectReferenceValue = mirrorMazeUI;
         gmSO.ApplyModifiedProperties();
 
-        // ボタンイベント
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(fireBtn.GetComponent<Button>().onClick, grid.FireLaser);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(resetBtn.GetComponent<Button>().onClick, gm.RestartStage);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(nextBtn.GetComponent<Button>().onClick, gm.OnNextStageButtonPressed);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(retryBtn.GetComponent<Button>().onClick, gm.RestartStage);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(menuBtn.GetComponent<Button>().onClick, gm.ReturnToMenu);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(clearMenuBtn.GetComponent<Button>().onClick, gm.ReturnToMenu);
-
-        // EventSystem
+        // --- EventSystem ---
         if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
         {
-            var eo = new GameObject("EventSystem");
-            eo.AddComponent<UnityEngine.EventSystems.EventSystem>();
-            eo.AddComponent<InputSystemUIInputModule>();
+            var eventObj = new GameObject("EventSystem");
+            eventObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventObj.AddComponent<InputSystemUIInputModule>();
         }
 
+        // シーン保存
         string scenePath = "Assets/Scenes/002_MirrorMaze.unity";
         EditorSceneManager.SaveScene(scene, scenePath);
         AddSceneToBuildSettings(scenePath);
-        Debug.Log("[Setup002] MirrorMaze シーンを作成しました: " + scenePath);
+
+        Debug.Log("[Setup002_MirrorMaze] MirrorMaze シーンを作成しました: " + scenePath);
     }
 
-    private static Sprite LoadSprite(string path)
+    private static GameObject CreateSpritePrefab(string path, Sprite sprite, Sprite fallback, int sortOrder, bool addCollider)
     {
-        if (!File.Exists(path)) return null;
-        AssetDatabase.ImportAsset(path);
-        var imp = AssetImporter.GetAtPath(path) as TextureImporter;
-        if (imp != null && imp.textureType != TextureImporterType.Sprite)
+        string name = System.IO.Path.GetFileNameWithoutExtension(path);
+        var obj = new GameObject(name);
+        var sr = obj.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite != null ? sprite : fallback;
+        sr.color = Color.white;
+        sr.sortingOrder = sortOrder;
+        if (addCollider)
         {
-            imp.textureType = TextureImporterType.Sprite;
-            imp.spritePixelsPerUnit = 100;
-            imp.SaveAndReimport();
+            var col = obj.AddComponent<BoxCollider2D>();
+            col.size = new Vector2(0.9f, 0.9f);
         }
-        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
-    }
-
-    private static GameObject CreatePanel(Transform parent, string name, Color color)
-    {
-        var obj = new GameObject(name, typeof(RectTransform));
-        obj.transform.SetParent(parent, false);
-        obj.AddComponent<Image>().color = color;
-        var r = obj.GetComponent<RectTransform>();
-        r.anchorMin = new Vector2(0.05f, 0.25f);
-        r.anchorMax = new Vector2(0.95f, 0.75f);
-        r.offsetMin = r.offsetMax = Vector2.zero;
         return obj;
     }
 
-    private static GameObject CT(Transform p, string n, string t, float fs, TMP_FontAsset f,
-        Vector2 amin, Vector2 amax, Vector2 piv, Vector2 sd, Vector2 ap)
+    private static GameObject CreateSimplePrefab(string path, string name, Sprite sprite, Sprite fallback, int sortOrder)
     {
-        var o = new GameObject(n, typeof(RectTransform));
-        o.transform.SetParent(p, false);
-        var tmp = o.AddComponent<TextMeshProUGUI>();
-        tmp.text = t; tmp.fontSize = fs; tmp.color = Color.white;
-        if (f != null) tmp.font = f;
-        var r = o.GetComponent<RectTransform>();
-        r.anchorMin = amin; r.anchorMax = amax; r.pivot = piv; r.sizeDelta = sd; r.anchoredPosition = ap;
-        return o;
+        var obj = new GameObject(name);
+        var sr = obj.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite != null ? sprite : fallback;
+        sr.color = Color.white;
+        sr.sortingOrder = sortOrder;
+        var prefab = PrefabUtility.SaveAsPrefabAsset(obj, path);
+        Object.DestroyImmediate(obj);
+        return prefab;
     }
 
-    private static GameObject CB(Transform p, string n, string l, float fs, TMP_FontAsset f,
-        Vector2 amin, Vector2 amax, Vector2 piv, Vector2 sd, Vector2 ap, Color bg)
+    private static GameObject CreateText(Transform parent, string name, string text, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
+        Vector2 sizeDelta, Vector2 anchoredPos)
     {
-        var o = new GameObject(n, typeof(RectTransform));
-        o.transform.SetParent(p, false);
-        o.AddComponent<Image>().color = bg;
-        o.AddComponent<Button>();
-        var r = o.GetComponent<RectTransform>();
-        r.anchorMin = amin; r.anchorMax = amax; r.pivot = piv; r.sizeDelta = sd; r.anchoredPosition = ap;
-        var t = new GameObject("Text", typeof(RectTransform));
-        t.transform.SetParent(o.transform, false);
-        var tmp = t.AddComponent<TextMeshProUGUI>();
-        tmp.text = l; tmp.fontSize = fs; tmp.color = Color.white;
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+
+        var tmp = obj.AddComponent<TextMeshProUGUI>();
+        tmp.text = text;
+        tmp.fontSize = fontSize;
+        tmp.color = Color.white;
+        if (font != null) tmp.font = font;
+
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.pivot = pivot;
+        rect.sizeDelta = sizeDelta;
+        rect.anchoredPosition = anchoredPos;
+
+        return obj;
+    }
+
+    private static GameObject CreateButton(Transform parent, string name, string label, float fontSize,
+        TMP_FontAsset font, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot,
+        Vector2 sizeDelta, Vector2 anchoredPos, Color bgColor)
+    {
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+
+        var image = obj.AddComponent<Image>();
+        image.color = bgColor;
+        obj.AddComponent<Button>();
+
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.pivot = pivot;
+        rect.sizeDelta = sizeDelta;
+        rect.anchoredPosition = anchoredPos;
+
+        var textObj = new GameObject("Text", typeof(RectTransform));
+        textObj.transform.SetParent(obj.transform, false);
+        var tmp = textObj.AddComponent<TextMeshProUGUI>();
+        tmp.text = label;
+        tmp.fontSize = fontSize;
+        tmp.color = Color.white;
         tmp.alignment = TextAlignmentOptions.Center;
-        if (f != null) tmp.font = f;
-        var tr = t.GetComponent<RectTransform>();
-        tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
-        tr.offsetMin = tr.offsetMax = Vector2.zero;
-        return o;
+        if (font != null) tmp.font = font;
+
+        var textRect = textObj.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+
+        return obj;
     }
 
     private static void AddSceneToBuildSettings(string scenePath)
     {
         var scenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-        foreach (var s in scenes) if (s.path == scenePath) return;
+        foreach (var s in scenes)
+        {
+            if (s.path == scenePath) return;
+        }
         scenes.Add(new EditorBuildSettingsScene(scenePath, true));
         EditorBuildSettings.scenes = scenes.ToArray();
     }

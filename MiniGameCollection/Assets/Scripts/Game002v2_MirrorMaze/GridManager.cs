@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Game002_MirrorMaze
+namespace Game002v2_MirrorMaze
 {
     public enum CellType { Empty, Wall, Emitter, Goal, Prism, MovingWall, Mirror }
     public enum Direction { Right, Up, Left, Down }
@@ -160,8 +160,25 @@ namespace Game002_MirrorMaze
             _grid = new CellType[_gridSize, _gridSize];
             _cellObjects = new GameObject[_gridSize, _gridSize];
 
+            // カメラサイズに基づいてレイアウトを動的計算
+            // 上部: HUD(ステージ・スコア) 約1.0u
+            // 中央: グリッド
+            // 下部: ミラースロット + UIボタン用に2.5u確保
+            float camSize = Camera.main != null ? Camera.main.orthographicSize : 6f;
+            float topMargin = 1.2f;   // HUD用
+            float bottomMargin = 2.8f; // スロット+ボタン用
+            float availableHeight = (camSize * 2f) - topMargin - bottomMargin;
+            float availableWidth = (camSize * Camera.main.aspect * 2f) - 0.5f;
+
+            // グリッドサイズに合わせてセルサイズを動的調整
+            float maxCellByHeight = availableHeight / _gridSize;
+            float maxCellByWidth = availableWidth / _gridSize;
+            _cellSize = Mathf.Min(maxCellByHeight, maxCellByWidth, 0.8f);
+
             float totalWidth = _gridSize * _cellSize;
-            _gridOrigin = new Vector2(-totalWidth / 2f, -totalWidth / 2f - 0.5f);
+            float totalHeight = _gridSize * _cellSize;
+            float gridCenterY = camSize - topMargin - totalHeight / 2f;
+            _gridOrigin = new Vector2(-totalWidth / 2f, gridCenterY - totalHeight / 2f);
 
             // Grid cells
             for (int x = 0; x < _gridSize; x++)
@@ -243,8 +260,10 @@ namespace Game002_MirrorMaze
             _mirrorSlots.Clear();
             _mirrors.Clear();
 
-            float slotStartX = _gridOrigin.x;
-            float slotY = _gridOrigin.y - _cellSize * 1.5f;
+            // ミラースロットをグリッド下端とボタンの間に中央配置
+            float slotsWidth = _totalMirrors * _cellSize * 1.3f - _cellSize * 0.3f;
+            float slotStartX = -slotsWidth / 2f;
+            float slotY = _gridOrigin.y - _cellSize * 1.2f;
 
             for (int i = 0; i < _totalMirrors; i++)
             {
@@ -381,8 +400,10 @@ namespace Game002_MirrorMaze
         private void ReturnMirrorToSlot(int index)
         {
             var m = _mirrors[index];
-            float slotX = _gridOrigin.x + index * _cellSize * 1.3f;
-            float slotY = _gridOrigin.y - _cellSize * 1.5f;
+            float slotsWidth = _totalMirrors * _cellSize * 1.3f - _cellSize * 0.3f;
+            float slotStartX = -slotsWidth / 2f;
+            float slotX = slotStartX + index * _cellSize * 1.3f;
+            float slotY = _gridOrigin.y - _cellSize * 1.2f;
             m.obj.transform.position = new Vector3(slotX, slotY, 0);
             m.obj.GetComponent<SpriteRenderer>().sortingOrder = 5;
             m.obj.transform.rotation = Quaternion.identity;
