@@ -101,37 +101,39 @@ public static class Setup003v2_GravitySwitch
             new Vector2(200, 40), new Vector2(15, -55));
         moveText.GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 1f, 0.9f);
 
-        // 方向ボタン（十字配置、下部エリア）
-        var upBtn = CB(canvasObj.transform, "UpButton", "↑", 36, jpFont,
-            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
-            new Vector2(110, 90), new Vector2(0, 270),
+        // 方向ボタン（十字配置）
+        // 中心Y=230, ボタン間隔120px, サイズ110x110
+        // Up: center+(0,120), Down: center+(0,0), Left: center+(-120,60), Right: center+(120,60)
+        var upBtn = CB(canvasObj.transform, "UpButton", "↑", 40, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(120, 120), new Vector2(0, 360),
             new Color(0.15f, 0.45f, 0.75f));
 
-        var downBtn = CB(canvasObj.transform, "DownButton", "↓", 36, jpFont,
-            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
-            new Vector2(110, 90), new Vector2(0, 75),
+        var downBtn = CB(canvasObj.transform, "DownButton", "↓", 40, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(120, 120), new Vector2(0, 120),
             new Color(0.15f, 0.45f, 0.75f));
 
-        var leftBtn = CB(canvasObj.transform, "LeftButton", "←", 36, jpFont,
-            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
-            new Vector2(110, 90), new Vector2(-130, 170),
+        var leftBtn = CB(canvasObj.transform, "LeftButton", "←", 40, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(120, 120), new Vector2(-150, 240),
             new Color(0.15f, 0.45f, 0.75f));
 
-        var rightBtn = CB(canvasObj.transform, "RightButton", "→", 36, jpFont,
-            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
-            new Vector2(110, 90), new Vector2(130, 170),
+        var rightBtn = CB(canvasObj.transform, "RightButton", "→", 40, jpFont,
+            new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0.5f),
+            new Vector2(120, 120), new Vector2(150, 240),
             new Color(0.15f, 0.45f, 0.75f));
 
         // リセットボタン（左下）
-        var resetBtn = CB(canvasObj.transform, "ResetButton", "リセット", 22, jpFont,
+        var resetBtn = CB(canvasObj.transform, "ResetButton", "リセット", 24, jpFont,
             new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0),
-            new Vector2(160, 55), new Vector2(20, 15),
+            new Vector2(180, 70), new Vector2(20, 20),
             new Color(0.3f, 0.3f, 0.5f, 0.9f));
 
         // メニューボタン（右下）
-        var menuBtn2 = CB(canvasObj.transform, "MenuButton2", "メニュー", 22, jpFont,
+        var menuBtn2 = CB(canvasObj.transform, "MenuButton2", "メニュー", 24, jpFont,
             new Vector2(1, 0), new Vector2(1, 0), new Vector2(1, 0),
-            new Vector2(160, 55), new Vector2(-20, 15),
+            new Vector2(180, 70), new Vector2(-20, 20),
             new Color(0.3f, 0.3f, 0.4f, 0.9f));
 
         // ステージクリアパネル
