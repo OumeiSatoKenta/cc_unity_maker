@@ -74,13 +74,13 @@ public class TopMenuManager : MonoBehaviour
             image.color = new Color(0.15f, 0.15f, 0.25f, 0.9f);
 
             var rect = tabObj.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(200, 50);
+            rect.sizeDelta = new Vector2(0, 44);
 
             var textObj = new GameObject("Text", typeof(RectTransform));
             textObj.transform.SetParent(tabObj.transform, false);
             var text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = label;
-            text.fontSize = 28;
+            text.fontSize = 26;
             text.alignment = TextAlignmentOptions.Center;
             text.color = Color.white;
             if (_japaneseFont != null) text.font = _japaneseFont;
@@ -137,14 +137,14 @@ public class TopMenuManager : MonoBehaviour
 
             // ボタンサイズ
             var rect = tabObj.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(160, 50);
+            rect.sizeDelta = new Vector2(140, 44);
 
             // ラベル
             var textObj = new GameObject("Text", typeof(RectTransform));
             textObj.transform.SetParent(tabObj.transform, false);
             var text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = label;
-            text.fontSize = 26;
+            text.fontSize = 22;
             text.alignment = TextAlignmentOptions.Center;
             text.color = Color.white;
             if (_japaneseFont != null) text.font = _japaneseFont;
@@ -200,6 +200,7 @@ public class TopMenuManager : MonoBehaviour
             games = GameRegistry.Instance.GetGamesByCategoryAndCollection(category, collection);
         }
 
+        Debug.Log($"[TopMenuManager] collection={collection} category={category} → {games.Count} 件");
         foreach (var game in games)
         {
             CreateCard(game);
