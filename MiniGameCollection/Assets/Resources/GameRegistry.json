@@ -1039,6 +1039,986 @@
       "description": "重力方向を4方向に切り替えてボールをゴールへ導く（v2: 5ステージ・チュートリアル対応）",
       "implemented": true,
       "collection": "remake"
+    },
+    {
+      "id": "004",
+      "title": "WordCrystal",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "004v2_WordCrystal",
+      "description": "クリスタルを砕くと文字が出て英単語を作る",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "005",
+      "title": "PipeConnect",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "005v2_PipeConnect",
+      "description": "水道管パーツを回転させて水源から出口まで繋げる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "006",
+      "title": "ShadowMatch",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "006v2_ShadowMatch",
+      "description": "3Dオブジェクトの影が指定のシルエットと一致するよう回転させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "007",
+      "title": "NumberFlow",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "007v2_NumberFlow",
+      "description": "数字を1から順に繋げて盤面を全マス埋める",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "008",
+      "title": "IcePath",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "008v2_IcePath",
+      "description": "氷の上を滑って一筆書きで全マスを通過する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "009",
+      "title": "ColorMix",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "009v2_ColorMix",
+      "description": "絵の具を混ぜて指定の色を正確に再現する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "010",
+      "title": "GearSync",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "010v2_GearSync",
+      "description": "歯車の向きを合わせて機械を起動させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "011",
+      "title": "FoldPaper",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "011v2_FoldPaper",
+      "description": "紙を折り畳んで指定の形を作る折り紙パズル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "012",
+      "title": "BridgeBuilder",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "012v2_BridgeBuilder",
+      "description": "橋のパーツを配置して車が安全に渡れる橋を作る",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "013",
+      "title": "SymmetryDraw",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "013v2_SymmetryDraw",
+      "description": "線を引くと左右対称にも描かれ、指定の絵を完成させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "014",
+      "title": "MagnetPath",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "014v2_MagnetPath",
+      "description": "磁石の極性（N/S）を切り替えて鉄球を誘導する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "015",
+      "title": "TileTurn",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "015v2_TileTurn",
+      "description": "タイルを回転させて全体の絵柄を完成させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "016",
+      "title": "LightSwitch",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "016v2_LightSwitch",
+      "description": "電球のオンオフパターンで暗号を解読する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "017",
+      "title": "CrystalSort",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "017v2_CrystalSort",
+      "description": "色のついたクリスタルを同色の瓶に正しく分類する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "018",
+      "title": "TimeRewind",
+      "category": "puzzle",
+      "size": "L",
+      "sceneName": "018v2_TimeRewind",
+      "description": "コマを動かした後に時間を巻き戻してゴールを達成する逆算パズル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "019",
+      "title": "PathCut",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "019v2_PathCut",
+      "description": "最小手数でロープをカットしてボールを星に当てて落とす",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "020",
+      "title": "EchoMaze",
+      "category": "puzzle",
+      "size": "L",
+      "sceneName": "020v2_EchoMaze",
+      "description": "音のエコーと反響だけを頼りに見えない迷路を進む",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "021",
+      "title": "BladeDash",
+      "category": "action",
+      "size": "S",
+      "sceneName": "021v2_BladeDash",
+      "description": "迫りくる刃を避けながらコインを集めるエンドレスラン",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "022",
+      "title": "GravityBall",
+      "category": "action",
+      "size": "S",
+      "sceneName": "022v2_GravityBall",
+      "description": "上下反転を繰り返しながら障害物をよける反射アクション",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "023",
+      "title": "ChainSlash",
+      "category": "action",
+      "size": "M",
+      "sceneName": "023v2_ChainSlash",
+      "description": "敵を鎖で繋いで一気に倒すコンボスラッシュ",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "024",
+      "title": "BubblePop",
+      "category": "action",
+      "size": "S",
+      "sceneName": "024v2_BubblePop",
+      "description": "迫ってくるバブルをタップで破裂させるアーケード",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "025",
+      "title": "TowerDefend",
+      "category": "action",
+      "size": "M",
+      "sceneName": "025v2_TowerDefend",
+      "description": "指でドラッグして壁を描き敵の進行を止めるタワーディフェンス",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "026",
+      "title": "SliceNinja",
+      "category": "action",
+      "size": "S",
+      "sceneName": "026v2_SliceNinja",
+      "description": "飛んでくる物体をスワイプで切り爆弾は避ける忍者ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "027",
+      "title": "DotDodge",
+      "category": "action",
+      "size": "S",
+      "sceneName": "027v2_DotDodge",
+      "description": "画面を埋め尽くす無数のドットを避け生き延びるサバイバル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "028",
+      "title": "RopeSwing",
+      "category": "action",
+      "size": "M",
+      "sceneName": "028v2_RopeSwing",
+      "description": "ロープを掴んで振り子運動でステージを渡り歩く",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "029",
+      "title": "MeteorShield",
+      "category": "action",
+      "size": "S",
+      "sceneName": "029v2_MeteorShield",
+      "description": "落下する隕石をシールドで弾いて星を守るディフェンス",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "030",
+      "title": "FingerRacer",
+      "category": "action",
+      "size": "M",
+      "sceneName": "030v2_FingerRacer",
+      "description": "指でなぞったコースを車が走るフィンガーレース",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "031",
+      "title": "BounceKing",
+      "category": "action",
+      "size": "S",
+      "sceneName": "031v2_BounceKing",
+      "description": "ボールをバウンドさせてブロックを全破壊するブレイクアウト",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "032",
+      "title": "SpinCutter",
+      "category": "action",
+      "size": "M",
+      "sceneName": "032v2_SpinCutter",
+      "description": "回転する刃の軌道をコントロールして敵を一掃する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "033",
+      "title": "AimSniper",
+      "category": "action",
+      "size": "S",
+      "sceneName": "033v2_AimSniper",
+      "description": "揺れるスコープでタイミングよくタップして動くターゲットを撃つ",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "034",
+      "title": "DropZone",
+      "category": "action",
+      "size": "S",
+      "sceneName": "034v2_DropZone",
+      "description": "落下するアイテムをドラッグして正しいゾーンに分類する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "035",
+      "title": "WaveRider",
+      "category": "action",
+      "size": "M",
+      "sceneName": "035v2_WaveRider",
+      "description": "波に乗ってサーフィンし岩を避けながらトリックでスコアを稼ぐ",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "036",
+      "title": "CoinStack",
+      "category": "action",
+      "size": "S",
+      "sceneName": "036v2_CoinStack",
+      "description": "落下するコインをタイミングよく積み上げ崩れないタワーを作る",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "037",
+      "title": "ZapChain",
+      "category": "action",
+      "size": "M",
+      "sceneName": "037v2_ZapChain",
+      "description": "敵に触れると電撃が連鎖して多数をまとめて倒す",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "038",
+      "title": "FlyBird",
+      "category": "action",
+      "size": "S",
+      "sceneName": "038v2_FlyBird",
+      "description": "ワンタップ操作で障害物の隙間をすり抜けて飛び続ける",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "039",
+      "title": "BoomerangHero",
+      "category": "action",
+      "size": "M",
+      "sceneName": "039v2_BoomerangHero",
+      "description": "ブーメランを投げ軌道を指でなぞり操作して敵を倒す",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "040",
+      "title": "DashDungeon",
+      "category": "action",
+      "size": "M",
+      "sceneName": "040v2_DashDungeon",
+      "description": "ワンタップでダッシュ方向を切り替えながらダンジョンを突破",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "041",
+      "title": "StackJump",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "041v2_StackJump",
+      "description": "タイミングよくタップしてプラットフォームを積み上げ高さを競う",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "042",
+      "title": "ColorDrop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "042v2_ColorDrop",
+      "description": "色付きの雨粒を同色のバケツにスワイプで振り分ける",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "043",
+      "title": "BallSort3D",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "043v2_BallSort3D",
+      "description": "3Dのカップで色のボールを同色ごとに整理する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "044",
+      "title": "TiltMaze",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "044v2_TiltMaze",
+      "description": "デバイスを傾けてボールを迷路の出口へ転がす",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "045",
+      "title": "FingerPaint",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "045v2_FingerPaint",
+      "description": "BGMのリズムに乗ってキャンバスに指で絵を描く",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "046",
+      "title": "SqueezePop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "046v2_SqueezePop",
+      "description": "絞ると色が出るチューブで画面全体を塗りつぶす",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "047",
+      "title": "SpinBalance",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "047v2_SpinBalance",
+      "description": "画面を回転させて端から落ちないようコマを保持し続ける",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "048",
+      "title": "GlassBall",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "048v2_GlassBall",
+      "description": "ガラスの傾斜面を滑るボールを目的地へ誘導する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "049",
+      "title": "CloudHop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "049v2_CloudHop",
+      "description": "消える雲を素早く踏み台にして空高く跳ね上がる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "050",
+      "title": "BubbleSort",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "050v2_BubbleSort",
+      "description": "浮かんでくる色バブルを色ごとに分けて並べる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "051",
+      "title": "DrawBridge",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "051v2_DrawBridge",
+      "description": "橋を指で描いてボールを転がしゴールへ届ける",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "052",
+      "title": "HammerNail",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "052v2_HammerNail",
+      "description": "リズムよくタップして釘を打ち込む爽快ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "053",
+      "title": "SlideBlitz",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "053v2_SlideBlitz",
+      "description": "スライドパズルをいかに速く解けるかのタイムアタック",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "054",
+      "title": "FruitSlash",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "054v2_FruitSlash",
+      "description": "飛んでくるフルーツをスワイプで切り爆弾は回避する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "055",
+      "title": "DustSweep",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "055v2_DustSweep",
+      "description": "画面の砂埃をスワイプで一掃する爽快クリーニングゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "056",
+      "title": "InflateFloat",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "056v2_InflateFloat",
+      "description": "風船を膨らませ障害物をかわしながら空を飛ぶ",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "057",
+      "title": "CandyDrop",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "057v2_CandyDrop",
+      "description": "落下するキャンディを積み上げる物理パズル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "058",
+      "title": "ThreadNeedle",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "058v2_ThreadNeedle",
+      "description": "揺れる針穴に糸を通すような精密タップゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "059",
+      "title": "WaterJug",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "059v2_WaterJug",
+      "description": "ジャグを傾けて指定量の水を正確に計る操作ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "060",
+      "title": "MeltIce",
+      "category": "casual",
+      "size": "S",
+      "sceneName": "060v2_MeltIce",
+      "description": "太陽光を鏡で反射させて的の氷を溶かすカジュアルゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "061",
+      "title": "CookieFactory",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "061v2_CookieFactory",
+      "description": "クッキーを焼いて工場を拡大するクリッカー",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "062",
+      "title": "MagicForest",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "062v2_MagicForest",
+      "description": "木をタップして育て森を広げる放置育成",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "063",
+      "title": "StarMiner",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "063v2_StarMiner",
+      "description": "星を採掘して宇宙船をアップグレードする放置ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "064",
+      "title": "AquaCity",
+      "category": "idle",
+      "size": "L",
+      "sceneName": "064v2_AquaCity",
+      "description": "水中都市を建設して魚を集める放置シム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "065",
+      "title": "SpellBrewery",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "065v2_SpellBrewery",
+      "description": "魔法の材料を自動収集してポーションを醸造する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "066",
+      "title": "RoboFactory",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "066v2_RoboFactory",
+      "description": "ロボットが自動で資源を集めて都市を建設する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "067",
+      "title": "TapDojo",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "067v2_TapDojo",
+      "description": "道場でひたすらタップ修行して武道家を最強へ育てる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "068",
+      "title": "CloudFarm",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "068v2_CloudFarm",
+      "description": "雲の上の農場で野菜を育てて市場に出荷する放置農業",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "069",
+      "title": "DungeonDigger",
+      "category": "idle",
+      "size": "M",
+      "sceneName": "069v2_DungeonDigger",
+      "description": "地下を掘り続けて宝を集めるドリルクリッカー",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "070",
+      "title": "NanoLab",
+      "category": "idle",
+      "size": "L",
+      "sceneName": "070v2_NanoLab",
+      "description": "ナノマシンを増殖させて科学技術を段階的に進化させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "071",
+      "title": "BeatTiles",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "071v2_BeatTiles",
+      "description": "落ちてくるタイルをリズムに合わせてタップするリズムゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "072",
+      "title": "DrumKit",
+      "category": "rhythm",
+      "size": "S",
+      "sceneName": "072v2_DrumKit",
+      "description": "画面上のドラムセットをタップして演奏する楽器ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "073",
+      "title": "MelodyMaze",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "073v2_MelodyMaze",
+      "description": "音符を繋げてメロディを完成させる音楽パズル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "074",
+      "title": "NoteRain",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "074v2_NoteRain",
+      "description": "降ってくる音符を正確にキャッチして演奏を完成させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "075",
+      "title": "SoundGarden",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "075v2_SoundGarden",
+      "description": "植物をタップして育てると音楽が生まれるインタラクティブアート",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "076",
+      "title": "ChordCatch",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "076v2_ChordCatch",
+      "description": "和音を聞き取り対応するボタンを素早くタップする",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "077",
+      "title": "BeatRunner",
+      "category": "rhythm",
+      "size": "M",
+      "sceneName": "077v2_BeatRunner",
+      "description": "BGMのビートに合わせてジャンプするリズムランゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "078",
+      "title": "EchoBack",
+      "category": "rhythm",
+      "size": "S",
+      "sceneName": "078v2_EchoBack",
+      "description": "再生された音楽パターンを正確に再現する音楽記憶ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "079",
+      "title": "SilentBeat",
+      "category": "rhythm",
+      "size": "S",
+      "sceneName": "079v2_SilentBeat",
+      "description": "無音の画面でリズムを感じ取り正確なタイミングでタップ",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "080",
+      "title": "FreqFight",
+      "category": "rhythm",
+      "size": "L",
+      "sceneName": "080v2_FreqFight",
+      "description": "周波数（音程）を合わせると敵にダメージを与える音楽バトル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "081",
+      "title": "PetBonsai",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "081v2_PetBonsai",
+      "description": "盆栽に水をやり枝を整えて美しい形に育てる和風育成",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "082",
+      "title": "AquaPet",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "082v2_AquaPet",
+      "description": "水槽の魚を育てて鑑賞する仮想アクアリウム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "083",
+      "title": "StarChef",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "083v2_StarChef",
+      "description": "星を使って宇宙レシピの料理を作るお料理育成ゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "084",
+      "title": "GardenZen",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "084v2_GardenZen",
+      "description": "禅の庭を自由にデザインし石と砂紋で癒やしの空間を作る",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "085",
+      "title": "MechPet",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "085v2_MechPet",
+      "description": "メカのパーツを組み合わせて独自のロボットペットを育てる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "086",
+      "title": "CityBonsai",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "086v2_CityBonsai",
+      "description": "盆栽の中に小さな都市を育てる箱庭シミュレーション",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "087",
+      "title": "DreamCatcher",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "087v2_DreamCatcher",
+      "description": "夢の破片を集めて自分だけの夢の世界を構築する",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "088",
+      "title": "AlchemyPet",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "088v2_AlchemyPet",
+      "description": "錬金術で素材を変換してユニークなペットを生み出す",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "089",
+      "title": "IslandHop",
+      "category": "simulation",
+      "size": "M",
+      "sceneName": "089v2_IslandHop",
+      "description": "孤島を次々と開拓してリゾートアイランドを完成させる",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "090",
+      "title": "StarshipCrew",
+      "category": "simulation",
+      "size": "L",
+      "sceneName": "090v2_StarshipCrew",
+      "description": "宇宙船クルーを育成して銀河探検ミッションをこなす",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "091",
+      "title": "TimeBlender",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "091v2_TimeBlender",
+      "description": "過去と未来を自由に切り替えて謎を解くタイムトラベルパズル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "092",
+      "title": "MirrorWorld",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "092v2_MirrorWorld",
+      "description": "画面上下が鏡像になっており逆向きに操作するギミックゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "093",
+      "title": "ColorPerception",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "093v2_ColorPerception",
+      "description": "色覚の違いをテーマにした視点切替パズル",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "094",
+      "title": "GravityPainter",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "094v2_GravityPainter",
+      "description": "重力方向を変えながら絵の具が流れて絵が完成するアート体験",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "095",
+      "title": "SilentWorld",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "095v2_SilentWorld",
+      "description": "音が存在しない世界で視覚だけを頼りに進む実験的アドベンチャー",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "096",
+      "title": "DualControl",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "096v2_DualControl",
+      "description": "2つのキャラを同時に別々に操作する二刀流アクション",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "097",
+      "title": "PixelEvolution",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "097v2_PixelEvolution",
+      "description": "ピクセルが世代を経るごとに進化して複雑な生命体になるシム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "098",
+      "title": "InfiniteLoop",
+      "category": "unique",
+      "size": "L",
+      "sceneName": "098v2_InfiniteLoop",
+      "description": "同じループを繰り返す世界に気づき脱出するメタゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "099",
+      "title": "TouchMemory",
+      "category": "unique",
+      "size": "S",
+      "sceneName": "099v2_TouchMemory",
+      "description": "タッチした順番を記憶して同じパターンを再現するメモリーゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "100",
+      "title": "DreamRun",
+      "category": "unique",
+      "size": "M",
+      "sceneName": "100v2_DreamRun",
+      "description": "シュールな夢の中を走り続けるナラティブランゲーム",
+      "implemented": false,
+      "collection": "remake"
+    },
+    {
+      "id": "101",
+      "title": "ChainReactor",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "101v2_ChainReactor",
+      "description": "1つの爆発が連鎖反応を起こすパズル。最小手数で全オーブを起爆せよ",
+      "implemented": false,
+      "collection": "remake"
     }
   ]
 }
