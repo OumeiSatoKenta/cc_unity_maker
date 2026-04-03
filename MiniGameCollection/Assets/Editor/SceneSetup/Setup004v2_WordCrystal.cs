@@ -365,6 +365,7 @@ public static class Setup004v2_WordCrystal
         sr.sortingOrder = 5;
         var col = obj.AddComponent<CircleCollider2D>();
         col.radius = 0.45f;
+        obj.AddComponent<CrystalObject>();
         var prefab = PrefabUtility.SaveAsPrefabAsset(obj, path);
         Object.DestroyImmediate(obj);
         return prefab;
