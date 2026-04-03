@@ -1,41 +1,33 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game003_GravitySwitch
 {
-    public enum CellType { Empty, Wall, Hole, Goal }
-
     public class GravityManager : MonoBehaviour
     {
-        public event System.Action<int, int> OnMovesChanged; // (movesUsed, moveLimit)
-
+        [SerializeField] private int _gridWidth = 7;
+        [SerializeField] private int _gridHeight = 7;
+        [SerializeField] private float _cellSize = 1.0f;
         [SerializeField] private GameObject _ballPrefab;
         [SerializeField] private GameObject _wallPrefab;
         [SerializeField] private GameObject _goalPrefab;
-        [SerializeField] private GameObject _holePrefab;
+        [SerializeField] private GameObject _floorPrefab;
 
         private CellType[,] _grid;
-        private int _gridSize;
-        private float _cellSize;
-        private Vector3 _gridOrigin;
-
         private BallController _ball;
-        private BallController _ball2;
-        private Vector2Int _ballStart;
-        private Vector2Int _ball2Start;
-        private Vector2Int _goalPos;
-        private Vector2Int _goal2Pos;
-
-        private bool _hasTwoBalls;
-        private bool _hasHole;
-        private int _moveLimit;
-        private int _minMoves;
-        private int _movesUsed;
-        private bool _isMoving;
-
         private readonly List<GameObject> _stageObjects = new List<GameObject>();
+
         private GravitySwitchGameManager _gameManager;
+        private Vector2Int _goalPos;
+
+        public static int StageCount => 3;
+
+        public enum CellType
+        {
+            Floor,
+            Wall,
+            Goal
+        }
 
         private void Awake()
         {
@@ -45,436 +37,200 @@ namespace Game003_GravitySwitch
         public void SetupStage(int stageIndex)
         {
             ClearStage();
-            var data = GetStageData(stageIndex);
-            _gridSize = data.gridSize;
-            _hasHole = data.hasHole;
-            _hasTwoBalls = data.hasTwoBalls;
-            _moveLimit = data.moveLimit;
-            _minMoves = data.minMoves;
-            _movesUsed = 0;
-            _ballStart = data.ballStart;
-            _ball2Start = data.ball2Start;
-            _goalPos = data.goalPos;
-            _goal2Pos = data.goal2Pos;
-            _isMoving = false;
-
-            // レスポンシブ配置
-            var cam = Camera.main;
-            if (cam == null) { Debug.LogError("[GravityManager] Camera.main が見つかりません"); return; }
-            float camSize = cam.orthographicSize;
-            float camWidth = camSize * cam.aspect;
-            float topMargin = 1.2f;
-            float bottomMargin = 3.0f;
-            float availableHeight = (camSize * 2f) - topMargin - bottomMargin;
-            _cellSize = Mathf.Min(availableHeight / _gridSize, camWidth * 2f / _gridSize, 1.6f);
-            float gridWorldSize = _cellSize * _gridSize;
-            _gridOrigin = new Vector3(-gridWorldSize * 0.5f + _cellSize * 0.5f,
-                                      -camSize + bottomMargin + _cellSize * 0.5f, 0f);
-
-            _grid = new CellType[_gridSize, _gridSize];
-            BuildStage(data);
+            _grid = new CellType[_gridWidth, _gridHeight];
+            BuildStage(GetStageData(stageIndex));
         }
 
         private void ClearStage()
         {
             foreach (var obj in _stageObjects)
+            {
                 if (obj != null) Destroy(obj);
+            }
             _stageObjects.Clear();
             _ball = null;
-            _ball2 = null;
+        }
+
+        public bool ApplyGravity(Vector2Int direction)
+        {
+            if (_ball == null) return false;
+
+            Vector2Int currentPos = _ball.GridPosition;
+            Vector2Int nextPos = currentPos;
+
+            while (true)
+            {
+                Vector2Int candidate = nextPos + direction;
+                if (!IsInBounds(candidate)) break;
+                if (_grid[candidate.x, candidate.y] == CellType.Wall) break;
+                nextPos = candidate;
+                if (_grid[nextPos.x, nextPos.y] == CellType.Goal) break;
+            }
+
+            if (nextPos == currentPos) return false;
+
+            _ball.SetGridPosition(nextPos);
+            _ball.UpdateWorldPosition(GridToWorld(nextPos));
+            return true;
+        }
+
+        public bool IsGoalReached()
+        {
+            return _ball != null && _ball.GridPosition == _goalPos;
+        }
+
+        public Vector3 GridToWorld(Vector2Int gridPos)
+        {
+            float offsetX = (_gridWidth - 1) * _cellSize * 0.5f;
+            float offsetY = (_gridHeight - 1) * _cellSize * 0.5f;
+            return new Vector3(gridPos.x * _cellSize - offsetX, gridPos.y * _cellSize - offsetY, 0f);
+        }
+
+        private bool IsInBounds(Vector2Int pos)
+        {
+            return pos.x >= 0 && pos.x < _gridWidth && pos.y >= 0 && pos.y < _gridHeight;
         }
 
         private void BuildStage(StageData data)
         {
-            for (int x = 0; x < _gridSize; x++)
-                for (int y = 0; y < _gridSize; y++)
-                    _grid[x, y] = CellType.Empty;
+            _goalPos = data.goalPos;
 
-            foreach (var wp in data.walls)
+            for (int x = 0; x < _gridWidth; x++)
             {
-                if (InBounds(wp))
+                for (int y = 0; y < _gridHeight; y++)
                 {
-                    _grid[wp.x, wp.y] = CellType.Wall;
-                    SpawnAt(_wallPrefab, wp, "Wall");
+                    _grid[x, y] = CellType.Floor;
+                    if (_floorPrefab != null)
+                    {
+                        var floor = Instantiate(_floorPrefab, transform);
+                        floor.transform.position = GridToWorld(new Vector2Int(x, y));
+                        floor.name = $"Floor_{x}_{y}";
+                        _stageObjects.Add(floor);
+                    }
                 }
             }
 
-            if (data.hasHole)
+            foreach (var wallPos in data.walls)
             {
-                foreach (var hp in data.holes)
+                if (IsInBounds(wallPos))
                 {
-                    if (InBounds(hp))
+                    _grid[wallPos.x, wallPos.y] = CellType.Wall;
+                    if (_wallPrefab != null)
                     {
-                        _grid[hp.x, hp.y] = CellType.Hole;
-                        SpawnAt(_holePrefab, hp, "Hole");
+                        var wall = Instantiate(_wallPrefab, transform);
+                        wall.transform.position = GridToWorld(wallPos);
+                        wall.name = $"Wall_{wallPos.x}_{wallPos.y}";
+                        _stageObjects.Add(wall);
                     }
                 }
             }
 
             _grid[data.goalPos.x, data.goalPos.y] = CellType.Goal;
-            SpawnAt(_goalPrefab, data.goalPos, "Goal");
-
-            if (data.hasTwoBalls)
+            if (_goalPrefab != null)
             {
-                _grid[data.goal2Pos.x, data.goal2Pos.y] = CellType.Goal;
-                SpawnAt(_goalPrefab, data.goal2Pos, "Goal2");
+                var goal = Instantiate(_goalPrefab, transform);
+                goal.transform.position = GridToWorld(data.goalPos);
+                goal.name = "Goal";
+                _stageObjects.Add(goal);
             }
 
             if (_ballPrefab != null)
             {
-                var b1 = Instantiate(_ballPrefab, GridToWorld(data.ballStart), Quaternion.identity, transform);
-                b1.name = "Ball";
-                b1.transform.localScale = Vector3.one * _cellSize * 0.8f;
-                _ball = b1.GetComponent<BallController>();
-                if (_ball != null) _ball.Initialize(data.ballStart);
-                _stageObjects.Add(b1);
-
-                if (data.hasTwoBalls)
-                {
-                    var b2 = Instantiate(_ballPrefab, GridToWorld(data.ball2Start), Quaternion.identity, transform);
-                    b2.name = "Ball2";
-                    b2.transform.localScale = Vector3.one * _cellSize * 0.8f;
-                    _ball2 = b2.GetComponent<BallController>();
-                    if (_ball2 != null) _ball2.Initialize(data.ball2Start);
-                    _stageObjects.Add(b2);
-                }
+                var ballObj = Instantiate(_ballPrefab, transform);
+                ballObj.transform.position = GridToWorld(data.ballStartPos);
+                ballObj.name = "Ball";
+                _ball = ballObj.GetComponent<BallController>();
+                if (_ball != null) _ball.Initialize(data.ballStartPos);
+                _stageObjects.Add(ballObj);
             }
-        }
-
-        private GameObject SpawnAt(GameObject prefab, Vector2Int gridPos, string name)
-        {
-            if (prefab == null) return null;
-            var obj = Instantiate(prefab, GridToWorld(gridPos), Quaternion.identity, transform);
-            obj.name = name;
-            obj.transform.localScale = Vector3.one * _cellSize * 0.9f;
-            _stageObjects.Add(obj);
-            return obj;
-        }
-
-        public void ApplyGravity(GravityDirection dir)
-        {
-            if (_isMoving || _ball == null) return;
-            if (_gameManager == null || !_gameManager.IsPlaying) return;
-
-            Vector2Int d = DirToVec(dir);
-            bool moved = false;
-
-            // ボール1移動
-            var (newPos1, result1) = SimulateMove(_ball.GridPosition, d);
-            // ボール2移動（2ボール時）
-            Vector2Int newPos2 = _hasTwoBalls && _ball2 != null ? _ball2.GridPosition : Vector2Int.zero;
-            MoveResult result2 = MoveResult.Blocked;
-            if (_hasTwoBalls && _ball2 != null)
-            {
-                (newPos2, result2) = SimulateMove(_ball2.GridPosition, d);
-            }
-
-            if (newPos1 != _ball.GridPosition || (_hasTwoBalls && _ball2 != null && newPos2 != _ball2.GridPosition))
-                moved = true;
-
-            if (!moved) return;
-
-            _movesUsed++;
-            _ball.SetGridPosition(newPos1);
-            if (_hasTwoBalls && _ball2 != null) _ball2.SetGridPosition(newPos2);
-
-            OnMovesChanged?.Invoke(_movesUsed, _moveLimit);
-
-            StartCoroutine(AnimateMove(newPos1, newPos2, result1, result2));
-        }
-
-        private IEnumerator AnimateMove(Vector2Int newPos1, Vector2Int newPos2, MoveResult result1, MoveResult result2)
-        {
-            _isMoving = true;
-            float t = 0f;
-            float dur = 0.18f;
-
-            Vector3 startW1 = _ball.transform.position;
-            Vector3 endW1 = GridToWorld(newPos1);
-            Vector3 startW2 = _hasTwoBalls && _ball2 != null ? _ball2.transform.position : Vector3.zero;
-            Vector3 endW2 = _hasTwoBalls && _ball2 != null ? GridToWorld(newPos2) : Vector3.zero;
-
-            while (t < dur)
-            {
-                t += Time.deltaTime;
-                float ratio = Mathf.Clamp01(t / dur);
-                _ball.transform.position = Vector3.Lerp(startW1, endW1, ratio);
-                if (_hasTwoBalls && _ball2 != null) _ball2.transform.position = Vector3.Lerp(startW2, endW2, ratio);
-                yield return null;
-            }
-            _ball.transform.position = endW1;
-            if (_hasTwoBalls && _ball2 != null) _ball2.transform.position = endW2;
-
-            _isMoving = false;
-
-            // 結果処理
-            if (result1 == MoveResult.Hole || (_hasTwoBalls && result2 == MoveResult.Hole))
-            {
-                StartCoroutine(PlayHoleEffect());
-                yield return new WaitForSeconds(0.3f);
-                _gameManager.OnFallIntoHole();
-                yield break;
-            }
-
-            if (_moveLimit > 0 && _movesUsed >= _moveLimit)
-            {
-                if (CheckGoalReached(result1, result2))
-                {
-                    yield return StartCoroutine(PlayGoalEffect());
-                    _gameManager.OnReachGoal(_movesUsed, _minMoves, _moveLimit);
-                }
-                else
-                {
-                    _gameManager.OnMoveLimitExceeded();
-                }
-                yield break;
-            }
-
-            if (CheckGoalReached(result1, result2))
-            {
-                yield return StartCoroutine(PlayGoalEffect());
-                _gameManager.OnReachGoal(_movesUsed, _minMoves, _moveLimit);
-            }
-        }
-
-        private bool CheckGoalReached(MoveResult r1, MoveResult r2)
-        {
-            if (_hasTwoBalls)
-                return r1 == MoveResult.Goal && r2 == MoveResult.Goal;
-            return r1 == MoveResult.Goal;
-        }
-
-        private enum MoveResult { Moved, Blocked, Goal, Hole }
-
-        private (Vector2Int, MoveResult) SimulateMove(Vector2Int from, Vector2Int dir)
-        {
-            Vector2Int pos = from;
-            while (true)
-            {
-                Vector2Int next = pos + dir;
-                if (!InBounds(next)) break;
-                CellType cell = _grid[next.x, next.y];
-                if (cell == CellType.Wall) break;
-                pos = next;
-                if (cell == CellType.Goal) return (pos, MoveResult.Goal);
-                if (cell == CellType.Hole) return (pos, MoveResult.Hole);
-            }
-            return (pos, pos == from ? MoveResult.Blocked : MoveResult.Moved);
-        }
-
-        public void ResetStage()
-        {
-            StopAllCoroutines();
-            _isMoving = false;
-            if (_ball != null)
-            {
-                _ball.SetGridPosition(_ballStart);
-                _ball.transform.position = GridToWorld(_ballStart);
-            }
-            if (_hasTwoBalls && _ball2 != null)
-            {
-                _ball2.SetGridPosition(_ball2Start);
-                _ball2.transform.position = GridToWorld(_ball2Start);
-            }
-            _movesUsed = 0;
-            _isMoving = false;
-        }
-
-        private IEnumerator PlayGoalEffect()
-        {
-            // ゴール到達: スケールパルス
-            if (_ball != null)
-            {
-                float t = 0f;
-                Vector3 origScale = _ball.transform.localScale;
-                while (t < 0.3f)
-                {
-                    t += Time.deltaTime;
-                    float s = 1f + Mathf.Sin(t / 0.3f * Mathf.PI) * 0.5f;
-                    _ball.transform.localScale = origScale * s;
-                    yield return null;
-                }
-                _ball.transform.localScale = origScale;
-            }
-        }
-
-        private IEnumerator PlayHoleEffect()
-        {
-            // 穴落下: 赤フラッシュ
-            if (_ball != null)
-            {
-                var sr = _ball.GetComponent<SpriteRenderer>();
-                if (sr != null)
-                {
-                    float t = 0f;
-                    while (t < 0.4f)
-                    {
-                        t += Time.deltaTime;
-                        float s = Mathf.Sin(t * 20f) * 0.5f + 0.5f;
-                        sr.color = Color.Lerp(Color.red, Color.white, s);
-                        yield return null;
-                    }
-                    sr.color = Color.white;
-                }
-            }
-        }
-
-        private Vector3 GridToWorld(Vector2Int pos)
-        {
-            return _gridOrigin + new Vector3(pos.x * _cellSize, pos.y * _cellSize, 0f);
-        }
-
-        private bool InBounds(Vector2Int pos)
-        {
-            return pos.x >= 0 && pos.x < _gridSize && pos.y >= 0 && pos.y < _gridSize;
-        }
-
-        private Vector2Int DirToVec(GravityDirection dir)
-        {
-            return dir switch
-            {
-                GravityDirection.Up => Vector2Int.up,
-                GravityDirection.Down => Vector2Int.down,
-                GravityDirection.Left => Vector2Int.left,
-                GravityDirection.Right => Vector2Int.right,
-                _ => Vector2Int.down
-            };
-        }
-
-        private void OnDestroy()
-        {
-            ClearStage();
         }
 
         #region Stage Data
 
         private struct StageData
         {
-            public int gridSize;
-            public Vector2Int ballStart;
-            public Vector2Int ball2Start;
+            public Vector2Int ballStartPos;
             public Vector2Int goalPos;
-            public Vector2Int goal2Pos;
             public List<Vector2Int> walls;
-            public List<Vector2Int> holes;
-            public bool hasHole;
-            public bool hasTwoBalls;
-            public int moveLimit;
-            public int minMoves;
         }
 
         private StageData GetStageData(int index)
         {
-            return index switch
+            switch (index % StageCount)
             {
-                0 => GetStage1(),
-                1 => GetStage2(),
-                2 => GetStage3(),
-                3 => GetStage4(),
-                4 => GetStage5(),
-                _ => GetStage1()
-            };
+                case 0: return GetStage1();
+                case 1: return GetStage2();
+                case 2: return GetStage3();
+                default: return GetStage1();
+            }
         }
 
-        // Stage 1: 5x5, 壁のみ, 基本操作
         private StageData GetStage1()
         {
             return new StageData
             {
-                gridSize = 5,
-                ballStart = new Vector2Int(0, 0),
-                goalPos = new Vector2Int(4, 4),
-                walls = new List<Vector2Int> {
-                    new Vector2Int(2, 0), new Vector2Int(2, 1),
-                    new Vector2Int(1, 3), new Vector2Int(3, 2),
-                },
-                holes = new List<Vector2Int>(),
-                hasHole = false, hasTwoBalls = false, moveLimit = 0, minMoves = 4
+                ballStartPos = new Vector2Int(1, 1),
+                goalPos = new Vector2Int(5, 5),
+                walls = new List<Vector2Int>
+                {
+                    new Vector2Int(0, 6), new Vector2Int(1, 6), new Vector2Int(2, 6),
+                    new Vector2Int(3, 6), new Vector2Int(4, 6), new Vector2Int(5, 6), new Vector2Int(6, 6),
+                    new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0),
+                    new Vector2Int(3, 0), new Vector2Int(4, 0), new Vector2Int(5, 0), new Vector2Int(6, 0),
+                    new Vector2Int(0, 1), new Vector2Int(0, 2), new Vector2Int(0, 3),
+                    new Vector2Int(0, 4), new Vector2Int(0, 5),
+                    new Vector2Int(6, 1), new Vector2Int(6, 2), new Vector2Int(6, 3),
+                    new Vector2Int(6, 4), new Vector2Int(6, 5),
+                    new Vector2Int(3, 2), new Vector2Int(3, 3), new Vector2Int(4, 4),
+                }
             };
         }
 
-        // Stage 2: 6x6, 複雑な壁, 複数ステップ迂回
         private StageData GetStage2()
         {
             return new StageData
             {
-                gridSize = 6,
-                ballStart = new Vector2Int(0, 0),
-                goalPos = new Vector2Int(5, 5),
-                walls = new List<Vector2Int> {
-                    new Vector2Int(1, 0), new Vector2Int(1, 1), new Vector2Int(1, 2),
-                    new Vector2Int(3, 3), new Vector2Int(3, 4), new Vector2Int(3, 5),
-                    new Vector2Int(0, 4), new Vector2Int(4, 1), new Vector2Int(5, 2),
-                    new Vector2Int(2, 2), new Vector2Int(4, 4),
-                },
-                holes = new List<Vector2Int>(),
-                hasHole = false, hasTwoBalls = false, moveLimit = 0, minMoves = 5
+                ballStartPos = new Vector2Int(1, 5),
+                goalPos = new Vector2Int(5, 1),
+                walls = new List<Vector2Int>
+                {
+                    new Vector2Int(0, 6), new Vector2Int(1, 6), new Vector2Int(2, 6),
+                    new Vector2Int(3, 6), new Vector2Int(4, 6), new Vector2Int(5, 6), new Vector2Int(6, 6),
+                    new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0),
+                    new Vector2Int(3, 0), new Vector2Int(4, 0), new Vector2Int(5, 0), new Vector2Int(6, 0),
+                    new Vector2Int(0, 1), new Vector2Int(0, 2), new Vector2Int(0, 3),
+                    new Vector2Int(0, 4), new Vector2Int(0, 5),
+                    new Vector2Int(6, 1), new Vector2Int(6, 2), new Vector2Int(6, 3),
+                    new Vector2Int(6, 4), new Vector2Int(6, 5),
+                    new Vector2Int(2, 4), new Vector2Int(3, 4),
+                    new Vector2Int(4, 3), new Vector2Int(4, 2),
+                    new Vector2Int(2, 2), new Vector2Int(5, 4),
+                }
             };
         }
 
-        // Stage 3: 6x6, 穴追加
         private StageData GetStage3()
         {
             return new StageData
             {
-                gridSize = 6,
-                ballStart = new Vector2Int(0, 0),
-                goalPos = new Vector2Int(5, 5),
-                walls = new List<Vector2Int> {
-                    new Vector2Int(2, 0), new Vector2Int(2, 1),
-                    new Vector2Int(0, 3), new Vector2Int(4, 3),
-                    new Vector2Int(3, 5), new Vector2Int(1, 4),
-                },
-                holes = new List<Vector2Int> {
-                    new Vector2Int(1, 1), new Vector2Int(4, 2), new Vector2Int(3, 4),
-                },
-                hasHole = true, hasTwoBalls = false, moveLimit = 0, minMoves = 5
-            };
-        }
-
-        // Stage 4: 7x7, 手数制限15, 多障害
-        private StageData GetStage4()
-        {
-            return new StageData
-            {
-                gridSize = 7,
-                ballStart = new Vector2Int(0, 0),
-                goalPos = new Vector2Int(6, 6),
-                walls = new List<Vector2Int> {
-                    new Vector2Int(1, 0), new Vector2Int(1, 1),
-                    new Vector2Int(3, 1), new Vector2Int(3, 2),
-                    new Vector2Int(5, 3), new Vector2Int(5, 4),
-                    new Vector2Int(2, 4), new Vector2Int(2, 5),
-                    new Vector2Int(4, 5), new Vector2Int(0, 4),
-                    new Vector2Int(6, 2),
-                },
-                holes = new List<Vector2Int> {
-                    new Vector2Int(2, 1), new Vector2Int(4, 3),
-                    new Vector2Int(1, 5), new Vector2Int(5, 1),
-                },
-                hasHole = true, hasTwoBalls = false, moveLimit = 15, minMoves = 7
-            };
-        }
-
-        // Stage 5: 7x7, 2ボール同時ゴール, 手数制限20
-        private StageData GetStage5()
-        {
-            return new StageData
-            {
-                gridSize = 7,
-                ballStart = new Vector2Int(0, 0),
-                ball2Start = new Vector2Int(6, 0),
-                goalPos = new Vector2Int(0, 6),
-                goal2Pos = new Vector2Int(6, 6),
-                walls = new List<Vector2Int> {
-                    new Vector2Int(2, 2), new Vector2Int(3, 2), new Vector2Int(4, 2),
-                    new Vector2Int(2, 4), new Vector2Int(3, 4), new Vector2Int(4, 4),
-                    new Vector2Int(1, 3), new Vector2Int(5, 3),
-                },
-                holes = new List<Vector2Int> {
-                    new Vector2Int(3, 1), new Vector2Int(3, 5),
-                },
-                hasHole = true, hasTwoBalls = true, moveLimit = 20, minMoves = 10
+                ballStartPos = new Vector2Int(1, 1),
+                goalPos = new Vector2Int(3, 3),
+                walls = new List<Vector2Int>
+                {
+                    new Vector2Int(0, 6), new Vector2Int(1, 6), new Vector2Int(2, 6),
+                    new Vector2Int(3, 6), new Vector2Int(4, 6), new Vector2Int(5, 6), new Vector2Int(6, 6),
+                    new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0),
+                    new Vector2Int(3, 0), new Vector2Int(4, 0), new Vector2Int(5, 0), new Vector2Int(6, 0),
+                    new Vector2Int(0, 1), new Vector2Int(0, 2), new Vector2Int(0, 3),
+                    new Vector2Int(0, 4), new Vector2Int(0, 5),
+                    new Vector2Int(6, 1), new Vector2Int(6, 2), new Vector2Int(6, 3),
+                    new Vector2Int(6, 4), new Vector2Int(6, 5),
+                    new Vector2Int(2, 1), new Vector2Int(2, 2),
+                    new Vector2Int(3, 4), new Vector2Int(3, 5),
+                    new Vector2Int(4, 2), new Vector2Int(4, 3),
+                    new Vector2Int(1, 3),
+                    new Vector2Int(5, 4), new Vector2Int(5, 5),
+                }
             };
         }
 

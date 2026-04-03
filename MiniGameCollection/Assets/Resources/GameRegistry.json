@@ -1019,6 +1019,26 @@
       "description": "色付きブロックをスワイプして同色を全て繋げる（v2: 5ステージ・チュートリアル対応）",
       "implemented": true,
       "collection": "remake"
+    },
+    {
+      "id": "002",
+      "title": "MirrorMaze",
+      "category": "puzzle",
+      "size": "M",
+      "sceneName": "002v2_MirrorMaze",
+      "description": "鏡を配置してレーザーをゴールへ誘導する（v2: 5ステージ・チュートリアル対応）",
+      "implemented": true,
+      "collection": "remake"
+    },
+    {
+      "id": "003",
+      "title": "GravitySwitch",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "003v2_GravitySwitch",
+      "description": "重力方向を4方向に切り替えてボールをゴールへ導く（v2: 5ステージ・チュートリアル対応）",
+      "implemented": true,
+      "collection": "remake"
     }
   ]
 }
