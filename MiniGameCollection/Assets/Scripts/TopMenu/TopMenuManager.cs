@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// TopMenuのメイン制御。カテゴリタブの切り替えとゲームカードの生成を管理する。
-/// GameRegistry からゲーム一覧を取得し、選択されたカテゴリのカードを表示する。
+/// TopMenuのメイン制御。コレクションタブ・カテゴリタブの切り替えとゲームカードの生成を管理する。
+/// GameRegistry からゲーム一覧を取得し、選択されたコレクション×カテゴリのカードを表示する。
 /// </summary>
 public class TopMenuManager : MonoBehaviour
 {
@@ -16,6 +16,9 @@ public class TopMenuManager : MonoBehaviour
     [SerializeField, Tooltip("カテゴリタブボタンを並べるコンテナ")]
     private Transform _tabContainer;
 
+    [SerializeField, Tooltip("コレクションタブボタンを並べるコンテナ")]
+    private Transform _collectionTabContainer;
+
     [SerializeField, Tooltip("ゲームカードのプレハブ")]
     private GameObject _cardPrefab;
 
@@ -23,9 +26,11 @@ public class TopMenuManager : MonoBehaviour
     private TMP_FontAsset _japaneseFont;
 
     private string _currentCategory = "puzzle";
+    private string _currentCollection = "classic";
     private readonly List<GameObject> _currentCards = new List<GameObject>();
 
     private const string CategoryPrefsKey = "last_selected_category";
+    private const string CollectionPrefsKey = "last_selected_collection";
 
     private static readonly (string id, string label)[] Categories =
     {
@@ -39,11 +44,84 @@ public class TopMenuManager : MonoBehaviour
         ("unique", "ユニーク")
     };
 
+    private static readonly (string id, string label)[] Collections =
+    {
+        ("classic", "Classic"),
+        ("remake", "Remake"),
+        ("favorite", "★お気に入り"),
+    };
+
     private void Start()
     {
+        _currentCollection = PlayerPrefs.GetString(CollectionPrefsKey, SceneLoader.CurrentCollection ?? "classic");
         _currentCategory = PlayerPrefs.GetString(CategoryPrefsKey, "puzzle");
+        CreateCollectionTabs();
         CreateTabs();
         ShowCategory(_currentCategory);
+    }
+
+    private void CreateCollectionTabs()
+    {
+        if (_collectionTabContainer == null) return;
+
+        foreach (var (id, label) in Collections)
+        {
+            var tabObj = new GameObject($"CollectionTab_{id}", typeof(RectTransform));
+            tabObj.transform.SetParent(_collectionTabContainer, false);
+
+            var button = tabObj.AddComponent<Button>();
+            var image = tabObj.AddComponent<Image>();
+            image.color = new Color(0.15f, 0.15f, 0.25f, 0.9f);
+
+            var rect = tabObj.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(200, 50);
+
+            var textObj = new GameObject("Text", typeof(RectTransform));
+            textObj.transform.SetParent(tabObj.transform, false);
+            var text = textObj.AddComponent<TextMeshProUGUI>();
+            text.text = label;
+            text.fontSize = 28;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = Color.white;
+            if (_japaneseFont != null) text.font = _japaneseFont;
+
+            var textRect = textObj.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            string collectionId = id;
+            button.onClick.AddListener(() => SwitchCollection(collectionId));
+        }
+
+        UpdateCollectionTabHighlight();
+    }
+
+    private void SwitchCollection(string collection)
+    {
+        _currentCollection = collection;
+        SceneLoader.CurrentCollection = collection;
+        PlayerPrefs.SetString(CollectionPrefsKey, collection);
+        PlayerPrefs.Save();
+        UpdateCollectionTabHighlight();
+        ShowCategory(_currentCategory);
+    }
+
+    private void UpdateCollectionTabHighlight()
+    {
+        if (_collectionTabContainer == null) return;
+
+        for (int i = 0; i < _collectionTabContainer.childCount && i < Collections.Length; i++)
+        {
+            var tabImage = _collectionTabContainer.GetChild(i).GetComponent<Image>();
+            if (tabImage == null) continue;
+
+            bool isSelected = Collections[i].id == _currentCollection;
+            tabImage.color = isSelected
+                ? new Color(0.8f, 0.5f, 0.1f, 1f)
+                : new Color(0.15f, 0.15f, 0.25f, 0.9f);
+        }
     }
 
     private void CreateTabs()
@@ -99,38 +177,21 @@ public class TopMenuManager : MonoBehaviour
             return;
         }
 
-        string collection = SceneLoader.CurrentCollection;
+        string collection = _currentCollection;
 
         List<GameEntry> games;
-        if (category == "favorite")
+        if (category == "favorite" || collection == "favorite")
         {
             games = new List<GameEntry>();
             if (FavoriteManager.Instance != null)
             {
                 var favoriteIds = FavoriteManager.Instance.GetFavoriteIds();
-                foreach (string id in favoriteIds)
+                foreach (string favId in favoriteIds)
                 {
-                    var game = GameRegistry.Instance.GetGameById(id);
-                    if (game != null)
-                    {
-                        // お気に入りタブでもコレクションが "favorite" の場合は全横断
-                        if (collection == "favorite" || game.collection == collection)
-                            games.Add(game);
-                    }
-                }
-            }
-        }
-        else if (collection == "favorite")
-        {
-            // コレクション選択で「お気に入り」を選んだ場合: カテゴリでフィルタ
-            games = new List<GameEntry>();
-            if (FavoriteManager.Instance != null)
-            {
-                var favoriteIds = FavoriteManager.Instance.GetFavoriteIds();
-                foreach (string id in favoriteIds)
-                {
-                    var game = GameRegistry.Instance.GetGameById(id);
-                    if (game != null && game.category == category) games.Add(game);
+                    var game = GameRegistry.Instance.GetGameById(favId);
+                    if (game == null) continue;
+                    if (category == "favorite" || game.category == category)
+                        games.Add(game);
                 }
             }
         }

@@ -35,8 +35,10 @@ public static class SetupTopMenu
         var canvasObj = new GameObject("Canvas");
         var canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasObj.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        canvasObj.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920, 1080);
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080, 1920);
+        scaler.matchWidthOrHeight = 0.5f;
         canvasObj.AddComponent<GraphicRaycaster>();
 
         // --- コレクション選択に戻るボタン ---
@@ -57,28 +59,71 @@ public static class SetupTopMenu
         btRect.offsetMin = Vector2.zero; btRect.offsetMax = Vector2.zero;
         backText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
-        // --- タイトル ---
+        // --- タイトル（アンカーストレッチ）---
         var titleObj = CreateText(canvasObj.transform, "Title", "ミニゲーム集", 48,
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-            new Vector2(400, 60), new Vector2(0, -30));
+            new Vector2(0.1f, 0.96f), new Vector2(0.9f, 1f), new Vector2(0.5f, 1f),
+            Vector2.zero, Vector2.zero);
+        var titleRect2 = titleObj.GetComponent<RectTransform>();
+        titleRect2.offsetMin = new Vector2(0, -60);
+        titleRect2.offsetMax = new Vector2(0, -10);
         titleObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        titleObj.GetComponent<TextMeshProUGUI>().enableAutoSizing = true;
+        titleObj.GetComponent<TextMeshProUGUI>().fontSizeMin = 28;
+        titleObj.GetComponent<TextMeshProUGUI>().fontSizeMax = 48;
 
-        // --- タブコンテナ ---
+        // --- コレクションタブコンテナ（Classic / Remake / お気に入り）---
+        var collectionTabContainerObj = new GameObject("CollectionTabContainer", typeof(RectTransform));
+        collectionTabContainerObj.transform.SetParent(canvasObj.transform, false);
+        var collectionTabRect = collectionTabContainerObj.GetComponent<RectTransform>();
+        collectionTabRect.anchorMin = new Vector2(0, 1);
+        collectionTabRect.anchorMax = new Vector2(1, 1);
+        collectionTabRect.pivot = new Vector2(0.5f, 1f);
+        collectionTabRect.anchoredPosition = new Vector2(0, -75);
+        collectionTabRect.sizeDelta = new Vector2(-20, 55);
+        var collectionTabLayout = collectionTabContainerObj.AddComponent<HorizontalLayoutGroup>();
+        collectionTabLayout.spacing = 12;
+        collectionTabLayout.childAlignment = TextAnchor.MiddleCenter;
+        collectionTabLayout.childForceExpandWidth = false;
+        collectionTabLayout.childForceExpandHeight = true;
+        collectionTabLayout.padding = new RectOffset(10, 10, 4, 4);
+
+        // --- カテゴリタブコンテナ（横スクロール対応）---
+        var tabScrollObj = new GameObject("TabScroll", typeof(RectTransform));
+        tabScrollObj.transform.SetParent(canvasObj.transform, false);
+        var tabScrollRect = tabScrollObj.GetComponent<RectTransform>();
+        tabScrollRect.anchorMin = new Vector2(0, 1);
+        tabScrollRect.anchorMax = new Vector2(1, 1);
+        tabScrollRect.pivot = new Vector2(0.5f, 1f);
+        tabScrollRect.anchoredPosition = new Vector2(0, -138);
+        tabScrollRect.sizeDelta = new Vector2(-20, 55);
+
+        var tabScroll = tabScrollObj.AddComponent<ScrollRect>();
+        tabScroll.horizontal = true;
+        tabScroll.vertical = false;
+        tabScroll.movementType = ScrollRect.MovementType.Elastic;
+        tabScrollObj.AddComponent<Image>().color = new Color(0, 0, 0, 0);
+        tabScrollObj.AddComponent<Mask>().showMaskGraphic = false;
+
         var tabContainerObj = new GameObject("TabContainer", typeof(RectTransform));
-        tabContainerObj.transform.SetParent(canvasObj.transform, false);
+        tabContainerObj.transform.SetParent(tabScrollObj.transform, false);
         var tabRect = tabContainerObj.GetComponent<RectTransform>();
-        tabRect.anchorMin = new Vector2(0, 1);
-        tabRect.anchorMax = new Vector2(1, 1);
-        tabRect.pivot = new Vector2(0.5f, 1f);
-        tabRect.anchoredPosition = new Vector2(0, -80);
-        tabRect.sizeDelta = new Vector2(-40, 50);
+        tabRect.anchorMin = new Vector2(0, 0);
+        tabRect.anchorMax = new Vector2(0, 1);
+        tabRect.pivot = new Vector2(0, 0.5f);
+        tabRect.anchoredPosition = Vector2.zero;
 
         var tabLayout = tabContainerObj.AddComponent<HorizontalLayoutGroup>();
         tabLayout.spacing = 8;
         tabLayout.childAlignment = TextAnchor.MiddleCenter;
         tabLayout.childForceExpandWidth = false;
         tabLayout.childForceExpandHeight = true;
-        tabLayout.padding = new RectOffset(10, 10, 0, 0);
+        tabLayout.padding = new RectOffset(10, 10, 4, 4);
+
+        var tabFitter = tabContainerObj.AddComponent<ContentSizeFitter>();
+        tabFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        tabScroll.content = tabRect;
+        tabScroll.viewport = tabScrollObj.GetComponent<RectTransform>();
 
         // --- スクロールエリア ---
         var scrollObj = new GameObject("ScrollView", typeof(RectTransform));
@@ -87,7 +132,7 @@ public static class SetupTopMenu
         scrollRect.anchorMin = new Vector2(0, 0);
         scrollRect.anchorMax = new Vector2(1, 1);
         scrollRect.offsetMin = new Vector2(20, 20);
-        scrollRect.offsetMax = new Vector2(-20, -140);
+        scrollRect.offsetMax = new Vector2(-20, -200);
 
         var scrollView = scrollObj.AddComponent<ScrollRect>();
         scrollView.horizontal = false;
@@ -138,6 +183,7 @@ public static class SetupTopMenu
         var managerSO = new SerializedObject(manager);
         managerSO.FindProperty("_cardContainer").objectReferenceValue = contentObj.transform;
         managerSO.FindProperty("_tabContainer").objectReferenceValue = tabContainerObj.transform;
+        managerSO.FindProperty("_collectionTabContainer").objectReferenceValue = collectionTabContainerObj.transform;
         var jpFont = LoadJapaneseFont();
         if (jpFont != null)
         {
