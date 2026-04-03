@@ -1009,6 +1009,16 @@
       "description": "1つの爆発が連鎖反応を起こすパズル。最小手数で全オーブを起爆せよ",
       "implemented": true,
       "collection": "classic"
+    },
+    {
+      "id": "001",
+      "title": "BlockFlow",
+      "category": "puzzle",
+      "size": "S",
+      "sceneName": "001v2_BlockFlow",
+      "description": "色付きブロックをスワイプして同色を全て繋げる（v2: 5ステージ・チュートリアル対応）",
+      "implemented": true,
+      "collection": "remake"
     }
   ]
 }
