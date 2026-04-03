@@ -1067,7 +1067,7 @@
       "size": "S",
       "sceneName": "006v2_ShadowMatch",
       "description": "3Dオブジェクトの影が指定のシルエットと一致するよう回転させる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {

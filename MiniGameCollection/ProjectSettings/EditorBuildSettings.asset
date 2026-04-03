@@ -329,6 +329,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/004v2_WordCrystal.unity
     guid: ca47f215e7ca8470591d48a0d3c5526e
+  - enabled: 1
+    path: Assets/Scenes/005v2_PipeConnect.unity
+    guid: c7976f869b1e142d596b3b14a5707cd1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
