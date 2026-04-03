@@ -22,10 +22,10 @@
 | フィールド（private） | _camelCase（アンダースコア接頭辞） | `_score`, `_isGameOver` |
 | プロパティ（public） | PascalCase | `Score`, `IsGameOver` |
 | 定数 | UPPER_SNAKE_CASE | `MAX_BLOCK_COUNT` |
-| 名前空間 | `Game<ID>_<Title>` | `namespace Game001_BlockFlow` |
+| 名前空間 | `Game<ID>_<Title>`（classic）/ `Game<ID>v2_<Title>`（remake） | `namespace Game001_BlockFlow` / `namespace Game001v2_BlockFlow` |
 
 ```csharp
-// ✅ 良い例
+// ✅ 良い例（classic）
 namespace Game001_BlockFlow
 {
     public class BlockFlowGameManager : MonoBehaviour
@@ -177,18 +177,19 @@ Step 1: GitHub Projects でゲームを選ぶ
   → ステータス「未着手」× 工数「S」でフィルター
   → 1つ選んでステータスを「作業中」に変更
 
-Step 2: Claude Code に依頼する
-  > 「ゲーム001 BlockFlow を作って」
-  → 自動でプロジェクト生成・push まで完了
+Step 2: Claude Code に依頼する（remakeモード推奨）
+  > 「ゲーム001 BlockFlow を作って（remakeモード）」
+  → GameRegistry.json の remake エントリの implemented を true に更新
+  → Game001v2_BlockFlow/ フォルダとスクリプト群を自動生成・push まで完了
 
 Step 3: ゲームアセット（画像）を生成する
   > 「ゲーム001のアセットを生成して」
   → Gemini CLI で各スプライト画像を自動生成
-  → MiniGameCollection/Assets/Sprites/Game001_BlockFlow/ に保存
+  → MiniGameCollection/Assets/Sprites/Game001v2_BlockFlow/ に保存
 
 Step 4: Unity Editor で確認する
   → Unity Hub でプロジェクトを開く（初回のみ）
-  → Assets > Setup > 001 BlockFlow を実行
+  → Assets > Setup > 001v2 BlockFlow を実行（remake版）
   → Play ボタンを押して動作確認
 
 Step 5: 問題があれば Claude Code に伝える
@@ -345,11 +346,102 @@ claude
 
 > このセクションはClaude Codeへの指示です。コード生成時に必ず遵守してください。
 
-1. **名前空間を必ず付与する**: 全スクリプトに `namespace Game<ID>_<Title>` を付ける
+1. **名前空間を必ず付与する**: classic版は `namespace Game<ID>_<Title>`、remake版は `namespace Game<ID>v2_<Title>` を付ける
 2. **Null チェックを徹底する**: `Resources.Load` 等の結果は必ず null チェック
 3. **Tooltip を付ける**: `[SerializeField]` には `[Tooltip("説明")]` を併記
 4. **Unity 6 API を使う**: 非推奨の旧APIを使わない（例: `FindObjectOfType` → `FindFirstObjectByType`）
 5. **SceneSetup で全設定を完結させる**: 非エンジニアがインスペクタを手動設定する場面をゼロにする
-6. **GameRegistry.json を必ず更新する**: 新ゲーム追加時は `implemented: true` でエントリを追加
+6. **GameRegistry.json を必ず更新する**: classic実装時は classicエントリの `implemented: true` を確認（既に true）、remake実装時は remakeエントリの `implemented` を `true` に更新する
 7. **ゲーム間依存を作らない**: `using Game002_*` は絶対に書かない
 8. **コミットはゲーム単位で行う**: 複数ゲームを1コミットにまとめない
+
+---
+
+## UI レスポンシブ設計ガイドライン
+
+### 基本原則
+
+モバイル（縦画面）からデスクトップ（横画面）まで、解像度変更時にUI要素が重ならないようにする。
+
+### CanvasScaler 設定（全シーン共通）
+
+```csharp
+scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+scaler.referenceResolution = new Vector2(1080, 1920); // 縦基準で統一
+scaler.matchWidthOrHeight = 0.5f; // 縦横バランスよくスケール
+```
+
+- `referenceResolution` は全シーンで `1080x1920` に統一する（横向き `1920x1080` にしない）
+- `matchWidthOrHeight = 0.5f` で縦横どちらが狭くなっても破綻しにくくする
+
+### レイアウト手法
+
+| 手法 | 使い所 |
+|------|--------|
+| **アンカーストレッチ** | テキスト・パネルなど親の幅に追従すべき要素 |
+| **LayoutGroup + LayoutElement** | カード列・ボタン列など均等配置 |
+| **ScrollRect** | 要素数が画面に収まらない可能性がある場合（タブ一覧等） |
+| **enableAutoSizing** | テキストが解像度によって切れる可能性がある場合 |
+
+### 固定サイズ・固定アンカーの禁止
+
+```csharp
+// ❌ 固定アンカー+固定サイズ（解像度変更で重なる）
+rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.65f);
+rect.sizeDelta = new Vector2(700, 180);
+
+// ✅ 相対アンカー（親のサイズに追従）
+rect.anchorMin = new Vector2(0.08f, 0.55f);
+rect.anchorMax = new Vector2(0.92f, 0.75f);
+rect.offsetMin = Vector2.zero;
+rect.offsetMax = Vector2.zero;
+```
+
+ただし `LayoutElement` で高さを指定し、幅をLayoutGroupに委ねるパターンはOK:
+
+```csharp
+// ✅ LayoutGroup内での高さ指定（幅は親が制御）
+var le = card.AddComponent<LayoutElement>();
+le.preferredHeight = 180;
+le.minHeight = 120;
+le.flexibleWidth = 1;
+```
+
+### テキストの自動サイズ
+
+解像度変更でテキストが切れるのを防ぐため、可変長テキストには `enableAutoSizing` を使用する:
+
+```csharp
+tmp.enableAutoSizing = true;
+tmp.fontSizeMin = 18;  // 最小フォントサイズ
+tmp.fontSizeMax = 48;  // 最大フォントサイズ（デザイン上の理想値）
+```
+
+### タブ・ボタン列のスクロール対応
+
+要素数が画面幅を超える可能性がある場合は `ScrollRect` でラップする:
+
+```csharp
+// 横スクロール可能なタブコンテナ
+var scrollRect = tabScrollObj.AddComponent<ScrollRect>();
+scrollRect.horizontal = true;
+scrollRect.vertical = false;
+scrollRect.movementType = ScrollRect.MovementType.Elastic;
+
+// 中のコンテナはContentSizeFitterで自動伸縮
+var fitter = tabContainerObj.AddComponent<ContentSizeFitter>();
+fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+```
+
+### ボタンの最小タップ領域
+
+モバイル操作性のため、ボタンの `sizeDelta` の最小値は `(150, 55)` とする。
+
+### 適用済み画面一覧
+
+| 画面 | SceneSetupファイル | 対応状況 |
+|------|-------------------|----------|
+| CollectionSelect | `SetupCollectionSelect.cs` | VerticalLayoutGroup + autoSizing + matchWidthOrHeight |
+| TopMenu | `SetupTopMenu.cs` | ScrollRect タブ + アンカーストレッチタイトル + matchWidthOrHeight |
+| 各ゲーム画面（classic） | `Setup[ID]_[Title].cs` | 個別対応（HUD は基本アンカーベース） |
+| 各ゲーム画面（remake） | `Setup[ID]v2_[Title].cs` | 個別対応（StageManager/InstructionPanel統合） |

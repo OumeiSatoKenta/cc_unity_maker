@@ -154,20 +154,24 @@ interface Task {
 - Editorスクリプトでシーン構成を自動化
 - `README.md` に起動・操作手順を記述
 
-**生成ファイル構造（新ゲーム追加時）**:
+**生成ファイル構造（新ゲーム追加時・remakeモード例）**:
 ```
 MiniGameCollection/Assets/
 ├── Scenes/
-│   └── Game001_BlockFlow.unity        # ← 新規追加
+│   └── 001v2_BlockFlow.unity          # ← 新規追加（remake版）
 ├── Scripts/
-│   └── Game001_BlockFlow/
+│   └── Game001v2_BlockFlow/           # ← remake版はv2サフィックス
 │       ├── BlockFlowGameManager.cs    # ← 新規追加
 │       ├── BlockController.cs         # ← 新規追加
 │       └── BlockFlowUI.cs             # ← 新規追加
 └── Editor/
     └── SceneSetup/
-        └── Setup001_BlockFlow.cs      # ← 新規追加（シーン自動構成）
+        └── Setup001v2_BlockFlow.cs    # ← 新規追加（メニュー: Assets/Setup/001v2 BlockFlow）
 ```
+
+**GameRegistry.jsonの更新**:
+- remakeモード実装時: remakeエントリの `implemented` を `true` に更新
+- classicは全101本が最初から `implemented: true`（v1実装済み扱い）
 
 ※ Unityプロジェクト本体（`MiniGameCollection/`）は初回のみ作成。以降は追加のみ。
 

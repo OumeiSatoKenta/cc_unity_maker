@@ -46,25 +46,33 @@ cc_unity_maker/                         # リポジトリルート
 ```
 MiniGameCollection/Assets/
 ├── Scenes/
+│   ├── CollectionSelect.unity          # コレクション選択画面（Classic/Remake/お気に入り）
 │   ├── TopMenu.unity                   # ゲーム選択画面（カテゴリタブ）
-│   ├── 001_BlockFlow.unity
+│   ├── 001_BlockFlow.unity             # classic版（v1）
+│   ├── 001v2_BlockFlow.unity           # remake版（v2、5ステージ）
 │   ├── 002_MirrorMaze.unity
+│   ├── 002v2_MirrorMaze.unity
 │   └── ...（ゲーム追加のたびに増える）
 │
 ├── Scripts/
 │   ├── Common/                         # 全ゲーム共通スクリプト
-│   │   ├── SceneLoader.cs             # シーン遷移管理
+│   │   ├── SceneLoader.cs             # シーン遷移管理（CurrentCollectionを保持）
 │   │   ├── GameRegistry.cs            # GameRegistry.json読み込み
 │   │   └── BackToMenuButton.cs        # 各ゲームから戻るボタン
+│   ├── CollectionSelect/               # CollectionSelect専用スクリプト
+│   │   └── CollectionSelectManager.cs # コレクション選択画面制御
 │   ├── TopMenu/                        # TopMenu専用スクリプト
 │   │   ├── TopMenuManager.cs          # カテゴリタブ制御・ゲームカード生成
 │   │   └── GameCardUI.cs              # ゲームカードUI部品
-│   ├── Game001_BlockFlow/              # ゲームごとに独立したフォルダ
+│   ├── Game001_BlockFlow/              # classic版（v1）
 │   │   ├── BlockFlowGameManager.cs
 │   │   ├── BlockController.cs
 │   │   └── BlockFlowUI.cs
-│   ├── Game002_MirrorMaze/
+│   ├── Game001v2_BlockFlow/            # remake版（v2、namespace: Game001v2_BlockFlow）
+│   │   ├── BlockFlowGameManager.cs
 │   │   └── ...
+│   ├── Game002_MirrorMaze/
+│   ├── Game002v2_MirrorMaze/
 │   └── ...（ゲーム追加のたびに増える）
 │
 ├── Fonts/
@@ -73,14 +81,17 @@ MiniGameCollection/Assets/
 │
 ├── Editor/
 │   └── SceneSetup/                     # シーン自動構成Editorスクリプト
+│       ├── SetupCollectionSelect.cs    # CollectionSelectシーン自動構成
 │       ├── SetupTopMenu.cs             # TopMenuシーン自動構成
 │       ├── SetupJapaneseFont.cs        # 日本語フォントアセット生成
-│       ├── Setup001_BlockFlow.cs       # ゲームごとに1ファイル
+│       ├── Setup001_BlockFlow.cs       # classic版（メニュー: Assets/Setup/001 BlockFlow）
+│       ├── Setup001v2_BlockFlow.cs     # remake版（メニュー: Assets/Setup/001v2 BlockFlow）
 │       ├── Setup002_MirrorMaze.cs
+│       ├── Setup002v2_MirrorMaze.cs
 │       └── ...（ゲーム追加のたびに増える）
 │
 └── Resources/
-    └── GameRegistry.json               # ゲーム一覧データ（TopMenuが参照）
+    └── GameRegistry.json               # ゲーム一覧データ（collectionフィールドで分類）
 ```
 
 ---
@@ -92,17 +103,22 @@ MiniGameCollection/Assets/
 **役割**: 全シーンファイルを管理
 
 **配置ファイル**:
-- `TopMenu.unity`: アプリ起動時の画面、全ゲームへのエントリポイント
-- `<ID>_<Title>.unity`: 各ゲームのシーン（ゲーム追加のたびに追加）
+- `CollectionSelect.unity`: アプリ起動時の最初の画面（コレクション選択）
+- `TopMenu.unity`: コレクション選択後のゲーム選択画面
+- `<ID>_<Title>.unity`: 各ゲームのclassic版シーン（v1）
+- `<ID>v2_<Title>.unity`: 各ゲームのremake版シーン（v2、5ステージ）
 
 **命名規則**:
+- CollectionSelect: `CollectionSelect.unity`（固定）
 - TopMenu: `TopMenu.unity`（固定）
-- ゲームシーン: `<3桁ID>_<PascalCaseタイトル>.unity`
+- classic版ゲームシーン: `<3桁ID>_<PascalCaseタイトル>.unity`
   - 例: `001_BlockFlow.unity`, `021_BladeDash.unity`
+- remake版ゲームシーン: `<3桁ID>v2_<PascalCaseタイトル>.unity`
+  - 例: `001v2_BlockFlow.unity`, `021v2_BladeDash.unity`
 
 **依存関係**:
 - `Scripts/Common/` のスクリプトを参照
-- `Scripts/TopMenu/` または `Scripts/Game<ID>_<Title>/` を参照
+- `Scripts/CollectionSelect/`、`Scripts/TopMenu/`、または `Scripts/Game<ID>_<Title>/`（`Game<ID>v2_<Title>/`）を参照
 
 ---
 
@@ -133,9 +149,9 @@ MiniGameCollection/Assets/
 
 ---
 
-### MiniGameCollection/Assets/Scripts/Game\<ID\>_\<Title\>/
+### MiniGameCollection/Assets/Scripts/Game\<ID\>_\<Title\>/ と Game\<ID\>v2_\<Title\>/
 
-**役割**: 各ゲームのロジックを独立したフォルダで管理
+**役割**: 各ゲームのロジックを独立したフォルダで管理（classic版とremake版は別フォルダ）
 
 **配置ファイル**:
 - `<Title>GameManager.cs`: ゲーム全体の状態管理（開始・終了・スコア）
@@ -143,16 +159,18 @@ MiniGameCollection/Assets/
 - `<Title>UI.cs`: ゲーム内UI制御（スコア表示・クリア画面等）
 
 **命名規則**:
-- フォルダ: `Game<3桁ID>_<PascalCaseタイトル>`
+- classic版フォルダ: `Game<3桁ID>_<PascalCaseタイトル>`
   - 例: `Game001_BlockFlow/`, `Game021_BladeDash/`
+- remake版フォルダ: `Game<3桁ID>v2_<PascalCaseタイトル>`
+  - 例: `Game001v2_BlockFlow/`, `Game021v2_BladeDash/`
 - スクリプト: `<PascalCaseタイトル><役割>.cs`
   - 例: `BlockFlowGameManager.cs`, `BlockController.cs`
-- 名前空間: `namespace Game<ID>_<Title>` で競合を防ぐ
-  - 例: `namespace Game001_BlockFlow`
+- 名前空間: classic版は `namespace Game<ID>_<Title>`、remake版は `namespace Game<ID>v2_<Title>` で競合を防ぐ
+  - 例: `namespace Game001_BlockFlow`、`namespace Game001v2_BlockFlow`
 
 **依存関係**:
 - 依存可能: `Scripts/Common/`、Unity標準API
-- 依存禁止: 他のゲームのスクリプト（`Game002_*` 等）
+- 依存禁止: 他のゲームのスクリプト（`Game002_*` 等）、classic版とremake版の相互依存
 
 ---
 
@@ -164,12 +182,16 @@ MiniGameCollection/Assets/
 - `Setup<ID>_<Title>.cs`: Unity Editorメニューから実行するセットアップスクリプト
 
 **命名規則**:
-- `Setup<3桁ID>_<PascalCaseタイトル>.cs`
+- classic版: `Setup<3桁ID>_<PascalCaseタイトル>.cs`
   - 例: `Setup001_BlockFlow.cs`
+- remake版: `Setup<3桁ID>v2_<PascalCaseタイトル>.cs`
+  - 例: `Setup001v2_BlockFlow.cs`
 
 **メニューパス**:
-- `Assets/Setup/<タイトル>` でEditorメニューに表示
+- classic版: `Assets/Setup/<ID> <タイトル>` でEditorメニューに表示
   - 例: `[MenuItem("Assets/Setup/001 BlockFlow")]`
+- remake版: `Assets/Setup/<ID>v2 <タイトル>` でEditorメニューに表示
+  - 例: `[MenuItem("Assets/Setup/001v2 BlockFlow")]`
 
 **依存関係**:
 - 依存可能: `UnityEditor`, `UnityEngine`、対応ゲームのスクリプト
@@ -233,31 +255,45 @@ MiniGameCollection/Assets/
 | ファイル種別 | 配置先 | 命名規則 | 例 |
 |------------|--------|---------|-----|
 | 共通スクリプト | `Scripts/Common/` | PascalCase | `SceneLoader.cs` |
+| CollectionSelectスクリプト | `Scripts/CollectionSelect/` | PascalCase | `CollectionSelectManager.cs` |
 | TopMenuスクリプト | `Scripts/TopMenu/` | PascalCase | `TopMenuManager.cs` |
-| ゲームスクリプト | `Scripts/Game<ID>_<Title>/` | `<Title><役割>.cs` | `BlockFlowGameManager.cs` |
-| Editorスクリプト | `Editor/SceneSetup/` | `Setup<ID>_<Title>.cs` | `Setup001_BlockFlow.cs` |
+| ゲームスクリプト（classic） | `Scripts/Game<ID>_<Title>/` | `<Title><役割>.cs` | `BlockFlowGameManager.cs` |
+| ゲームスクリプト（remake） | `Scripts/Game<ID>v2_<Title>/` | `<Title><役割>.cs` | `BlockFlowGameManager.cs` |
+| Editorスクリプト（classic） | `Editor/SceneSetup/` | `Setup<ID>_<Title>.cs` | `Setup001_BlockFlow.cs` |
+| Editorスクリプト（remake） | `Editor/SceneSetup/` | `Setup<ID>v2_<Title>.cs` | `Setup001v2_BlockFlow.cs` |
 
-### 新ゲーム追加時に変更するファイル
+### 新ゲーム追加時に変更するファイル（remakeモード）
 
 | ファイル | 変更内容 |
 |---------|---------|
-| `Resources/GameRegistry.json` | 新エントリを追加（`implemented: true`） |
-| `Scenes/<ID>_<Title>.unity` | 新規作成（空シーン） |
-| `Scripts/Game<ID>_<Title>/` | フォルダ・スクリプト新規作成 |
-| `Editor/SceneSetup/Setup<ID>_<Title>.cs` | 新規作成 |
+| `Resources/GameRegistry.json` | remakeエントリの `implemented` を `true` に更新 |
+| `Scenes/<ID>v2_<Title>.unity` | 新規作成（空シーン） |
+| `Scripts/Game<ID>v2_<Title>/` | フォルダ・スクリプト新規作成 |
+| `Editor/SceneSetup/Setup<ID>v2_<Title>.cs` | 新規作成 |
 
 ---
 
 ## 命名規則まとめ
 
 ### Unityシーン名
-- フォーマット: `<3桁ID>_<PascalCaseタイトル>`
-- 例: `001_BlockFlow`, `021_BladeDash`, `071_BeatTiles`
+- classic版: `<3桁ID>_<PascalCaseタイトル>`
+  - 例: `001_BlockFlow`, `021_BladeDash`, `071_BeatTiles`
+- remake版: `<3桁ID>v2_<PascalCaseタイトル>`
+  - 例: `001v2_BlockFlow`, `021v2_BladeDash`, `071v2_BeatTiles`
 
 ### C#スクリプト
 - フォーマット: PascalCase（Unity標準）
 - ゲーム固有: `<Title><役割>.cs`
-- 名前空間: `namespace Game<ID>_<Title>`
+- 名前空間（classic）: `namespace Game<ID>_<Title>`
+- 名前空間（remake）: `namespace Game<ID>v2_<Title>`
+
+### Editorメニューパス
+- classic版: `Assets/Setup/<ID> <Title>`（例: `Assets/Setup/001 BlockFlow`）
+- remake版: `Assets/Setup/<ID>v2 <Title>`（例: `Assets/Setup/001v2 BlockFlow`）
+
+### GameRegistry.jsonのcollectionフィールド
+- `"classic"`: v1オリジナル。001〜101全本が `implemented: true`
+- `"remake"`: v2リメイク版。実装済みのみ `implemented: true`（未実装は `false`）
 
 ### フォルダ名（Unity外）
 - kebab-case（例: `create-all-issues.sh`）
