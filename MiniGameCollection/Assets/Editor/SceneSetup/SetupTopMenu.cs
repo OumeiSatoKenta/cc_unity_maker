@@ -71,31 +71,14 @@ public static class SetupTopMenu
         titleObj.GetComponent<TextMeshProUGUI>().fontSizeMin = 24;
         titleObj.GetComponent<TextMeshProUGUI>().fontSizeMax = 40;
 
-        // --- コレクションタブコンテナ（Classic / Remake / お気に入り）---
-        // タイトル直下、高さ52px
-        var collectionTabContainerObj = new GameObject("CollectionTabContainer", typeof(RectTransform));
-        collectionTabContainerObj.transform.SetParent(canvasObj.transform, false);
-        var collectionTabRect = collectionTabContainerObj.GetComponent<RectTransform>();
-        collectionTabRect.anchorMin = new Vector2(0, 1);
-        collectionTabRect.anchorMax = new Vector2(1, 1);
-        collectionTabRect.pivot = new Vector2(0.5f, 1f);
-        collectionTabRect.anchoredPosition = new Vector2(0, -72);
-        collectionTabRect.sizeDelta = new Vector2(0, 52);
-        var collectionTabLayout = collectionTabContainerObj.AddComponent<HorizontalLayoutGroup>();
-        collectionTabLayout.spacing = 0;
-        collectionTabLayout.childAlignment = TextAnchor.MiddleCenter;
-        collectionTabLayout.childForceExpandWidth = true;
-        collectionTabLayout.childForceExpandHeight = true;
-        collectionTabLayout.padding = new RectOffset(0, 0, 4, 4);
-
-        // --- カテゴリタブコンテナ（横スクロール対応）コレクションタブ直下 ---
+        // --- カテゴリタブコンテナ（横スクロール対応）タイトル直下 ---
         var tabScrollObj = new GameObject("TabScroll", typeof(RectTransform));
         tabScrollObj.transform.SetParent(canvasObj.transform, false);
         var tabScrollRect = tabScrollObj.GetComponent<RectTransform>();
         tabScrollRect.anchorMin = new Vector2(0, 1);
         tabScrollRect.anchorMax = new Vector2(1, 1);
         tabScrollRect.pivot = new Vector2(0.5f, 1f);
-        tabScrollRect.anchoredPosition = new Vector2(0, -128);
+        tabScrollRect.anchoredPosition = new Vector2(0, -76);
         tabScrollRect.sizeDelta = new Vector2(0, 52);
 
         var tabScroll = tabScrollObj.AddComponent<ScrollRect>();
@@ -133,7 +116,7 @@ public static class SetupTopMenu
         scrollRect.anchorMin = new Vector2(0, 0);
         scrollRect.anchorMax = new Vector2(1, 1);
         scrollRect.offsetMin = new Vector2(0, 0);
-        scrollRect.offsetMax = new Vector2(0, -184);
+        scrollRect.offsetMax = new Vector2(0, -132);
 
         var scrollView = scrollObj.AddComponent<ScrollRect>();
         scrollView.horizontal = false;
@@ -184,7 +167,6 @@ public static class SetupTopMenu
         var managerSO = new SerializedObject(manager);
         managerSO.FindProperty("_cardContainer").objectReferenceValue = contentObj.transform;
         managerSO.FindProperty("_tabContainer").objectReferenceValue = tabContainerObj.transform;
-        managerSO.FindProperty("_collectionTabContainer").objectReferenceValue = collectionTabContainerObj.transform;
         var jpFont = LoadJapaneseFont();
         if (jpFont != null)
         {

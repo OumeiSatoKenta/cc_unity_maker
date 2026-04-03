@@ -53,9 +53,8 @@ public class TopMenuManager : MonoBehaviour
 
     private void Start()
     {
-        _currentCollection = PlayerPrefs.GetString(CollectionPrefsKey, SceneLoader.CurrentCollection ?? "classic");
+        _currentCollection = SceneLoader.CurrentCollection ?? "classic";
         _currentCategory = PlayerPrefs.GetString(CategoryPrefsKey, "puzzle");
-        CreateCollectionTabs();
         CreateTabs();
         ShowCategory(_currentCategory);
     }
