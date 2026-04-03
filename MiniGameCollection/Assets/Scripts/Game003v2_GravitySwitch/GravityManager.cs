@@ -378,6 +378,7 @@ namespace Game003v2_GravitySwitch
 
         // Stage 1: 5x5, 壁のみ, 基本操作
         // 解: 右→上 (2手)
+        // Ball(0,0) → 右 → (4,0) → 上 → (4,4)=Goal
         private StageData GetStage1()
         {
             return new StageData
@@ -386,8 +387,8 @@ namespace Game003v2_GravitySwitch
                 ballStart = new Vector2Int(0, 0),
                 goalPos = new Vector2Int(4, 4),
                 walls = new List<Vector2Int> {
-                    new Vector2Int(2, 4),
-                    new Vector2Int(4, 2),
+                    new Vector2Int(1, 2),
+                    new Vector2Int(3, 1),
                 },
                 holes = new List<Vector2Int>(),
                 hasHole = false, hasTwoBalls = false, moveLimit = 0, minMoves = 2
@@ -413,7 +414,9 @@ namespace Game003v2_GravitySwitch
         }
 
         // Stage 3: 6x6, 穴あり注意
-        // 解: 右→上→右→上 (4手)
+        // 解: 上→右→上→右→上 (5手)
+        // Ball(0,0)→上→(0,5)→右→(5,5)=Goal ※穴は経路外
+        // 実際: 上→(0,2) ※(0,3)壁, 右→(4,2) ※(5,2)壁, 上→(4,5), 右→(5,5)=Goal (4手)
         private StageData GetStage3()
         {
             return new StageData
@@ -422,19 +425,21 @@ namespace Game003v2_GravitySwitch
                 ballStart = new Vector2Int(0, 0),
                 goalPos = new Vector2Int(5, 5),
                 walls = new List<Vector2Int> {
-                    new Vector2Int(3, 0), new Vector2Int(3, 1),
-                    new Vector2Int(0, 3), new Vector2Int(1, 3),
-                    new Vector2Int(5, 3),
+                    new Vector2Int(0, 3),
+                    new Vector2Int(5, 2),
+                    new Vector2Int(2, 5),
                 },
                 holes = new List<Vector2Int> {
-                    new Vector2Int(2, 2), new Vector2Int(4, 4),
+                    new Vector2Int(3, 0), new Vector2Int(0, 4),
                 },
                 hasHole = true, hasTwoBalls = false, moveLimit = 0, minMoves = 4
             };
         }
 
-        // Stage 4: 6x6, 手数制限12, 穴多め
-        // 解: 右→上→左→上→右→上 (6手)
+        // Stage 4: 6x6, 手数制限12
+        // 解: 右→上→右→上 (4手)
+        // Ball(0,0)→右→(1,0)[壁(2,0)]→上→(1,4)[壁(1,5)]→右→(5,4)→上→(5,5)=Goal
+        // 穴は解の経路(x=1のy列、y=4のx列)を避けた位置に配置
         private StageData GetStage4()
         {
             return new StageData
@@ -443,20 +448,20 @@ namespace Game003v2_GravitySwitch
                 ballStart = new Vector2Int(0, 0),
                 goalPos = new Vector2Int(5, 5),
                 walls = new List<Vector2Int> {
-                    new Vector2Int(2, 0), new Vector2Int(2, 1),
-                    new Vector2Int(4, 2), new Vector2Int(4, 3),
-                    new Vector2Int(1, 4), new Vector2Int(2, 4),
+                    new Vector2Int(2, 0),
+                    new Vector2Int(1, 5),
                 },
                 holes = new List<Vector2Int> {
-                    new Vector2Int(3, 1), new Vector2Int(0, 3), new Vector2Int(5, 2),
+                    new Vector2Int(0, 2), new Vector2Int(3, 1), new Vector2Int(4, 2),
                 },
-                hasHole = true, hasTwoBalls = false, moveLimit = 12, minMoves = 6
+                hasHole = true, hasTwoBalls = false, moveLimit = 12, minMoves = 4
             };
         }
 
         // Stage 5: 6x6, 2ボール同時ゴール
         // Ball(0,0)→Goal(0,5), Ball2(5,0)→Goal2(5,5)
-        // 解: 上→(両方上端に到達) (1手で両ゴール)
+        // 解: 上 (1手) Ball→(0,5)=Goal, Ball2→(5,5)=Goal2
+        // 壁は中央帯に置いて経路は両端のみ通る
         private StageData GetStage5()
         {
             return new StageData
@@ -467,13 +472,13 @@ namespace Game003v2_GravitySwitch
                 goalPos = new Vector2Int(0, 5),
                 goal2Pos = new Vector2Int(5, 5),
                 walls = new List<Vector2Int> {
-                    new Vector2Int(1, 2), new Vector2Int(2, 2), new Vector2Int(3, 2), new Vector2Int(4, 2),
-                    new Vector2Int(1, 4), new Vector2Int(2, 4), new Vector2Int(3, 4), new Vector2Int(4, 4),
+                    new Vector2Int(1, 1), new Vector2Int(2, 1), new Vector2Int(3, 1), new Vector2Int(4, 1),
+                    new Vector2Int(1, 3), new Vector2Int(2, 3), new Vector2Int(3, 3), new Vector2Int(4, 3),
                 },
                 holes = new List<Vector2Int> {
-                    new Vector2Int(2, 1), new Vector2Int(3, 3),
+                    new Vector2Int(2, 2), new Vector2Int(3, 2),
                 },
-                hasHole = true, hasTwoBalls = true, moveLimit = 15, minMoves = 4
+                hasHole = true, hasTwoBalls = true, moveLimit = 15, minMoves = 1
             };
         }
 
