@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: fee2c4843604348ab910e94eb611b475
+guid: f20a14e2c0cae429c816c25732ac4686
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2868101353237766674
-    second: WhiteSquare_0
+      213: -2530518476736191857
+    second: warp_tile_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: WhiteSquare_0
+      name: warp_tile_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 4
-        height: 4
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 212ed832cfa8dc720800000000000000
-      internalID: 2868101353237766674
+      spriteID: f82a3984adac1ecd0800000000000000
+      internalID: -2530518476736191857
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      WhiteSquare_0: 2868101353237766674
+      warp_tile_0: -2530518476736191857
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

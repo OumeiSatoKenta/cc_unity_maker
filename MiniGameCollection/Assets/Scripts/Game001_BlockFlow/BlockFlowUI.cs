@@ -4,68 +4,77 @@ using TMPro;
 
 namespace Game001_BlockFlow
 {
-    /// <summary>
-    /// BlockFlow のUI制御。手数表示・クリアパネル・メニューへ戻るボタンを管理する。
-    /// </summary>
     public class BlockFlowUI : MonoBehaviour
     {
-        [SerializeField, Tooltip("手数を表示するテキスト")]
-        private TextMeshProUGUI _moveCountText;
+        [SerializeField, Tooltip("スコア")] private TextMeshProUGUI _scoreText;
+        [SerializeField, Tooltip("ステージ表示")] private TextMeshProUGUI _stageText;
+        [SerializeField, Tooltip("手数表示")] private TextMeshProUGUI _movesText;
+        [SerializeField, Tooltip("ステージクリアパネル")] private GameObject _stageClearPanel;
+        [SerializeField, Tooltip("ステージクリアテキスト")] private TextMeshProUGUI _stageClearText;
+        [SerializeField, Tooltip("次ステージボタン")] private Button _nextStageButton;
+        [SerializeField, Tooltip("クリアパネル")] private GameObject _clearPanel;
+        [SerializeField, Tooltip("クリアテキスト")] private TextMeshProUGUI _clearText;
+        [SerializeField, Tooltip("ゲームオーバーパネル")] private GameObject _gameOverPanel;
+        [SerializeField, Tooltip("ゲームオーバーテキスト")] private TextMeshProUGUI _gameOverText;
 
-        [SerializeField, Tooltip("クリア時に表示するパネル")]
-        private GameObject _clearPanel;
-
-        [SerializeField, Tooltip("クリアメッセージのテキスト")]
-        private TextMeshProUGUI _clearText;
-
-        [SerializeField, Tooltip("リスタートボタン")]
-        private Button _restartButton;
-
-        [SerializeField, Tooltip("メニューへ戻るボタン")]
-        private Button _menuButton;
-
-        [SerializeField, Tooltip("ゲームマネージャー参照")]
-        private BlockFlowGameManager _gameManager;
-
-        private void Awake()
+        public void UpdateScore(int score)
         {
-            if (_restartButton != null)
+            if (_scoreText) _scoreText.text = $"SCORE: {score}";
+        }
+
+        public void UpdateStage(int stage, int total)
+        {
+            if (_stageText) _stageText.text = $"Stage {stage} / {total}";
+        }
+
+        public void UpdateMoves(int moves, int limit)
+        {
+            if (_movesText)
             {
-                _restartButton.onClick.AddListener(OnRestartClicked);
+                if (limit > 0)
+                {
+                    _movesText.gameObject.SetActive(true);
+                    int remaining = limit - moves;
+                    _movesText.text = $"残り: {remaining}手";
+                    _movesText.color = remaining <= 3 ? new Color(1f, 0.3f, 0.3f) : Color.white;
+                }
+                else
+                {
+                    _movesText.gameObject.SetActive(true);
+                    _movesText.text = $"手数: {moves}";
+                    _movesText.color = Color.white;
+                }
             }
-            if (_menuButton != null)
+        }
+
+        public void ShowStageClearPanel(int stage, int score, string bonus)
+        {
+            if (_stageClearPanel) _stageClearPanel.SetActive(true);
+            if (_stageClearText)
             {
-                _menuButton.onClick.AddListener(OnMenuClicked);
+                string text = $"Stage {stage} クリア！\nスコア: {score}";
+                if (!string.IsNullOrEmpty(bonus)) text += $"\n{bonus}";
+                _stageClearText.text = text;
             }
         }
 
-        public void UpdateMoveCount(int count)
+        public void ShowClearPanel(int score)
         {
-            if (_moveCountText != null)
-            {
-                _moveCountText.text = $"手数: {count}";
-            }
+            if (_clearPanel) _clearPanel.SetActive(true);
+            if (_clearText) _clearText.text = $"全ステージクリア！\n\n最終スコア: {score}";
         }
 
-        public void ShowClearPanel(int moveCount)
+        public void ShowGameOverPanel(int score, int stage)
         {
-            if (_clearPanel != null) _clearPanel.SetActive(true);
-            if (_clearText != null) _clearText.text = $"クリア!\n{moveCount} 手";
+            if (_gameOverPanel) _gameOverPanel.SetActive(true);
+            if (_gameOverText) _gameOverText.text = $"ゲームオーバー\n\nStage {stage}\nスコア: {score}";
         }
 
-        public void HideClearPanel()
+        public void HideAllPanels()
         {
-            if (_clearPanel != null) _clearPanel.SetActive(false);
-        }
-
-        private void OnRestartClicked()
-        {
-            if (_gameManager != null) _gameManager.RestartGame();
-        }
-
-        private void OnMenuClicked()
-        {
-            SceneLoader.BackToMenu();
+            if (_stageClearPanel) _stageClearPanel.SetActive(false);
+            if (_clearPanel) _clearPanel.SetActive(false);
+            if (_gameOverPanel) _gameOverPanel.SetActive(false);
         }
     }
 }
