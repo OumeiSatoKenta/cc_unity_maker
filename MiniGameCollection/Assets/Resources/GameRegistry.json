@@ -1077,7 +1077,7 @@
       "size": "S",
       "sceneName": "007v2_NumberFlow",
       "description": "数字を1から順に繋げて盤面を全マス埋める",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
