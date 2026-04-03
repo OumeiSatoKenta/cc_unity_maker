@@ -1,0 +1,1 @@
+../setup-game-issues/references/issue-template-v2plus.md
