@@ -1127,7 +1127,7 @@
       "size": "M",
       "sceneName": "012v2_BridgeBuilder",
       "description": "橋のパーツを配置して車が安全に渡れる橋を作る",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
