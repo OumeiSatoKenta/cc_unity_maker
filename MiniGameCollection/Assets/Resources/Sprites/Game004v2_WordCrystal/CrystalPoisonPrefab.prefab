@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9031139102427563781}
   - component: {fileID: 781682214757671246}
   - component: {fileID: 7221036028815005806}
+  - component: {fileID: 6343877374702237982}
   m_Layer: 0
   m_Name: CrystalPoisonPrefab
   m_TagString: Untagged
@@ -128,3 +129,15 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.45
+--- !u!114 &6343877374702237982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043724656147384922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cc6093935b742febe6a10128f66a1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game004v2_WordCrystal.CrystalObject

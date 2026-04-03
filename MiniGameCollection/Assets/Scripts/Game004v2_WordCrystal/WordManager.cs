@@ -142,6 +142,8 @@ namespace Game004v2_WordCrystal
             };
             if (prefab == null) prefab = _crystalNormalPrefab;
 
+            if (prefab == null) return;
+
             var obj = Instantiate(prefab, pos, Quaternion.identity, transform);
             obj.transform.localScale = Vector3.one * _cellSize * 0.85f;
             var crystal = obj.GetComponent<CrystalObject>();
@@ -155,12 +157,28 @@ namespace Game004v2_WordCrystal
         private void Update()
         {
             if (!_isActive) return;
-            if (Mouse.current == null) return;
-            if (!Mouse.current.leftButton.wasPressedThisFrame) return;
 
-            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Vector2 screenPos;
+            bool tapped = false;
+
+            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+            {
+                screenPos = Touchscreen.current.primaryTouch.position.ReadValue();
+                tapped = true;
+            }
+            else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                screenPos = Mouse.current.position.ReadValue();
+                tapped = true;
+            }
+            else
+            {
+                return;
+            }
+
+            if (!tapped) return;
             if (_camera == null) return;
-            Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 0f));
+            Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0f));
             worldPos.z = 0f;
 
             // クリスタルチェック

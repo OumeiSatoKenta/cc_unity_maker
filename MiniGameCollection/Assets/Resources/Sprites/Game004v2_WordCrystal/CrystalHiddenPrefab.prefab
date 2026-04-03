@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8252308819156376543}
   - component: {fileID: 3841635030225457761}
   - component: {fileID: 555080554977629336}
+  - component: {fileID: 7729134262663167009}
   m_Layer: 0
   m_Name: CrystalHiddenPrefab
   m_TagString: Untagged
@@ -128,3 +129,15 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.45
+--- !u!114 &7729134262663167009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92691275413981112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cc6093935b742febe6a10128f66a1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game004v2_WordCrystal.CrystalObject
