@@ -1117,7 +1117,7 @@
       "size": "M",
       "sceneName": "011v2_FoldPaper",
       "description": "紙を折り畳んで指定の形を作る折り紙パズル",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {

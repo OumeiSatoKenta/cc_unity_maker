@@ -344,6 +344,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/010v2_GearSync.unity
     guid: c89b073bcae5e47c1bbc3ed44a366f3c
+  - enabled: 1
+    path: Assets/Scenes/007v2_NumberFlow.unity
+    guid: 1922e43a9d18548ec8764f2fbf5c1ff0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
