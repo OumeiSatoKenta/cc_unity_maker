@@ -6,54 +6,67 @@ namespace Game002_MirrorMaze
 {
     public class MirrorMazeUI : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _moveCountText;
-        [SerializeField] private TextMeshProUGUI _stageText;
-        [SerializeField] private GameObject _clearPanel;
-        [SerializeField] private TextMeshProUGUI _clearText;
-        [SerializeField] private Button _restartButton;
-        [SerializeField] private Button _nextStageButton;
         [SerializeField] private MirrorMazeGameManager _gameManager;
+        [SerializeField] private TextMeshProUGUI _stageText;
+        [SerializeField] private TextMeshProUGUI _scoreText;
+        [SerializeField] private Button _fireButton;
+        [SerializeField] private Button _resetButton;
+        [SerializeField] private Button _menuButton;
+        [SerializeField] private GameObject _stageClearPanel;
+        [SerializeField] private TextMeshProUGUI _stageClearText;
+        [SerializeField] private TextMeshProUGUI _stageScoreText;
+        [SerializeField] private Button _nextStageButton;
+        [SerializeField] private GameObject _clearPanel;
+        [SerializeField] private TextMeshProUGUI _finalScoreText;
+        [SerializeField] private Button _clearMenuButton;
+        [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private Button _retryButton;
 
-        private void Awake()
-        {
-            if (_restartButton != null)
-                _restartButton.onClick.AddListener(OnRestartClicked);
-            if (_nextStageButton != null)
-                _nextStageButton.onClick.AddListener(OnNextStageClicked);
-        }
-
-        public void UpdateMoveCount(int count)
-        {
-            if (_moveCountText != null)
-                _moveCountText.text = $"手数: {count}";
-        }
-
-        public void UpdateStageText(int stageNum)
+        public void UpdateStage(int current, int total)
         {
             if (_stageText != null)
-                _stageText.text = $"ステージ {stageNum}";
+                _stageText.text = $"Stage {current} / {total}";
         }
 
-        public void ShowClearPanel(int moveCount, int stageNum)
+        public void UpdateScore(int score)
         {
-            if (_clearPanel != null) _clearPanel.SetActive(true);
-            if (_clearText != null)
-                _clearText.text = $"クリア!\nステージ {stageNum}\n{moveCount} 手";
+            if (_scoreText != null)
+                _scoreText.text = $"Score: {score}";
         }
 
-        public void HideClearPanel()
+        public void ShowStageClearPanel(int stageNum, int stageScore)
         {
+            if (_stageClearPanel != null)
+            {
+                _stageClearPanel.SetActive(true);
+                if (_stageClearText != null)
+                    _stageClearText.text = $"ステージ {stageNum} クリア！";
+                if (_stageScoreText != null)
+                    _stageScoreText.text = $"+{stageScore}";
+            }
+        }
+
+        public void ShowClearPanel(int totalScore)
+        {
+            if (_clearPanel != null)
+            {
+                _clearPanel.SetActive(true);
+                if (_finalScoreText != null)
+                    _finalScoreText.text = $"最終スコア: {totalScore}";
+            }
+        }
+
+        public void ShowGameOverPanel()
+        {
+            if (_gameOverPanel != null)
+                _gameOverPanel.SetActive(true);
+        }
+
+        public void HideAllPanels()
+        {
+            if (_stageClearPanel != null) _stageClearPanel.SetActive(false);
             if (_clearPanel != null) _clearPanel.SetActive(false);
-        }
-
-        private void OnRestartClicked()
-        {
-            if (_gameManager != null) _gameManager.RestartGame();
-        }
-
-        private void OnNextStageClicked()
-        {
-            if (_gameManager != null) _gameManager.NextStage();
+            if (_gameOverPanel != null) _gameOverPanel.SetActive(false);
         }
     }
 }

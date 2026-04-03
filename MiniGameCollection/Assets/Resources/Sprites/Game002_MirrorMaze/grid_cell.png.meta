@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f6f8b8153ae2d44c6882191b23663438
+guid: 78c3b3cebc06c4a7d80471e6c75e79ef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2868101353237766674
-    second: WhiteSquare_0
+      213: -295810639959039521
+    second: grid_cell_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: WhiteSquare_0
+      name: grid_cell_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 4
-        height: 4
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 212ed832cfa8dc720800000000000000
-      internalID: 2868101353237766674
+      spriteID: fd1e57c4ac115ebf0800000000000000
+      internalID: -295810639959039521
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      WhiteSquare_0: 2868101353237766674
+      grid_cell_0: -295810639959039521
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
