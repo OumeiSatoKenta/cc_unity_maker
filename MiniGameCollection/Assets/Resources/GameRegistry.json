@@ -1397,7 +1397,7 @@
       "size": "M",
       "sceneName": "039v2_BoomerangHero",
       "description": "ブーメランを投げ軌道を指でなぞり操作して敵を倒す",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
