@@ -1187,7 +1187,7 @@
       "size": "L",
       "sceneName": "018v2_TimeRewind",
       "description": "コマを動かした後に時間を巻き戻してゴールを達成する逆算パズル",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
