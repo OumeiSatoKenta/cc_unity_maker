@@ -1197,7 +1197,7 @@
       "size": "S",
       "sceneName": "019v2_PathCut",
       "description": "最小手数でロープをカットしてボールを星に当てて落とす",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
