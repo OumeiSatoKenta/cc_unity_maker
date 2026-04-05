@@ -76,7 +76,7 @@ namespace Game030v2_FingerRacer
 
         bool IsCurveSegment()
         {
-            if (_coursePoints == null || _currentPointIndex < 1) return false;
+            if (_coursePoints == null || _coursePoints.Length < 3 || _currentPointIndex < 1) return false;
             int prev = Mathf.Max(0, _currentPointIndex - 2);
             int curr = _currentPointIndex;
             int next = Mathf.Min(_coursePoints.Length - 1, _currentPointIndex + 2);
@@ -218,6 +218,11 @@ namespace Game030v2_FingerRacer
         public void StopRace()
         {
             _isRacing = false;
+            if (_boostCo != null) { StopCoroutine(_boostCo); _boostCo = null; }
+            if (_spinCo  != null) { StopCoroutine(_spinCo);  _spinCo  = null; }
+            if (_pulseCo != null) { StopCoroutine(_pulseCo); _pulseCo = null; }
+            if (_carSr != null) _carSr.color = Color.white;
+            transform.localScale = Vector3.one;
         }
 
         public void SetSandMode(bool on)

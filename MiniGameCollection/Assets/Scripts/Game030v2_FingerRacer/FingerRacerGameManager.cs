@@ -96,6 +96,7 @@ namespace Game030v2_FingerRacer
             State = FingerRacerState.Drawing;
 
             var config = _stageManager.GetCurrentStageConfig();
+            _courseDrawer.SetCarController(_carController);
             _courseDrawer.SetupStage(config, _currentStage);
             _carController.SetupStage(config, _currentStage);
 
