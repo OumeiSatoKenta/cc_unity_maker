@@ -1357,7 +1357,7 @@
       "size": "M",
       "sceneName": "035v2_WaveRider",
       "description": "波に乗ってサーフィンし岩を避けながらトリックでスコアを稼ぐ",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {

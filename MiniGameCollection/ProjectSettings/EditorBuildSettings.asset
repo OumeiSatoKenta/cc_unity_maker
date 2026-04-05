@@ -413,6 +413,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/033v2_AimSniper.unity
     guid: 95f56890bbddc4a5894809bd3cf45dbb
+  - enabled: 1
+    path: Assets/Scenes/034v2_DropZone.unity
+    guid: 06694d022e676465d8d1fbb52eaadd48
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
