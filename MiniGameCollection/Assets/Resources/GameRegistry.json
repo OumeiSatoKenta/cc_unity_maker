@@ -1417,7 +1417,7 @@
       "size": "S",
       "sceneName": "041v2_StackJump",
       "description": "タイミングよくタップしてプラットフォームを積み上げ高さを競う",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
