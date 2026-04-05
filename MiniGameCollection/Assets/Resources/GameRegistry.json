@@ -1317,7 +1317,7 @@
       "size": "S",
       "sceneName": "031v2_BounceKing",
       "description": "ボールをバウンドさせてブロックを全破壊するブレイクアウト",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
