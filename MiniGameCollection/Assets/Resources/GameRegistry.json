@@ -1237,7 +1237,7 @@
       "size": "M",
       "sceneName": "023v2_ChainSlash",
       "description": "敵を鎖で繋いで一気に倒すコンボスラッシュ",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
