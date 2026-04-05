@@ -19,6 +19,7 @@ namespace Game010v2_GearSync
 
         void Start()
         {
+            _instructionPanel.OnDismissed += StartGame;
             _instructionPanel.Show(
                 "010",
                 "GearSync",
@@ -26,7 +27,6 @@ namespace Game010v2_GearSync
                 "パーツをタップして選択、グリッドをタップして配置。配置済みをタップで回収",
                 "全ての歯車を噛み合わせて機械を起動しよう"
             );
-            _instructionPanel.OnDismissed += StartGame;
         }
 
         void StartGame()

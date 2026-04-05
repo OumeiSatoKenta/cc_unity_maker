@@ -64,7 +64,7 @@ namespace Game030v2_FingerRacer
         public void UpdateBoost(int count, int max)
         {
             if (_boostText != null)
-                _boostText.text = $"⚡{count}/{max}";
+                _boostText.text = $"BOOST {count}/{max}";
         }
 
         public void ShowCombo(int combo, float multiplier)

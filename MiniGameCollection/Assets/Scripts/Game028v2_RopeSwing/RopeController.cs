@@ -219,8 +219,6 @@ namespace Game028v2_RopeSwing
             var platforms = _platformManager.Platforms;
             if (platforms == null) return;
 
-            float playerHalfH = 0.2f;
-
             for (int i = 0; i < platforms.Count; i++)
             {
                 var pd = platforms[i];

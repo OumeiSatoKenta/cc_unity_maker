@@ -18,6 +18,7 @@ namespace Game007v2_NumberFlow
 
         void Start()
         {
+            _instructionPanel.OnDismissed += StartGame;
             _instructionPanel.Show(
                 "007",
                 "NumberFlow",
@@ -25,7 +26,6 @@ namespace Game007v2_NumberFlow
                 "タップまたはスワイプでマスを順に選択、最後のマスを再タップで1手戻る",
                 "1から順に全マスを一筆書きで繋ごう"
             );
-            _instructionPanel.OnDismissed += StartGame;
         }
 
         void StartGame()

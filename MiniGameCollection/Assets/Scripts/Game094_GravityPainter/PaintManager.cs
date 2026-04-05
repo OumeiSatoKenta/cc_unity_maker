@@ -55,35 +55,33 @@ namespace Game094_GravityPainter
         public void DropPaint(int direction)
         {
             if (!_isActive) return;
-            bool painted = false;
-
             if (direction == 0) // up: 各列、上端から最初の白セルを塗る
             {
                 for (int c = 0; c < GridSize; c++)
                     for (int r = 0; r < GridSize; r++)
                         if (_canvasColors[r * GridSize + c] == ColorWhite)
-                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; painted = true; break; }
+                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; break; }
             }
             else if (direction == 1) // down: 各列、下端から最初の白セルを塗る
             {
                 for (int c = 0; c < GridSize; c++)
                     for (int r = GridSize - 1; r >= 0; r--)
                         if (_canvasColors[r * GridSize + c] == ColorWhite)
-                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; painted = true; break; }
+                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; break; }
             }
             else if (direction == 2) // left: 各行、左端から最初の白セルを塗る
             {
                 for (int r = 0; r < GridSize; r++)
                     for (int c = 0; c < GridSize; c++)
                         if (_canvasColors[r * GridSize + c] == ColorWhite)
-                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; painted = true; break; }
+                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; break; }
             }
             else if (direction == 3) // right: 各行、右端から最初の白セルを塗る
             {
                 for (int r = 0; r < GridSize; r++)
                     for (int c = GridSize - 1; c >= 0; c--)
                         if (_canvasColors[r * GridSize + c] == ColorWhite)
-                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; painted = true; break; }
+                        { _canvasColors[r * GridSize + c] = _selectedColorIdx; break; }
             }
             else
             {

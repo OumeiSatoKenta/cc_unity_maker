@@ -18,6 +18,7 @@ namespace Game011v2_FoldPaper
 
         void Start()
         {
+            _instructionPanel.OnDismissed += StartGame;
             _instructionPanel.Show(
                 "011",
                 "FoldPaper",
@@ -25,7 +26,6 @@ namespace Game011v2_FoldPaper
                 "折り線タップ→選択 / 紙の上下タップ→折る方向決定",
                 "手数以内に目標のシルエットと同じ形を作ろう"
             );
-            _instructionPanel.OnDismissed += StartGame;
         }
 
         void StartGame()

@@ -199,7 +199,6 @@ public class TopMenuManager : MonoBehaviour
             games = GameRegistry.Instance.GetGamesByCategoryAndCollection(category, collection);
         }
 
-        Debug.Log($"[TopMenuManager] collection={collection} category={category} → {games.Count} 件");
         foreach (var game in games)
         {
             CreateCard(game);
