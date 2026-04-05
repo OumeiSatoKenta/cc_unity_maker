@@ -1337,7 +1337,7 @@
       "size": "S",
       "sceneName": "033v2_AimSniper",
       "description": "揺れるスコープでタイミングよくタップして動くターゲットを撃つ",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
