@@ -1297,7 +1297,7 @@
       "size": "S",
       "sceneName": "029v2_MeteorShield",
       "description": "落下する隕石をシールドで弾いて星を守るディフェンス",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
