@@ -50,7 +50,7 @@ namespace Game014v2_MagnetPath
 
         static readonly StageLayoutData[] StageLayouts = new StageLayoutData[]
         {
-            // Stage 1: 2磁石直線配置
+            // Stage 1: 2磁石 横並び配置（直線上に磁石を置かず、誘導しやすい配置）
             new StageLayoutData
             {
                 gridSize = 5,
@@ -59,8 +59,8 @@ namespace Game014v2_MagnetPath
                 goalPos = new Vector2Int(2, 4),
                 magnets = new MagnetData[]
                 {
-                    new MagnetData { gridPos = new Vector2Int(2, 1), isNorth = true },
-                    new MagnetData { gridPos = new Vector2Int(2, 3), isNorth = false },
+                    new MagnetData { gridPos = new Vector2Int(0, 2), isNorth = true },
+                    new MagnetData { gridPos = new Vector2Int(4, 2), isNorth = true },
                 },
                 walls = new WallData[0],
             },
@@ -192,12 +192,14 @@ namespace Game014v2_MagnetPath
         float _cellSize;
         Vector2 _gridOrigin;
 
-        const float BASE_MAGNET_STRENGTH = 10.0f;
+        const float BASE_MAGNET_STRENGTH = 12.0f;
         const float MAGNET_INFLUENCE_RADIUS = 2.5f;
-        const float BALL_MAX_SPEED = 8.0f;
-        const float BALL_DAMPING = 0.98f;
+        const float BALL_MAX_SPEED = 10.0f;
+        const float BALL_DAMPING = 0.995f;
         const float GOAL_RADIUS = 0.4f;
         const float SWITCH_MAGNET_TRIGGER_RADIUS = 0.5f;
+        const float STALL_SPEED_THRESHOLD = 0.05f;
+        const float STALL_NUDGE_FORCE = 3.0f;
 
         public int SwitchCount => _switchCount;
         public int MaxSwitches => _maxSwitches;
@@ -569,6 +571,16 @@ namespace Game014v2_MagnetPath
             if (speed > BALL_MAX_SPEED * _speedMultiplier)
                 vel = vel.normalized * BALL_MAX_SPEED * _speedMultiplier;
             vel *= BALL_DAMPING;
+
+            // Stall detection: if nearly stationary, nudge toward goal to prevent getting stuck
+            Vector2 goalPos = isSecond
+                ? (_goal2Object != null ? (Vector2)_goal2Object.transform.position : (Vector2)_goalObject.transform.position)
+                : (Vector2)_goalObject.transform.position;
+            if (vel.magnitude < STALL_SPEED_THRESHOLD)
+            {
+                Vector2 nudgeDir = (goalPos - pos).normalized;
+                vel += nudgeDir * STALL_NUDGE_FORCE * dt;
+            }
 
             pos += vel * dt;
         }
