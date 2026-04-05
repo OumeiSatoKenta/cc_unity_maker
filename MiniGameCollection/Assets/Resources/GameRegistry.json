@@ -1327,7 +1327,7 @@
       "size": "M",
       "sceneName": "032v2_SpinCutter",
       "description": "回転する刃の軌道をコントロールして敵を一掃する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
