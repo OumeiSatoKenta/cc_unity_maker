@@ -63,15 +63,21 @@ namespace Game023v2_ChainSlash
         float _shakeTimer;
         float _shakeAmplitude;
 
+        // Cached references
+        Camera _cam;
+        Material _chainLineMaterial;
+
         void Awake()
         {
+            _cam = Camera.main;
+            _chainLineMaterial = new Material(Shader.Find("Sprites/Default"));
             ComputeBounds();
         }
 
         void ComputeBounds()
         {
-            float camSize = Camera.main != null ? Camera.main.orthographicSize : 5f;
-            float camWidth = camSize * (Camera.main != null ? Camera.main.aspect : 9f / 16f);
+            float camSize = _cam != null ? _cam.orthographicSize : 5f;
+            float camWidth = camSize * (_cam != null ? _cam.aspect : 9f / 16f);
             float topMargin = 1.4f;
             float bottomMargin = 3.0f;
             _minY = -camSize + bottomMargin;
@@ -213,8 +219,8 @@ namespace Game023v2_ChainSlash
 
         void MoveEnemies()
         {
-            float camSize = Camera.main != null ? Camera.main.orthographicSize : 5f;
-            float camW = camSize * (Camera.main != null ? Camera.main.aspect : 0.5625f);
+            float camSize = _cam != null ? _cam.orthographicSize : 5f;
+            float camW = camSize * (_cam != null ? _cam.aspect : 0.5625f);
             foreach (var e in _enemies)
             {
                 if (!e.isMoving || e.isChained || e.isDestroyed || e.go == null) continue;
@@ -243,7 +249,7 @@ namespace Game023v2_ChainSlash
             if (_isDragging)
             {
                 Vector2 screenPos = mouse.position.ReadValue();
-                Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+                Vector2 worldPos = _cam.ScreenToWorldPoint(screenPos);
                 var hit = Physics2D.OverlapPoint(worldPos);
                 if (hit != null)
                 {
@@ -365,6 +371,7 @@ namespace Game023v2_ChainSlash
             foreach (var e in _enemies)
                 if (e.go != null) e.sr.color = new Color(1f, 0.3f, 0.3f);
             yield return new WaitForSeconds(0.2f);
+            if (!_isActive) yield break;
             foreach (var e in _enemies)
                 if (e.go != null && !e.isChained) e.sr.color = Color.white;
         }
@@ -404,7 +411,7 @@ namespace Game023v2_ChainSlash
                 lr.SetPosition(1, _chain[i + 1].go.transform.position);
                 lr.startWidth = 0.08f;
                 lr.endWidth = 0.08f;
-                lr.material = new Material(Shader.Find("Sprites/Default"));
+                lr.material = _chainLineMaterial;
                 lr.startColor = new Color(1f, 0.9f, 0.2f, 0.9f);
                 lr.endColor = new Color(1f, 0.7f, 0.1f, 0.9f);
                 lr.sortingOrder = 8;
@@ -430,7 +437,7 @@ namespace Game023v2_ChainSlash
 
         void TriggerCameraShake(float duration, float amplitude)
         {
-            _camOrigPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            _camOrigPos = _cam != null ? _cam.transform.position : Vector3.zero;
             _shakeTimer = duration;
             _shakeAmplitude = amplitude;
         }
@@ -439,16 +446,16 @@ namespace Game023v2_ChainSlash
         {
             if (_shakeTimer <= 0f) return;
             _shakeTimer -= Time.deltaTime;
-            if (Camera.main == null) return;
+            if (_cam == null) return;
             if (_shakeTimer > 0f)
             {
                 float x = Random.Range(-_shakeAmplitude, _shakeAmplitude);
                 float y = Random.Range(-_shakeAmplitude, _shakeAmplitude);
-                Camera.main.transform.position = _camOrigPos + new Vector3(x, y, 0f);
+                _cam.transform.position = _camOrigPos + new Vector3(x, y, 0f);
             }
             else
             {
-                Camera.main.transform.position = _camOrigPos;
+                _cam.transform.position = _camOrigPos;
             }
         }
 
@@ -458,6 +465,7 @@ namespace Game023v2_ChainSlash
         void OnDestroy()
         {
             ClearAllEnemies();
+            if (_chainLineMaterial != null) Destroy(_chainLineMaterial);
         }
     }
 
