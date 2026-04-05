@@ -1,15 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Game014v2_MagnetPath
+namespace Game015v2_TileTurn
 {
-    public class MagnetPathGameManager : MonoBehaviour
+    public class TileTurnGameManager : MonoBehaviour
     {
         public enum GameState
         {
             WaitingInstruction,
             Playing,
-            BallMoving,
             StageClear,
             Clear,
             GameOver
@@ -17,8 +16,8 @@ namespace Game014v2_MagnetPath
 
         [SerializeField] StageManager _stageManager;
         [SerializeField] InstructionPanel _instructionPanel;
-        [SerializeField] MagnetManager _magnetManager;
-        [SerializeField] MagnetPathUI _ui;
+        [SerializeField] TileManager _tileManager;
+        [SerializeField] TileTurnUI _ui;
 
         GameState _state = GameState.WaitingInstruction;
         int _totalScore;
@@ -36,11 +35,11 @@ namespace Game014v2_MagnetPath
             _stageManager.OnAllStagesCleared += OnAllStagesCleared;
 
             _instructionPanel.Show(
-                "014v2",
-                "MagnetPath",
-                "磁石の極性を切り替えて鉄球をゴールに導こう",
-                "磁石をタップでN/S切替 → スタートで鉄球発射",
-                "少ない切替回数で鉄球をゴールに到達させよう"
+                "015v2",
+                "TileTurn",
+                "タイルをタップして回転させ、1枚の絵を完成させよう",
+                "タイルをタップで90度回転",
+                "少ない回転数で全タイルを正しい向きにしよう"
             );
         }
 
@@ -54,7 +53,7 @@ namespace Game014v2_MagnetPath
             _currentStage = stage;
             _state = GameState.Playing;
             var config = _stageManager.GetCurrentStageConfig();
-            _magnetManager.SetupStage(config, stage + 1);
+            _tileManager.SetupStage(config, stage + 1);
             _ui.UpdateStage(stage + 1, _stageManager.TotalStages);
             _ui.UpdateScore(_totalScore);
             _ui.HideAllPanels();
@@ -66,49 +65,28 @@ namespace Game014v2_MagnetPath
             _ui.ShowClearPanel(_totalScore);
         }
 
-        public void OnBallLaunched()
+        public void OnStageClear(int remainingRotations, int maxRotations, bool previewUsed)
         {
             if (_state != GameState.Playing) return;
-            _state = GameState.BallMoving;
-        }
-
-        public void OnBallReset()
-        {
-            if (_state != GameState.BallMoving && _state != GameState.Playing) return;
-            _state = GameState.Playing;
-        }
-
-        public void OnGoalReached(int remainingSwitches, int maxSwitches)
-        {
-            if (_state != GameState.BallMoving) return;
             _state = GameState.StageClear;
 
-            // Score calculation
-            float ratio = maxSwitches > 0 ? (float)remainingSwitches / maxSwitches : 0f;
+            float remainingRatio = maxRotations > 0 ? (float)remainingRotations / maxRotations : 0f;
             int baseScore = 1000 * (_currentStage + 1);
-            float efficiencyBonus = 1f + ratio;
-            bool perfectClear = remainingSwitches == maxSwitches; // no switches used beyond reset
-            float perfectMultiplier = perfectClear ? 2.0f : 1.0f;
+            float stageScore = baseScore * (1f + remainingRatio);
+            if (!previewUsed) stageScore *= 1.5f;
 
             _combo++;
             float comboMultiplier = _combo >= 5 ? 2.0f : _combo >= 3 ? 1.5f : _combo >= 2 ? 1.2f : 1.0f;
+            stageScore *= comboMultiplier;
 
-            int stageScore = Mathf.RoundToInt(baseScore * efficiencyBonus * perfectMultiplier * comboMultiplier);
-            _totalScore += stageScore;
+            int score = Mathf.RoundToInt(stageScore);
+            _totalScore += score;
 
             _ui.UpdateScore(_totalScore);
-            _ui.ShowStageClearPanel(stageScore, _combo);
+            _ui.ShowStageClearPanel(score, _combo);
         }
 
-        public void OnBallOutOfBounds()
-        {
-            if (_state != GameState.BallMoving) return;
-            _state = GameState.GameOver;
-            _combo = 0;
-            _ui.ShowGameOverPanel();
-        }
-
-        public void OnSwitchLimitExceeded()
+        public void OnGameOver()
         {
             if (_state != GameState.Playing) return;
             _state = GameState.GameOver;
@@ -126,7 +104,7 @@ namespace Game014v2_MagnetPath
         {
             if (_state != GameState.GameOver) return;
             _state = GameState.Playing;
-            _magnetManager.ResetStage();
+            _tileManager.ResetStage();
             _ui.HideAllPanels();
         }
 
@@ -138,11 +116,11 @@ namespace Game014v2_MagnetPath
         public void ShowInstructions()
         {
             _instructionPanel.Show(
-                "014v2",
-                "MagnetPath",
-                "磁石の極性を切り替えて鉄球をゴールに導こう",
-                "磁石をタップでN/S切替 → スタートで鉄球発射",
-                "少ない切替回数で鉄球をゴールに到達させよう"
+                "015v2",
+                "TileTurn",
+                "タイルをタップして回転させ、1枚の絵を完成させよう",
+                "タイルをタップで90度回転",
+                "少ない回転数で全タイルを正しい向きにしよう"
             );
         }
     }

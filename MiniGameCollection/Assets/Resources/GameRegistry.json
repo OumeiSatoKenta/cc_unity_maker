@@ -1157,7 +1157,7 @@
       "size": "S",
       "sceneName": "015v2_TileTurn",
       "description": "タイルを回転させて全体の絵柄を完成させる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
