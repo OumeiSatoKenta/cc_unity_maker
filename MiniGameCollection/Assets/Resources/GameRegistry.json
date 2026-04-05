@@ -1277,7 +1277,7 @@
       "size": "S",
       "sceneName": "027v2_DotDodge",
       "description": "画面を埋め尽くす無数のドットを避け生き延びるサバイバル",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
