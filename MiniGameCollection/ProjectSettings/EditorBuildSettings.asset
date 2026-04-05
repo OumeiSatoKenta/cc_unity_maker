@@ -386,6 +386,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/027v2_DotDodge.unity
     guid: 4873d878a05cc4094986725776a74022
+  - enabled: 1
+    path: Assets/Scenes/028v2_RopeSwing.unity
+    guid: 2c57353ce7ab24bfd904b077e11321c6
+  - enabled: 1
+    path: Assets/Scenes/029v2_MeteorShield.unity
+    guid: 345c1ab74a765470ab68ae04d3831b48
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
