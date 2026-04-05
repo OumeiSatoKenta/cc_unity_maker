@@ -138,13 +138,13 @@ public static class Setup011v2_FoldPaper
         bpImg.color = new Color(0.08f, 0.1f, 0.2f, 0.9f);
 
         // Undo button (left)
-        var undoBtn = CB(bottomPanel.transform, "UndoButton", "↩ Undo", jpFont,
+        var undoBtn = CB(bottomPanel.transform, "UndoButton", "Undo", jpFont,
             new Vector2(0.25f, 0.5f), new Vector2(0.25f, 0.5f), new Vector2(0.5f, 0.5f),
             new Vector2(200, 65), new Vector2(0, 50),
             new Color(0.4f, 0.3f, 0.7f));
 
         // Reset button (right)
-        var resetBtn = CB(bottomPanel.transform, "ResetButton", "🔄 リセット", jpFont,
+        var resetBtn = CB(bottomPanel.transform, "ResetButton", "リセット", jpFont,
             new Vector2(0.75f, 0.5f), new Vector2(0.75f, 0.5f), new Vector2(0.5f, 0.5f),
             new Vector2(200, 65), new Vector2(0, 50),
             new Color(0.5f, 0.3f, 0.2f));
@@ -317,7 +317,7 @@ public static class Setup011v2_FoldPaper
         var tmp = go.AddComponent<TextMeshProUGUI>();
         tmp.text = text; tmp.fontSize = size;
         if (font) tmp.font = font;
-        tmp.enableWordWrapping = false;
+        tmp.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
         return go;
     }
 

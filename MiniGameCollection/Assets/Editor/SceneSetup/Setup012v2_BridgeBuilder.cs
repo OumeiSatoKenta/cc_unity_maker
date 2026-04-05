@@ -333,7 +333,7 @@ public static class Setup012v2_BridgeBuilder
         var tmp = go.AddComponent<TextMeshProUGUI>();
         tmp.text = text; tmp.fontSize = size;
         if (font) tmp.font = font;
-        tmp.enableWordWrapping = false;
+        tmp.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
         return go;
     }
 
@@ -363,7 +363,7 @@ public static class Setup012v2_BridgeBuilder
         if (font) tmp.font = font;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = Color.white;
-        tmp.enableWordWrapping = true;
+        tmp.textWrappingMode = TMPro.TextWrappingModes.Normal;
         return go;
     }
 

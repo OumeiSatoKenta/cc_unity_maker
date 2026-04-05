@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7344529494200078876}
   - component: {fileID: 4040908212257632542}
-  - component: {fileID: 893546501475929197}
+  - component: {fileID: 6880305355430787671}
   m_Layer: 0
   m_Name: BallPrefabV2
   m_TagString: Untagged
@@ -92,7 +92,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &893546501475929197
+--- !u!114 &6880305355430787671
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,6 +101,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7229567749196572840}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b54c43c285bdc4ac3bf393ffad3c2c2e, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fddb78bd8d61478bab26f8957556323, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game003_GravitySwitch.BallController
+  m_EditorClassIdentifier: Assembly-CSharp::Game003v2_GravitySwitch.BallController
