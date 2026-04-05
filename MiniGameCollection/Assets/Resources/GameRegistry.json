@@ -1247,7 +1247,7 @@
       "size": "S",
       "sceneName": "024v2_BubblePop",
       "description": "迫ってくるバブルをタップで破裂させるアーケード",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
