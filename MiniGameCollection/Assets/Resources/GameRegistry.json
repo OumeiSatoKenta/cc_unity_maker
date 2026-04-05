@@ -1147,7 +1147,7 @@
       "size": "M",
       "sceneName": "014v2_MagnetPath",
       "description": "磁石の極性（N/S）を切り替えて鉄球を誘導する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
