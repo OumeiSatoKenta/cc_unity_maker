@@ -353,6 +353,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/012v2_BridgeBuilder.unity
     guid: d2a7d23e5e78943839efb71dc1a6185c
+  - enabled: 1
+    path: Assets/Scenes/014v2_MagnetPath.unity
+    guid: 0070b2c828a7141b28ff5ddc611575dc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
