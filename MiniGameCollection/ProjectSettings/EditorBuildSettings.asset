@@ -425,6 +425,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/038v2_FlyBird.unity
     guid: 206971ba0004148a5a6809a4b9d03ebb
+  - enabled: 1
+    path: Assets/Scenes/039v2_BoomerangHero.unity
+    guid: 8f2960547bc7e4b12aa7f9a844bed4f1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
