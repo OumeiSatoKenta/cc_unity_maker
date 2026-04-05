@@ -1227,7 +1227,7 @@
       "size": "S",
       "sceneName": "022v2_GravityBall",
       "description": "上下反転を繰り返しながら障害物をよける反射アクション",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
