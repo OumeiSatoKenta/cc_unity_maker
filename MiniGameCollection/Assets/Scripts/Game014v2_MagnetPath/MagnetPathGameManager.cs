@@ -31,6 +31,10 @@ namespace Game014v2_MagnetPath
 
         void Start()
         {
+            _instructionPanel.OnDismissed += StartGame;
+            _stageManager.OnStageChanged += OnStageChanged;
+            _stageManager.OnAllStagesCleared += OnAllStagesCleared;
+
             _instructionPanel.Show(
                 "014v2",
                 "MagnetPath",
@@ -38,10 +42,6 @@ namespace Game014v2_MagnetPath
                 "磁石をタップでN/S切替 → スタートで鉄球発射",
                 "少ない切替回数で鉄球をゴールに到達させよう"
             );
-            _instructionPanel.OnDismissed += StartGame;
-
-            _stageManager.OnStageChanged += OnStageChanged;
-            _stageManager.OnAllStagesCleared += OnAllStagesCleared;
         }
 
         void StartGame()
