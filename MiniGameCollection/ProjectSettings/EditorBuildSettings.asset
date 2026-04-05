@@ -383,6 +383,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/025v2_TowerDefend.unity
     guid: 154294cce83a6457085f32e1a1511812
+  - enabled: 1
+    path: Assets/Scenes/027v2_DotDodge.unity
+    guid: 4873d878a05cc4094986725776a74022
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

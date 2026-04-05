@@ -1287,7 +1287,7 @@
       "size": "M",
       "sceneName": "028v2_RopeSwing",
       "description": "ロープを掴んで振り子運動でステージを渡り歩く",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
