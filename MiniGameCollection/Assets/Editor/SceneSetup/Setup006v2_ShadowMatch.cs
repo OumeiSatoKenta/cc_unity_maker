@@ -43,7 +43,7 @@ public static class Setup006v2_ShadowMatch
         bgObj.transform.localScale = spBg != null ? new Vector3(0.025f, 0.025f, 1f) : new Vector3(16f, 14f, 1f);
 
         // ---- World Objects ----
-        float camSize = 6f;
+
         // ObjectDisplay root
         var displayRoot = new GameObject("ObjectDisplay");
         displayRoot.transform.position = Vector3.zero;

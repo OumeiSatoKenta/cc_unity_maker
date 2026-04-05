@@ -331,7 +331,7 @@ public static class Setup010v2_GearSync
         var tmp = go.AddComponent<TextMeshProUGUI>();
         tmp.text = text; tmp.fontSize = size;
         if (font) tmp.font = font;
-        tmp.enableWordWrapping = false;
+        tmp.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
         return go;
     }
 

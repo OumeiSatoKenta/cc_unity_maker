@@ -208,7 +208,7 @@ public static class Setup030v2_FingerRacer
         courseOutText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.5f, 0.5f);
 
         // Boost text (left lower HUD)
-        var boostText = CT(canvasObj.transform, "BoostText", "⚡3/3", 34, jpFont,
+        var boostText = CT(canvasObj.transform, "BoostText", "BOOST 3/3", 34, jpFont,
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
             new Vector2(200, 50), new Vector2(20, -120));
         boostText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Left;

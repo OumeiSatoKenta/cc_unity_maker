@@ -15,4 +15,9 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-01
+- WorldManager._ui への直接アクセス不可 → GameManager に UpdateHintDisplay() を追加してブリッジ
+- 未使用 _itemSprite/_trapSprite SerializeField を削除（ヒントは色変化のみで実現）
+- ShowHint() コルーチン中のシーンリロード対策: yield後に _isActive チェック追加
+- コンパイル・SceneSetup実行エラーなし、PR #250 マージ済み

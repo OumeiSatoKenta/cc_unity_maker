@@ -28,7 +28,6 @@ namespace Game028v2_RopeSwing
         int _comboCount;
         float _comboMultiplier = 1f;
         float _stageStartTime;
-        bool _isActive;
         Coroutine _autoAdvanceCo;
 
         void Start()
@@ -49,7 +48,6 @@ namespace Game028v2_RopeSwing
             _score = 0;
             _comboCount = 0;
             _comboMultiplier = 1f;
-            _isActive = true;
             State = RopeSwingState.Playing;
 
             _ui.Initialize(this);

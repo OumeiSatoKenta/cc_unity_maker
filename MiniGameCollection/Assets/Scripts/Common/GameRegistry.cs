@@ -87,11 +87,14 @@ public class GameRegistry : MonoBehaviour
     }
 
     /// <summary>
-    /// 指定コレクション+カテゴリのゲーム一覧を返す。
+    /// 指定コレクション+カテゴリのゲーム一覧を返す（ID昇順）。
     /// </summary>
     public List<GameEntry> GetGamesByCategoryAndCollection(string category, string collection)
     {
-        return _registryData.games.Where(g => g.category == category && g.collection == collection).ToList();
+        return _registryData.games
+            .Where(g => g.category == category && g.collection == collection)
+            .OrderBy(g => g.id)
+            .ToList();
     }
 
     /// <summary>

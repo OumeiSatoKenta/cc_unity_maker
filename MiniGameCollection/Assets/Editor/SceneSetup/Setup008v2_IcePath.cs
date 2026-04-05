@@ -109,7 +109,7 @@ public static class Setup008v2_IcePath
 
         // Bottom buttons row (y=75)
         // Undo button (left)
-        var undoBtn = CB(canvasObj.transform, "UndoButton", "↩ 戻す", 26, jpFont,
+        var undoBtn = CB(canvasObj.transform, "UndoButton", "← 戻す", 26, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(200, 65), new Vector2(20, 75), new Color(0.3f, 0.35f, 0.5f, 0.9f));
 

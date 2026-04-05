@@ -184,7 +184,7 @@ namespace Game011v2_FoldPaper
                     go.transform.position = CellToWorld(r, c) + Vector3.back * 0.1f;
                     var sr = go.AddComponent<SpriteRenderer>();
                     sr.sprite = _targetCellSprite;
-                    sr.sortingOrder = 0;
+                    sr.sortingOrder = 2;
                     go.transform.localScale = Vector3.one * _cellSize * 0.85f;
                     _targetObjects.Add(go);
                 }

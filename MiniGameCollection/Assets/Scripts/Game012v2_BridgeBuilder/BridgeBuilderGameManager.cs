@@ -18,6 +18,7 @@ namespace Game012v2_BridgeBuilder
 
         void Start()
         {
+            _instructionPanel.OnDismissed += StartGame;
             _instructionPanel.Show(
                 "012",
                 "BridgeBuilder",
@@ -25,7 +26,6 @@ namespace Game012v2_BridgeBuilder
                 "パーツ選択 → 支点タップ2回で配置 → テストで走行確認",
                 "予算内で橋を作り、車を安全に渡らせよう"
             );
-            _instructionPanel.OnDismissed += StartGame;
         }
 
         void StartGame()

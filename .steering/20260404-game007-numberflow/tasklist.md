@@ -15,4 +15,19 @@
 - [x] implemented: true に変更（remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+### 実装完了日
+2026-04-04
+
+### 計画と実績の差分
+- `StageManager._stageConfigs` プロパティが存在せず、SceneSetupでの直接設定が不可能だった → `StageManager` のデフォルト設定を利用する方針に変更
+- `HandlePointer` 内で `mouse` ローカル変数が参照できないコンパイルエラー → `isPress: bool` パラメータを渡す方式に修正
+- `ApplyDirectionStage` でインデックス重複宣言が発生 → 旧宣言を削除して修正
+
+### 学んだこと
+- `StageManager` の `_stageConfigs` フィールドは SerializedProperty で直接設定できない（private配列）。カスタム設定は実行時に `SetConfigs()` を呼ぶか、デフォルト設定を利用する
+- メソッドをリファクタリングしてスコープを変えると、外部変数参照がなくなりコンパイルエラーになる
+
+### 次回への改善提案
+- `HandlePointer` のように、メソッドで必要な状態はパラメータで明示的に渡すパターンを最初から意識する
+- SceneSetupでStageManagerのカスタム設定が必要な場合は `SetConfigs()` 呼び出しを RuntimeInitializationOnLoad や GameManager.Start() で行う

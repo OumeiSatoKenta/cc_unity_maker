@@ -15,4 +15,16 @@
 - [x] implemented: true に変更（remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-05
+
+**計画と実績の差分**:
+- StageManager.StageConfig に `stage` フィールドが存在しないため CS1061 コンパイルエラー。`SetupStage` を `(StageConfig config, int stageNumber)` に変更して解決。
+- Controller 内フレーム毎 GetComponent 設計ミスを構造レビューで指摘。SerializeField + SceneSetup 配線に変更。
+
+**学んだこと**:
+- StageConfig フィールドは `speedMultiplier`, `countMultiplier`, `complexityFactor`, `stageName` のみ。ステージ番号は別引数で渡す。
+- コルーチンと ClearAllEnemies 競合防止には `isDestroyed` フラグが有効。
+
+**次回への改善提案**:
+- SetupStage シグネチャを設計段階で (StageConfig, int) の2引数と明記する。

@@ -16,4 +16,14 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-01
+- PR: https://github.com/OumeiSatoKenta/cc_unity_maker/pull/189 (マージ済み)
+
+### 計画と実績の差分
+- ゾーンラベルはSpriteRendererではなく、DropManager内でゾーン名表示なしで実装（ゾーンの色で十分識別可能）
+- ドラッグ中もアイテムは落下し続ける仕様を採用（リリースで3倍加速）
+
+### 学んだこと
+- Invoke(nameof(SpawnNextItem), 0.4f) で次アイテム生成に遅延を入れるとテンポが良い
+- コンボシステムは _combo フィールド1つで十分（正解で++、ミスで0リセット）

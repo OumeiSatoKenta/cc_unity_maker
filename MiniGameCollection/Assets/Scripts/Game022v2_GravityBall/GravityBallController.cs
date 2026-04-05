@@ -260,7 +260,6 @@ namespace Game022v2_GravityBall
             float gapCenter = Random.Range(_gameAreaBottom + actualGap * 0.5f + 0.3f,
                                            _gameAreaTop - actualGap * 0.5f - 0.3f);
 
-            float obsHeight = 10f;
             float topY = gapCenter + actualGap * 0.5f;
             float botY = gapCenter - actualGap * 0.5f;
 

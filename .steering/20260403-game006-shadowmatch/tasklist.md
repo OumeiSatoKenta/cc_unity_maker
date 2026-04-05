@@ -16,4 +16,19 @@
 - [x] implemented: true に変更（006 remake エントリ）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-03
+
+**計画と実績の差分**:
+- ShadowRenderer.csは当初予定していたが、Texture2D動的生成は不要と判断。ShadowObjectControllerに統合した。これにより実装がシンプルになった。
+- コードレビューで`_lockZ`が実際はY軸ロックとして機能していた命名バグを発見し修正（`_lockYRot`に改名）。
+- CalculateMatch()のY軸ラップアラウンド計算にバグがあり修正（NormalizeAngle追加）。
+
+**学んだこと**:
+- 3D影のシミュレーションを2D Unityで実現する際は、角度差分からガウス関数でマッチ率計算するアプローチが有効。
+- StageConfigsの変数名は意図を明確に（lockX/lockYRotなど）。
+- Coroutineの多重起動防止フラグを実装することで、ボタン連打による意図しない動作を防げる。
+
+**次回への改善提案**:
+- StageConfigs数とStageManager.TotalStagesのアサーション追加を標準パターンにする。
+- ヒントUI更新はOnHintCountChangedイベント経由が疎結合で良い設計。

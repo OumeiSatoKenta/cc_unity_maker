@@ -437,7 +437,6 @@ namespace Game021v2_BladeDash
 
                 // Vertical check depending on blade type
                 bool hit = false;
-                bool canAvoid = false;
                 if (bdata.bladeType == BladeType.Low)
                 {
                     // Low blade: jump to avoid
