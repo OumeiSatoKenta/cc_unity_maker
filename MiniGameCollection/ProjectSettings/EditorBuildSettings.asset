@@ -419,6 +419,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/035v2_WaveRider.unity
     guid: 60e21f6ddc8ae4b7db16ece945e29241
+  - enabled: 1
+    path: Assets/Scenes/037v2_ZapChain.unity
+    guid: 9be3175c88933468e833fb781920a746
+  - enabled: 1
+    path: Assets/Scenes/038v2_FlyBird.unity
+    guid: 206971ba0004148a5a6809a4b9d03ebb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
