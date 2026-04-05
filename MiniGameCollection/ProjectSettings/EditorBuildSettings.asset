@@ -392,6 +392,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/029v2_MeteorShield.unity
     guid: 345c1ab74a765470ab68ae04d3831b48
+  - enabled: 1
+    path: Assets/Scenes/030v2_FingerRacer.unity
+    guid: 788822b4e5f9346af962a14035eb81a3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
