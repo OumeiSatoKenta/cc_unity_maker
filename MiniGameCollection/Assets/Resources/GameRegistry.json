@@ -1167,7 +1167,7 @@
       "size": "S",
       "sceneName": "016v2_LightSwitch",
       "description": "電球のオンオフパターンで暗号を解読する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
