@@ -192,9 +192,9 @@ namespace Game014v2_MagnetPath
         float _cellSize;
         Vector2 _gridOrigin;
 
-        const float BASE_MAGNET_STRENGTH = 6.0f;
+        const float BASE_MAGNET_STRENGTH = 10.0f;
         const float MAGNET_INFLUENCE_RADIUS = 2.5f;
-        const float BALL_MAX_SPEED = 5.0f;
+        const float BALL_MAX_SPEED = 8.0f;
         const float BALL_DAMPING = 0.98f;
         const float GOAL_RADIUS = 0.4f;
         const float SWITCH_MAGNET_TRIGGER_RADIUS = 0.5f;
@@ -458,11 +458,11 @@ namespace Game014v2_MagnetPath
             _ball2Reached = false;
             // Give a small initial nudge toward goal to overcome static state
             Vector2 goalDir = ((Vector2)_goalObject.transform.position - _ballPos).normalized;
-            _ballVelocity = goalDir * 0.5f;
+            _ballVelocity = goalDir * 2.0f;
             if (_hasTwoBalls)
             {
                 Vector2 goal2Dir = ((Vector2)_goal2Object.transform.position - _ball2Pos).normalized;
-                _ball2Velocity = goal2Dir * 0.5f;
+                _ball2Velocity = goal2Dir * 2.0f;
             }
             _gameManager.OnBallLaunched();
         }
