@@ -1267,7 +1267,7 @@
       "size": "S",
       "sceneName": "026v2_SliceNinja",
       "description": "飛んでくる物体をスワイプで切り爆弾は避ける忍者ゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
