@@ -377,6 +377,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/021v2_BladeDash.unity
     guid: 6573b968179524082b22f5411cdca3e7
+  - enabled: 1
+    path: Assets/Scenes/022v2_GravityBall.unity
+    guid: 7b55c8d26215649d89849bba55e0e8e7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
