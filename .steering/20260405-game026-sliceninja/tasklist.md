@@ -16,4 +16,19 @@
 - [x] implemented: true に変更（remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-05
+
+**計画と実績の差分**:
+- SceneSetupでStageManager SerializedObjectを使って初期configを設定しようとしたが、`_configs`フィールドはprivateのため操作不可。`SetConfigs()`メソッド呼び出しをStartGame()内に移動して解決。
+- `countMultiplier`がintであることを失念し、SceneSetupでfloat値を設定しようとしてコンパイルエラー。countMultiplier=1,1,2,2,2に修正。
+- SliceNinjaUI.Initialize()はStartGame()でも呼ぶ必要があった（SceneSetupのエディタ時呼び出しでは_gameManagerがnullのまま）。
+
+**学んだこと**:
+- StageManager.StageConfigのcountMultiplierはint型。SceneSetupで直接SerializedObject操作するよりStartGame()でSetConfigs()を使う方が安全。
+- FlyingObjectのCoroutineは`this == null`と`_spriteRenderer != null`の両方をガードしないとMissingReferenceExceptionが発生する。
+- DisableInput()は即座にスワイプ処理を止めるため、GameOver時のUI操作を安全にする重要なメソッド。
+
+**次回への改善提案**:
+- SceneSetupでStageConfigを設定する際は、SerializedObject操作ではなくStartGame()内SetConfigs()パターンを最初から採用する。
+- FlyingObjectのような破棄タイミングが複雑なオブジェクトには、最初からnull安全coroutineテンプレートを適用する。

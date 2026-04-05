@@ -17,4 +17,8 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-05
+- 差分: ShieldControllerの配置ミス（別GameObjectに追加していた）をレビューで検出・修正。"Star"タグ未定義もSceneSetup実行時に発覚し動的追加で対応
+- 学んだこと: BoxCollider2D/CircleCollider2D を持つ GameObject 上にコントローラーを配置しないと transform 操作がずれる
+- 次回への改善提案: SceneSetup作成時にコントローラーと物理コンポーネントを同一GameObjectに配置するルールを明示する

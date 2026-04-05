@@ -15,4 +15,9 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+- 実装完了日: 2026-04-03
+- StageManager.AdvanceStage() が存在せずCompleteCurrentStage()に修正
+- InstructionPanel のフィールド名が `_panel` でなく `_panelRoot` だった（他ゲームから確認必須）
+- reShowBtn を InstructionPanel 配線前に生成するよう順序修正
+- ベルト接続は「2点タップ」方式で実装（1点置くだけでは不十分）
+- Camera.main はAwake/SetupStageでキャッシュし、コルーチン内でnullチェック

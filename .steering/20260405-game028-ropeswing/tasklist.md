@@ -16,4 +16,15 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-05
+
+**計画と実績の差分**: 計画通り4スクリプト + SceneSetup + 6スプライト実装完了。コードレビューで[必須]6件・[推奨]2件の指摘 → 全て修正済み。
+
+**学んだこと**:
+- LineRendererのmaterialはAwakeでnew Materialし、OnDestroyでDestroyしないとリークする
+- AutoAdvanceStageコルーチンはCoroutine参照を保持してStopCoroutineしないと重複起動する
+- OnStageChangedでState==Clearチェックが必須（全ステージクリア後にイベント再発火するケースがある）
+
+**次回への改善提案**:
+- 着地判定のY範囲（-0.4f〜+0.1f）はもう少し余裕を持たせると操作感が改善される可能性あり

@@ -17,4 +17,12 @@
 - [x] implemented: true に変更（remakeエントリ）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-03
+- PR: #264 (マージ済み)
+- コードレビューで発見・修正した主要バグ:
+  - WordCrystalUI が GetComponentInParent で WordManager を取得できない問題 → SerializeField に変更
+  - RemoveSlotAt で同文字が複数ある場合に誤ったタイルを復元するバグ → _slotTiles[] 配列でインデックス対応を保持
+  - Camera.main が毎フレーム検索される問題 → Awake でキャッシュ
+  - SpawnCrystals で normalCount が負になりうる問題 → Mathf.Max(0, ...) で保護
+  - コルーチン中にオブジェクト破棄で MissingReferenceException → null チェック追加

@@ -15,4 +15,18 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+### 実装完了日
+2026-04-04
+
+### 計画と実績の差分
+- 計画通り5ステージ・StageManager・InstructionPanel統合を実装完了
+- レビューで `ResetStage()` に `_isActive = true` が漏れていた（コードレビューで検出・修正済み）
+- `Mouse.current` null チェック・コルーチン内nullガードもレビューで追加
+
+### 学んだこと
+- `HandleMovesExhausted()` で `_isActive = false` にした後、`ResetStage()` でリセット時に必ず `_isActive = true` を復元する必要がある（忘れやすいパターン）
+- カメラシェイクコルーチン内で `Camera.main` をキャッシュしないとシーン遷移時にNullRefが発生する
+
+### 次回への改善提案
+- 折り紙メカニクスのような複雑なグリッド変換ロジックはユニットテストで事前検証が望ましい

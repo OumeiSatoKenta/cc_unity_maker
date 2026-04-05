@@ -15,4 +15,9 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-01
+- Color==比較の浮動小数点問題をintインデックス管理で回避 → 今後の標準パターンにすべき
+- 全塗り済みでゲームが終わらない問題: painted==falseでもOnPaintDropped呼ぶ設計に変更
+- GravityPainterUI の未使用SerializeField削除でコードを整理
+- コンパイル・SceneSetup実行エラーなし

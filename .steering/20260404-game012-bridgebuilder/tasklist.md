@@ -15,4 +15,8 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-04
+- コードレビューで4件の[必須]指摘を修正（スプライト選択バグ・DistanceToSegmentの誤実装・0-based/1-based混在・コルーチン二重起動）
+- StageManagerの引数は0-basedで渡されるため、SetupStage内では+1して1-basedに変換することを徹底
+- `Sprite[] _spanTypes` をAwakeではなくSetupStage時に初期化する（SerializedFieldはAwake時点では未設定）
