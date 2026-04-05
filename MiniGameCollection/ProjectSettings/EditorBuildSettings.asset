@@ -407,6 +407,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/031v2_BounceKing.unity
     guid: 80bf920f86af14f76b864e18541ed3ea
+  - enabled: 1
+    path: Assets/Scenes/032v2_SpinCutter.unity
+    guid: ddbc4841339864f4e8e6cb28d2615601
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
