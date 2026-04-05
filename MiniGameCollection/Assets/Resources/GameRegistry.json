@@ -1307,7 +1307,7 @@
       "size": "M",
       "sceneName": "030v2_FingerRacer",
       "description": "指でなぞったコースを車が走るフィンガーレース",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
