@@ -410,6 +410,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/032v2_SpinCutter.unity
     guid: ddbc4841339864f4e8e6cb28d2615601
+  - enabled: 1
+    path: Assets/Scenes/033v2_AimSniper.unity
+    guid: 95f56890bbddc4a5894809bd3cf45dbb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
