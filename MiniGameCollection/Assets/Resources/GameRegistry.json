@@ -1427,7 +1427,7 @@
       "size": "S",
       "sceneName": "042v2_ColorDrop",
       "description": "色付きの雨粒を同色のバケツにスワイプで振り分ける",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {

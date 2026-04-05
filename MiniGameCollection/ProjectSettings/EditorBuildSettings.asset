@@ -431,6 +431,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/040v2_DashDungeon.unity
     guid: fa3965811675a40a78945ab988cb2372
+  - enabled: 1
+    path: Assets/Scenes/041v2_StackJump.unity
+    guid: f1798ffdc34384d079cefad22a56642d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
