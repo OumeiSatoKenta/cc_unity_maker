@@ -1367,7 +1367,7 @@
       "size": "S",
       "sceneName": "036v2_CoinStack",
       "description": "落下するコインをタイミングよく積み上げ崩れないタワーを作る",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
