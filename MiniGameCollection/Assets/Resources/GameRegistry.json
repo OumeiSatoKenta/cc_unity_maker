@@ -1217,7 +1217,7 @@
       "size": "S",
       "sceneName": "021v2_BladeDash",
       "description": "迫りくる刃を避けながらコインを集めるエンドレスラン",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
