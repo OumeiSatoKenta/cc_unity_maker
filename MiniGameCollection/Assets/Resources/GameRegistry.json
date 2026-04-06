@@ -1547,7 +1547,7 @@
       "size": "S",
       "sceneName": "054v2_FruitSlash",
       "description": "飛んでくるフルーツをスワイプで切り爆弾は回避する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
