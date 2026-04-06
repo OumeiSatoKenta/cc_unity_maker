@@ -455,6 +455,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/047v2_SpinBalance.unity
     guid: d6bd4f78e4d324088a9057c186a99299
+  - enabled: 1
+    path: Assets/Scenes/050v2_BubbleSort.unity
+    guid: ef3f9fb65eab743459a22966a3b830e8
+  - enabled: 1
+    path: Assets/Scenes/051v2_DrawBridge.unity
+    guid: 905111a1a4c2343209f1942aaf2d66fe
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
