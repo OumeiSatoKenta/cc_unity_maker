@@ -1497,7 +1497,7 @@
       "size": "S",
       "sceneName": "049v2_CloudHop",
       "description": "消える雲を素早く踏み台にして空高く跳ね上がる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
