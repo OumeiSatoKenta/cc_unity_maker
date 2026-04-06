@@ -479,6 +479,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/055v2_DustSweep.unity
     guid: 006d8d8ef1e0b4ebdb77d651ff452d31
+  - enabled: 1
+    path: Assets/Scenes/058v2_ThreadNeedle.unity
+    guid: de58327ae4dd94821b61ad443d183d25
+  - enabled: 1
+    path: Assets/Scenes/059v2_WaterJug.unity
+    guid: 8d6150c6a646544c1b8673f862cb7f91
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
