@@ -95,6 +95,7 @@ namespace Game072v2_DrumKit
 
         public void SetupStage(StageManager.StageConfig config, int stageIndex)
         {
+            StopAllCoroutines();
             _stageIndex = stageIndex;
             _isActive = false;
 
@@ -235,9 +236,10 @@ namespace Game072v2_DrumKit
 
             // Auto-miss
             AutoMissNotes();
+            if (!_isActive) return;
 
             // Stage complete check
-            if (_beatCount >= _totalBeats && _activeNotes.Count == 0 && _isActive)
+            if (_beatCount >= _totalBeats && _activeNotes.Count == 0)
                 OnStageComplete();
         }
 
@@ -285,6 +287,10 @@ namespace Game072v2_DrumKit
             if (padIndex < 0 || padIndex >= _padCount || padIndex >= _pads.Length) return;
             var pad = _pads[padIndex];
             if (pad == null) return;
+
+            // Skip if pad already has an active note
+            foreach (var existing in _activeNotes)
+                if (!existing.judged && existing.padIndex == padIndex) return;
 
             // Ring shrink: starts large (2.5x pad scale), shrinks to 1.0x over ~1.5 beats
             float shrinkDuration = _beatInterval * 1.5f;
