@@ -1607,7 +1607,7 @@
       "size": "S",
       "sceneName": "060v2_MeltIce",
       "description": "太陽光を鏡で反射させて的の氷を溶かすカジュアルゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1617,7 +1617,7 @@
       "size": "M",
       "sceneName": "061v2_CookieFactory",
       "description": "クッキーを焼いて工場を拡大するクリッカー",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
