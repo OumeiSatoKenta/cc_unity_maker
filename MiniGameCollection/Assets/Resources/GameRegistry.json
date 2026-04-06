@@ -1687,7 +1687,7 @@
       "size": "M",
       "sceneName": "068v2_CloudFarm",
       "description": "雲の上の農場で野菜を育てて市場に出荷する放置農業",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1697,7 +1697,7 @@
       "size": "M",
       "sceneName": "069v2_DungeonDigger",
       "description": "地下を掘り続けて宝を集めるドリルクリッカー",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
