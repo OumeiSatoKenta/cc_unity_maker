@@ -488,6 +488,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/061v2_CookieFactory.unity
     guid: 6ba30b21d87414cb8922b639d8432d49
+  - enabled: 1
+    path: Assets/Scenes/062v2_MagicForest.unity
+    guid: a94ae6e401a4b44d28416e6ee411627c
+  - enabled: 1
+    path: Assets/Scenes/063v2_StarMiner.unity
+    guid: d8ecbd5ec3452413da126461b24d5e34
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
