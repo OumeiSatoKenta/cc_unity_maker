@@ -1517,7 +1517,7 @@
       "size": "S",
       "sceneName": "051v2_DrawBridge",
       "description": "橋を指で描いてボールを転がしゴールへ届ける",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
