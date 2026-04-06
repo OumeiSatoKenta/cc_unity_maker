@@ -1,0 +1,428 @@
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.InputSystem.UI;
+using TMPro;
+using System.IO;
+using Game071v2_BeatTiles;
+
+public static class Setup071v2_BeatTiles
+{
+    [MenuItem("Assets/Setup/071v2 BeatTiles")]
+    public static void CreateScene()
+    {
+        if (EditorApplication.isPlaying) { Debug.LogError("[Setup071v2] Play モード中は実行できません。"); return; }
+        EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+
+        var jpFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansJP-Regular SDF.asset");
+        string sp = "Assets/Resources/Sprites/Game071v2_BeatTiles/";
+
+        // Camera
+        var camera = Object.FindFirstObjectByType<Camera>();
+        if (camera != null)
+        {
+            camera.backgroundColor = new Color(0.01f, 0.02f, 0.08f);
+            camera.orthographic = true;
+            camera.orthographicSize = 6f;
+        }
+
+        // Background
+        Sprite bgSprite = LoadSprite(sp + "background.png");
+        if (bgSprite != null)
+        {
+            var bgObj = new GameObject("Background");
+            var bgSr = bgObj.AddComponent<SpriteRenderer>();
+            bgSr.sprite = bgSprite;
+            bgSr.sortingOrder = -10;
+            bgObj.transform.localScale = new Vector3(0.011f, 0.00625f, 1f);
+        }
+
+        // Load sprites
+        Sprite noteNormalSprite = LoadSprite(sp + "note_normal.png");
+        Sprite noteHoldSprite   = LoadSprite(sp + "note_hold.png");
+        Sprite noteRapidSprite  = LoadSprite(sp + "note_rapid.png");
+        Sprite holdBodySprite   = LoadSprite(sp + "hold_body.png");
+        Sprite laneBgSprite     = LoadSprite(sp + "lane_bg.png");
+        Sprite judgeLineSprite  = LoadSprite(sp + "judge_line.png");
+
+        // Lane backgrounds (world space)
+        float camSize = 6f;
+        float camWidth = camSize * (9f / 16f); // approx
+        float totalLaneWidth = camWidth * 1.7f;
+        float laneW = totalLaneWidth / 4f;
+        float startX = -totalLaneWidth / 2f + laneW / 2f;
+        float laneHeight = 12f; // tall enough to cover game area
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (laneBgSprite == null) break;
+            var laneObj = new GameObject($"LaneBg_{i}");
+            var sr = laneObj.AddComponent<SpriteRenderer>();
+            sr.sprite = laneBgSprite;
+            sr.sortingOrder = -5;
+            float laneX = startX + i * laneW;
+            laneObj.transform.position = new Vector3(laneX, 0f, 0f);
+            laneObj.transform.localScale = new Vector3(laneW / 2.56f, laneHeight / 10.24f, 1f);
+        }
+
+        // Judge line (world space)
+        float judgeY = -camSize + 2.8f;
+        if (judgeLineSprite != null)
+        {
+            var jlObj = new GameObject("JudgeLine");
+            var jlSr = jlObj.AddComponent<SpriteRenderer>();
+            jlSr.sprite = judgeLineSprite;
+            jlSr.sortingOrder = 3;
+            jlObj.transform.position = new Vector3(0f, judgeY, 0f);
+            jlObj.transform.localScale = new Vector3(totalLaneWidth / 5.12f, 0.2f, 1f);
+        }
+
+        // === GameManager hierarchy ===
+        var gmObj = new GameObject("BeatTilesGameManager");
+        var gm = gmObj.AddComponent<BeatTilesGameManager>();
+
+        // StageManager
+        var smObj = new GameObject("StageManager");
+        smObj.transform.SetParent(gmObj.transform);
+        var sm = smObj.AddComponent<Common.StageManager>();
+
+        var stageConfigs = new Common.StageManager.StageConfig[]
+        {
+            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.0f },
+            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.2f, complexityFactor = 0.3f },
+            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.5f, complexityFactor = 0.6f },
+            new Common.StageManager.StageConfig { speedMultiplier = 1.1f, countMultiplier = 1.8f, complexityFactor = 0.8f },
+            new Common.StageManager.StageConfig { speedMultiplier = 1.1f, countMultiplier = 2.0f, complexityFactor = 1.0f },
+        };
+        SetField(sm, "_stages", stageConfigs);
+
+        // NoteManager
+        var nmObj = new GameObject("NoteManager");
+        nmObj.transform.SetParent(gmObj.transform);
+        var nm = nmObj.AddComponent<NoteManager>();
+
+        SetField(nm, "_noteNormalSprite", noteNormalSprite);
+        SetField(nm, "_noteHoldSprite",   noteHoldSprite);
+        SetField(nm, "_noteRapidSprite",  noteRapidSprite);
+        SetField(nm, "_holdBodySprite",   holdBodySprite);
+        SetField(nm, "_laneBgSprite",     laneBgSprite);
+        SetField(nm, "_gameManager",      gm);
+
+        // === Canvas ===
+        var canvasObj = new GameObject("Canvas");
+        var canvas = canvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        var scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080, 1920);
+        canvasObj.AddComponent<GraphicRaycaster>();
+
+        // HUD
+        var stageText = CT(canvasObj.transform, "StageText", "Stage 1 / 5", 42, jpFont,
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(600, 60), new Vector2(0, -30));
+        stageText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        var scoreText = CT(canvasObj.transform, "ScoreText", "0", 50, jpFont,
+            new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
+            new Vector2(400, 60), new Vector2(-15, -30));
+        scoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Right;
+        scoreText.GetComponent<TextMeshProUGUI>().color = new Color(0f, 1f, 1f);
+
+        var comboText = CT(canvasObj.transform, "ComboText", "", 56, jpFont,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(600, 80), new Vector2(0, 200));
+        comboText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        comboText.GetComponent<TextMeshProUGUI>().color = new Color(0.9f, 0.5f, 1f);
+
+        var judgementText = CT(canvasObj.transform, "JudgementText", "", 72, jpFont,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(700, 100), new Vector2(0, 80));
+        judgementText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        judgementText.gameObject.SetActive(false);
+
+        // Life slider
+        var lifeSliderObj = new GameObject("LifeSlider", typeof(RectTransform));
+        lifeSliderObj.transform.SetParent(canvasObj.transform, false);
+        var lifeRT = lifeSliderObj.GetComponent<RectTransform>();
+        lifeRT.anchorMin = new Vector2(0f, 1f);
+        lifeRT.anchorMax = new Vector2(1f, 1f);
+        lifeRT.pivot = new Vector2(0.5f, 1f);
+        lifeRT.sizeDelta = new Vector2(-40, 22);
+        lifeRT.anchoredPosition = new Vector2(0, -95);
+        var lifeSlider = lifeSliderObj.AddComponent<Slider>();
+        lifeSlider.value = 1f;
+        lifeSlider.minValue = 0f;
+        lifeSlider.maxValue = 1f;
+
+        var lifeBg = new GameObject("Background", typeof(RectTransform));
+        lifeBg.transform.SetParent(lifeSliderObj.transform, false);
+        var lifeBgRT = lifeBg.GetComponent<RectTransform>();
+        lifeBgRT.anchorMin = Vector2.zero; lifeBgRT.anchorMax = Vector2.one;
+        lifeBgRT.offsetMin = lifeBgRT.offsetMax = Vector2.zero;
+        var lifeBgImg = lifeBg.AddComponent<Image>();
+        lifeBgImg.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
+
+        var lifeFill = new GameObject("Fill", typeof(RectTransform));
+        lifeFill.transform.SetParent(lifeSliderObj.transform, false);
+        var lifeFillRT = lifeFill.GetComponent<RectTransform>();
+        lifeFillRT.anchorMin = Vector2.zero; lifeFillRT.anchorMax = Vector2.one;
+        lifeFillRT.offsetMin = lifeFillRT.offsetMax = Vector2.zero;
+        var lifeFillImg = lifeFill.AddComponent<Image>();
+        lifeFillImg.color = new Color(0f, 0.9f, 0.5f);
+        lifeSlider.fillRect = lifeFillRT;
+        lifeSlider.targetGraphic = lifeFillImg;
+
+        // Back button
+        var backBtn = CB(canvasObj.transform, "BackButton", "メニュー", 34, jpFont,
+            new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
+            new Vector2(170, 55), new Vector2(15, 15), new Color(0.2f, 0.2f, 0.3f, 0.9f));
+        backBtn.GetComponent<Button>().onClick.AddListener(() =>
+            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+
+        // === Stage Clear Panel ===
+        var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
+        scPanel.transform.SetParent(canvasObj.transform, false);
+        var scRT = scPanel.GetComponent<RectTransform>();
+        scRT.anchorMin = new Vector2(0.5f, 0.5f); scRT.anchorMax = new Vector2(0.5f, 0.5f);
+        scRT.pivot = new Vector2(0.5f, 0.5f);
+        scRT.sizeDelta = new Vector2(700, 350);
+        scRT.anchoredPosition = Vector2.zero;
+        var scImg = scPanel.AddComponent<Image>();
+        scImg.color = new Color(0.05f, 0.05f, 0.2f, 0.95f);
+
+        var scTitle = CT(scPanel.transform, "SCTitle", "ステージクリア！", 60, jpFont,
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(650, 80), new Vector2(0, -30));
+        scTitle.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        scTitle.GetComponent<TextMeshProUGUI>().color = new Color(0f, 1f, 1f);
+
+        var nextBtn = CB(scPanel.transform, "NextButton", "次のステージへ", 42, jpFont,
+            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(380, 65), new Vector2(0, 50), new Color(0f, 0.6f, 0.8f));
+
+        scPanel.SetActive(false);
+
+        // === All Clear Panel ===
+        var acPanel = new GameObject("AllClearPanel", typeof(RectTransform));
+        acPanel.transform.SetParent(canvasObj.transform, false);
+        var acRT = acPanel.GetComponent<RectTransform>();
+        acRT.anchorMin = new Vector2(0.5f, 0.5f); acRT.anchorMax = new Vector2(0.5f, 0.5f);
+        acRT.pivot = new Vector2(0.5f, 0.5f);
+        acRT.sizeDelta = new Vector2(700, 400);
+        acRT.anchoredPosition = Vector2.zero;
+        var acImg = acPanel.AddComponent<Image>();
+        acImg.color = new Color(0.02f, 0.1f, 0.05f, 0.96f);
+
+        CT(acPanel.transform, "ACTitle", "全ステージクリア！", 60, jpFont,
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(650, 80), new Vector2(0, -30))
+            .GetComponent<TextMeshProUGUI>().color = new Color(0.5f, 1f, 0.5f);
+
+        var acScoreText = CT(acPanel.transform, "ACScoreText", "スコア: 0", 48, jpFont,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(600, 70), new Vector2(0, 20));
+        acScoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        var acBackBtn = CB(acPanel.transform, "ACBackButton", "メニューへ戻る", 40, jpFont,
+            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(380, 65), new Vector2(0, 45), new Color(0.2f, 0.5f, 0.3f));
+        acBackBtn.GetComponent<Button>().onClick.AddListener(() =>
+            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acPanel.SetActive(false);
+
+        // === Game Over Panel ===
+        var goPanel = new GameObject("GameOverPanel", typeof(RectTransform));
+        goPanel.transform.SetParent(canvasObj.transform, false);
+        var goRT = goPanel.GetComponent<RectTransform>();
+        goRT.anchorMin = new Vector2(0.5f, 0.5f); goRT.anchorMax = new Vector2(0.5f, 0.5f);
+        goRT.pivot = new Vector2(0.5f, 0.5f);
+        goRT.sizeDelta = new Vector2(700, 400);
+        goRT.anchoredPosition = Vector2.zero;
+        var goImg = goPanel.AddComponent<Image>();
+        goImg.color = new Color(0.15f, 0.02f, 0.02f, 0.96f);
+
+        CT(goPanel.transform, "GOTitle", "ゲームオーバー", 60, jpFont,
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(650, 80), new Vector2(0, -30))
+            .GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.3f, 0.3f);
+
+        var goScoreText = CT(goPanel.transform, "GOScoreText", "スコア: 0", 48, jpFont,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(600, 70), new Vector2(0, 20));
+        goScoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        var goBackBtn = CB(goPanel.transform, "GOBackButton", "メニューへ戻る", 40, jpFont,
+            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(380, 65), new Vector2(0, 45), new Color(0.5f, 0.2f, 0.2f));
+        goBackBtn.GetComponent<Button>().onClick.AddListener(() =>
+            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goPanel.SetActive(false);
+
+        // === InstructionPanel ===
+        var ipCanvas = new GameObject("InstructionCanvas");
+        var ipC = ipCanvas.AddComponent<Canvas>();
+        ipC.renderMode = RenderMode.ScreenSpaceOverlay;
+        ipC.sortingOrder = 100;
+        var ipScaler = ipCanvas.AddComponent<CanvasScaler>();
+        ipScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        ipScaler.referenceResolution = new Vector2(1080, 1920);
+        ipCanvas.AddComponent<GraphicRaycaster>();
+
+        var ipBg = new GameObject("InstructionPanel", typeof(RectTransform));
+        ipBg.transform.SetParent(ipCanvas.transform, false);
+        var ipBgRT = ipBg.GetComponent<RectTransform>();
+        ipBgRT.anchorMin = Vector2.zero; ipBgRT.anchorMax = Vector2.one;
+        ipBgRT.offsetMin = ipBgRT.offsetMax = Vector2.zero;
+        var ipBgImg = ipBg.AddComponent<Image>();
+        ipBgImg.color = new Color(0f, 0f, 0f, 0.92f);
+
+        var ip = ipBg.AddComponent<Common.InstructionPanel>();
+
+        var ipTitle  = CT(ipBg.transform, "TitleText", "BeatTiles", 72, jpFont,
+            new Vector2(0.5f,0.7f), new Vector2(0.5f,0.7f), new Vector2(0.5f,0.5f),
+            new Vector2(900,100), new Vector2(0,0));
+        ipTitle.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        ipTitle.GetComponent<TextMeshProUGUI>().color = new Color(0f, 1f, 1f);
+
+        var ipDesc  = CT(ipBg.transform, "DescText", "", 44, jpFont,
+            new Vector2(0.5f,0.55f), new Vector2(0.5f,0.55f), new Vector2(0.5f,0.5f),
+            new Vector2(900,80), new Vector2(0,0));
+        ipDesc.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        var ipCtrl  = CT(ipBg.transform, "ControlsText", "", 38, jpFont,
+            new Vector2(0.5f,0.42f), new Vector2(0.5f,0.42f), new Vector2(0.5f,0.5f),
+            new Vector2(900,100), new Vector2(0,0));
+        ipCtrl.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        ipCtrl.GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 0.8f, 0.8f);
+
+        var ipGoal  = CT(ipBg.transform, "GoalText", "", 38, jpFont,
+            new Vector2(0.5f,0.31f), new Vector2(0.5f,0.31f), new Vector2(0.5f,0.5f),
+            new Vector2(900,80), new Vector2(0,0));
+        ipGoal.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        ipGoal.GetComponent<TextMeshProUGUI>().color = new Color(0.5f, 1f, 0.5f);
+
+        var startBtn = CB(ipBg.transform, "StartButton", "はじめる", 52, jpFont,
+            new Vector2(0.5f,0.18f), new Vector2(0.5f,0.18f), new Vector2(0.5f,0.5f),
+            new Vector2(400,75), new Vector2(0,0), new Color(0f, 0.5f, 0.7f));
+
+        var helpBtn = CB(canvasObj.transform, "HelpButton", "?", 44, jpFont,
+            new Vector2(1f,0f), new Vector2(1f,0f), new Vector2(1f,0f),
+            new Vector2(65,65), new Vector2(-15,15), new Color(0.2f, 0.3f, 0.5f, 0.9f));
+
+        // === BeatTilesUI ===
+        var uiObj = new GameObject("BeatTilesUI");
+        var ui = uiObj.AddComponent<BeatTilesUI>();
+
+        SetField(ui, "_scoreText",      scoreText.GetComponent<TextMeshProUGUI>());
+        SetField(ui, "_comboText",      comboText.GetComponent<TextMeshProUGUI>());
+        SetField(ui, "_stageText",      stageText.GetComponent<TextMeshProUGUI>());
+        SetField(ui, "_judgementText",  judgementText.GetComponent<TextMeshProUGUI>());
+        SetField(ui, "_lifeSlider",     lifeSlider);
+        SetField(ui, "_stageClearPanel", scPanel);
+        SetField(ui, "_stageClearText",  scTitle.GetComponent<TextMeshProUGUI>());
+        SetField(ui, "_allClearPanel",   acPanel);
+        SetField(ui, "_allClearScoreText", acScoreText.GetComponent<TextMeshProUGUI>());
+        SetField(ui, "_gameOverPanel",   goPanel);
+        SetField(ui, "_gameOverScoreText", goScoreText.GetComponent<TextMeshProUGUI>());
+
+        // Wire GameManager
+        SetField(gm, "_stageManager",    sm);
+        SetField(gm, "_instructionPanel", ip);
+        SetField(gm, "_noteManager",     nm);
+        SetField(gm, "_ui",              ui);
+
+        // Wire InstructionPanel fields
+        SetField(ip, "_titleText",       ipTitle.GetComponent<TextMeshProUGUI>());
+        SetField(ip, "_descriptionText", ipDesc.GetComponent<TextMeshProUGUI>());
+        SetField(ip, "_controlsText",    ipCtrl.GetComponent<TextMeshProUGUI>());
+        SetField(ip, "_goalText",        ipGoal.GetComponent<TextMeshProUGUI>());
+        SetField(ip, "_startButton",     startBtn.GetComponent<Button>());
+        SetField(ip, "_helpButton",      helpBtn.GetComponent<Button>());
+        SetField(ip, "_panelRoot",       ipBg);
+
+        // Button events
+        nextBtn.GetComponent<Button>().onClick.AddListener(() => {
+            scPanel.SetActive(false);
+            gm.NextStage();
+        });
+
+        // EventSystem
+        var es = new GameObject("EventSystem");
+        es.AddComponent<UnityEngine.EventSystems.EventSystem>();
+        es.AddComponent<InputSystemUIInputModule>();
+
+        // Save scene
+        string scenePath = "Assets/Scenes/071v2_BeatTiles.unity";
+        EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), scenePath);
+        AddSceneToBuildSettings(scenePath);
+        Debug.Log("[Setup071v2] BeatTiles シーン作成完了: " + scenePath);
+    }
+
+    static Sprite LoadSprite(string path)
+    {
+        if (!File.Exists(path)) return null;
+        AssetDatabase.ImportAsset(path);
+        var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (ti != null) { ti.textureType = TextureImporterType.Sprite; ti.SaveAndReimport(); }
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+    }
+
+    static void SetField(object obj, string fieldName, object value)
+    {
+        var field = obj.GetType().GetField(fieldName,
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        if (field != null) field.SetValue(obj, value);
+        else Debug.LogWarning($"[Setup071v2] Field not found: {fieldName} on {obj.GetType().Name}");
+    }
+
+    static GameObject CT(Transform parent, string name, string text, int fontSize, TMP_FontAsset font,
+        Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 size, Vector2 pos)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = anchorMin; rt.anchorMax = anchorMax; rt.pivot = pivot;
+        rt.sizeDelta = size; rt.anchoredPosition = pos;
+        var tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.text = text; tmp.fontSize = fontSize;
+        if (font != null) tmp.font = font;
+        return go;
+    }
+
+    static GameObject CB(Transform parent, string name, string label, int fontSize, TMP_FontAsset font,
+        Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 size, Vector2 pos, Color color)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = anchorMin; rt.anchorMax = anchorMax; rt.pivot = pivot;
+        rt.sizeDelta = size; rt.anchoredPosition = pos;
+        var img = go.AddComponent<Image>();
+        img.color = color;
+        go.AddComponent<Button>().targetGraphic = img;
+        var textGo = new GameObject("Text", typeof(RectTransform));
+        textGo.transform.SetParent(go.transform, false);
+        var tRT = textGo.GetComponent<RectTransform>();
+        tRT.anchorMin = Vector2.zero; tRT.anchorMax = Vector2.one;
+        tRT.offsetMin = tRT.offsetMax = Vector2.zero;
+        var tmp = textGo.AddComponent<TextMeshProUGUI>();
+        tmp.text = label; tmp.fontSize = fontSize;
+        if (font != null) tmp.font = font;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
+        return go;
+    }
+
+    static void AddSceneToBuildSettings(string scenePath)
+    {
+        var scenes = EditorBuildSettings.scenes;
+        foreach (var s in scenes)
+            if (s.path == scenePath) return;
+        var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
+        scenes.CopyTo(newScenes, 0);
+        newScenes[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
+        EditorBuildSettings.scenes = newScenes;
+    }
+}

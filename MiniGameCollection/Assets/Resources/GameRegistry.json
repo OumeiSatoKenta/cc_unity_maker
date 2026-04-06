@@ -1707,7 +1707,7 @@
       "size": "L",
       "sceneName": "070v2_NanoLab",
       "description": "ナノマシンを増殖させて科学技術を段階的に進化させる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1717,7 +1717,7 @@
       "size": "M",
       "sceneName": "071v2_BeatTiles",
       "description": "落ちてくるタイルをリズムに合わせてタップするリズムゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
