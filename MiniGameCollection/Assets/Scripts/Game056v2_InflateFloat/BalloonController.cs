@@ -117,9 +117,10 @@ namespace Game056v2_InflateFloat
                 _windTimer = 0f;
                 _windForce = Random.Range(-2f, 2f);
             }
-            Vector3 pos = transform.position;
-            pos.x += _windForce * Time.deltaTime;
-            transform.position = pos;
+            // Apply wind via velocity X to avoid mixing transform.position with Rigidbody physics
+            Vector2 vel = _rb.linearVelocity;
+            vel.x = _windForce;
+            _rb.linearVelocity = vel;
         }
 
         void ClampPosition()
@@ -151,6 +152,7 @@ namespace Game056v2_InflateFloat
         {
             if (!_isActive) return;
             _isActive = false;
+            StopAllCoroutines(); // Stop CoinPulse etc. to avoid mid-animation scale corruption
             StartCoroutine(ExplodeAnim());
         }
 
