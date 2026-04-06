@@ -1737,7 +1737,7 @@
       "size": "M",
       "sceneName": "073v2_MelodyMaze",
       "description": "音符を繋げてメロディを完成させる音楽パズル",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
