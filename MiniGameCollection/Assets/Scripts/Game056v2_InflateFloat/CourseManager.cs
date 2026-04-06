@@ -50,7 +50,7 @@ namespace Game056v2_InflateFloat
             _narrowSection = stageNum >= 3;
             _hasWind = stageNum >= 4;
             _hasSpike = stageNum >= 5;
-            _spawnInterval = 4f - config.speedMultiplier * 0.3f;
+            _spawnInterval = Mathf.Max(1.0f, 4f - config.speedMultiplier * 0.3f);
 
             var cam = Camera.main;
             if (cam == null) { Debug.LogError("[CourseManager] Camera.main not found"); return; }
