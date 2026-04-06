@@ -1487,7 +1487,7 @@
       "size": "S",
       "sceneName": "048v2_GlassBall",
       "description": "ガラスの傾斜面を滑るボールを目的地へ誘導する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
