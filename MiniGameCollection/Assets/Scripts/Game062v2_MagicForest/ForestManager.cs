@@ -387,6 +387,7 @@ namespace Game062v2_MagicForest
 
             int idx = saplings[Random.Range(0, saplings.Count)];
             // Show animal briefly
+            if (_sprAnimal == null) yield break;
             var animalObj = new GameObject("AnimalVisitor");
             int col = idx % Cols; int row = idx / Cols;
             animalObj.transform.position = new Vector3(
@@ -543,13 +544,14 @@ namespace Game062v2_MagicForest
             float elapsed = 0f;
             while (elapsed < 0.3f)
             {
+                if (_cellObjects[idx] == null) yield break;
                 elapsed += Time.deltaTime;
                 float r = elapsed / 0.3f;
                 float s = r < 0.5f ? Mathf.Lerp(1f, 1.4f, r * 2f) : Mathf.Lerp(1.4f, 1f, (r - 0.5f) * 2f);
                 t.localScale = orig * s;
                 yield return null;
             }
-            t.localScale = orig;
+            if (_cellObjects[idx] != null) t.localScale = orig;
         }
 
         IEnumerator GrowEffect(int idx)
@@ -560,7 +562,7 @@ namespace Game062v2_MagicForest
             Color orig = sr.color;
             sr.color = new Color(0.5f, 1f, 0.5f, 1f);
             yield return new WaitForSeconds(0.2f);
-            sr.color = orig;
+            if (sr != null) sr.color = orig;
         }
     }
 }

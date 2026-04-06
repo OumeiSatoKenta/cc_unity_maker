@@ -25,6 +25,16 @@ namespace Game062v2_MagicForest
             _instructionPanel.OnDismissed += StartGame;
         }
 
+        void OnDestroy()
+        {
+            if (_instructionPanel != null) _instructionPanel.OnDismissed -= StartGame;
+            if (_stageManager != null)
+            {
+                _stageManager.OnStageChanged -= OnStageChanged;
+                _stageManager.OnAllStagesCleared -= OnAllStagesCleared;
+            }
+        }
+
         void StartGame()
         {
             _state = GameState.Playing;
@@ -39,6 +49,8 @@ namespace Game062v2_MagicForest
             };
             _stageManager.SetConfigs(configs);
 
+            _stageManager.OnStageChanged -= OnStageChanged;
+            _stageManager.OnAllStagesCleared -= OnAllStagesCleared;
             _stageManager.OnStageChanged += OnStageChanged;
             _stageManager.OnAllStagesCleared += OnAllStagesCleared;
             _stageManager.StartFromBeginning();
