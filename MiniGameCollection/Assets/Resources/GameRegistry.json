@@ -1647,7 +1647,7 @@
       "size": "L",
       "sceneName": "064v2_AquaCity",
       "description": "水中都市を建設して魚を集める放置シム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
