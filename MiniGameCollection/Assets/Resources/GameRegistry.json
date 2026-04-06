@@ -1627,7 +1627,7 @@
       "size": "M",
       "sceneName": "062v2_MagicForest",
       "description": "木をタップして育て森を広げる放置育成",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
