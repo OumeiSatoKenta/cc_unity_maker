@@ -397,11 +397,12 @@ namespace Game064v2_AquaCity
                     int bt = (int)_grid[i].Value;
                     total += BuildingIncome[bt];
                 }
-                if (total > 0)
+                long totalAdjusted = (long)(total * _countMultiplier);
+                if (totalAdjusted > 0)
                 {
-                    _coins += total;
+                    _coins += totalAdjusted;
                     _ui.UpdateCoins(_coins);
-                    _ui.UpdateAutoRate(total, _speedMultiplier);
+                    _ui.UpdateAutoRate(totalAdjusted, _speedMultiplier);
                     _ui.UpdateShopAvailability(_currentStage, _coins);
                 }
             }
@@ -580,11 +581,10 @@ namespace Game064v2_AquaCity
 
         IEnumerator FishFlash(FishData fd)
         {
-            if (fd.obj == null) yield break;
+            if (fd.obj == null || fd.sr == null) yield break;
             fd.sr.color = Color.yellow;
             yield return new WaitForSeconds(0.12f);
-            fd.sr.color = Color.white;
-            // Remove fish after tap
+            if (fd.sr != null) fd.sr.color = Color.white;
             fd.tapped = true;
             yield return new WaitForSeconds(0.3f);
             if (fd.obj != null) Destroy(fd.obj);
