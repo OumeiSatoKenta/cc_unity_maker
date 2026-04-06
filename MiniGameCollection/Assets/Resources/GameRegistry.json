@@ -1467,7 +1467,7 @@
       "size": "S",
       "sceneName": "046v2_SqueezePop",
       "description": "絞ると色が出るチューブで画面全体を塗りつぶす",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
