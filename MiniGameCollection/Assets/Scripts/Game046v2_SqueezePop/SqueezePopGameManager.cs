@@ -138,6 +138,13 @@ namespace Game046v2_SqueezePop
             _stageManager.CompleteCurrentStage();
         }
 
+        private void OnDestroy()
+        {
+            _instructionPanel.OnDismissed -= StartGame;
+            _stageManager.OnStageChanged -= OnStageChanged;
+            _stageManager.OnAllStagesCleared -= OnAllStagesCleared;
+        }
+
         private void OnAllStagesCleared()
         {
             State = GameState.Clear;

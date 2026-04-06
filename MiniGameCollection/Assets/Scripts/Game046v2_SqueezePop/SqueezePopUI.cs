@@ -30,17 +30,17 @@ namespace Game046v2_SqueezePop
 
         private void Start()
         {
-            _stageClearPanel.SetActive(false);
-            _gameOverPanel.SetActive(false);
-            _allClearPanel.SetActive(false);
+            _stageClearPanel?.SetActive(false);
+            _gameOverPanel?.SetActive(false);
+            _allClearPanel?.SetActive(false);
             if (_comboText != null) _comboText.gameObject.SetActive(false);
         }
 
         public void SetupStage(int stage, int total, int targetCount, float timeLimit)
         {
-            _stageClearPanel.SetActive(false);
-            _gameOverPanel.SetActive(false);
-            _allClearPanel.SetActive(false);
+            _stageClearPanel?.SetActive(false);
+            _gameOverPanel?.SetActive(false);
+            _allClearPanel?.SetActive(false);
             if (_comboText != null) _comboText.gameObject.SetActive(false);
 
             if (_stageText != null) _stageText.text = $"Stage {stage} / {total}";
