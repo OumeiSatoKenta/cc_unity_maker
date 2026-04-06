@@ -452,6 +452,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/046v2_SqueezePop.unity
     guid: c3fdc95d28380498fa3d5af38306de9f
+  - enabled: 1
+    path: Assets/Scenes/047v2_SpinBalance.unity
+    guid: d6bd4f78e4d324088a9057c186a99299
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
