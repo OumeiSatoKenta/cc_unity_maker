@@ -1667,7 +1667,7 @@
       "size": "M",
       "sceneName": "066v2_RoboFactory",
       "description": "ロボットが自動で資源を集めて都市を建設する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
