@@ -1567,7 +1567,7 @@
       "size": "S",
       "sceneName": "056v2_InflateFloat",
       "description": "風船を膨らませ障害物をかわしながら空を飛ぶ",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
