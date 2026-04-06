@@ -92,7 +92,14 @@ namespace Game046v2_SqueezePop
             _totalPops++;
             if (isPerfect) _perfectPops++;
 
-            if (!isPerfect && !isBomb) ComboCount = 0;
+            if (isBomb)
+            {
+                // 爆弾起因のポップはコンボ・スコアに影響しない（残数チェックのみ）
+                if (_balloonManager.RemainingCount <= 0 && State == GameState.Playing) StageClear();
+                return;
+            }
+
+            if (!isPerfect) ComboCount = 0;
             else ComboCount++;
 
             float multiplier = ComboCount >= 4 ? 2.0f : (ComboCount >= 2 ? 1.5f : 1.0f);
