@@ -1457,7 +1457,7 @@
       "size": "S",
       "sceneName": "045v2_FingerPaint",
       "description": "BGMのリズムに乗ってキャンバスに指で絵を描く",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
