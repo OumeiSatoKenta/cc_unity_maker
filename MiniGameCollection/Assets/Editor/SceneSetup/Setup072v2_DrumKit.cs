@@ -289,10 +289,7 @@ public static class Setup072v2_DrumKit
         SetField(ip, "_panelRoot",       ipBg);
 
         // Button events
-        nextBtn.GetComponent<Button>().onClick.AddListener(() => {
-            scPanel.SetActive(false);
-            gm.NextStage();
-        });
+        nextBtn.GetComponent<Button>().onClick.AddListener(ui.OnNextStageButton);
 
         // EventSystem
         var es = new GameObject("EventSystem");

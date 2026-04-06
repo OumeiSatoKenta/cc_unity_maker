@@ -38,7 +38,6 @@ namespace Game072v2_DrumKit
         float _beatInterval;
         float _beatTimer;
         int _beatCount;
-        int _beatsProcessed;
 
         // Judgment windows (seconds) — ring shrink time × ratio
         const float PerfectWindow = 0.040f;
@@ -54,7 +53,8 @@ namespace Game072v2_DrumKit
         Vector3 _camOrigin;
         bool _isShaking;
 
-        public int TotalScore => _score;
+        int _accumulatedScore = 0;
+        public int TotalScore => _accumulatedScore + _score;
 
         struct PadPosition
         {
@@ -120,12 +120,12 @@ namespace Game072v2_DrumKit
             _totalBeats = 24 + stageIndex * 8;
 
             // Reset state
+            _accumulatedScore += _score;
             _score = 0;
             _combo = 0;
             _missCount = 0;
             _beatTimer = 0f;
             _beatCount = 0;
-            _beatsProcessed = 0;
 
             _gameManager.UpdateScoreDisplay(_score);
             _gameManager.UpdateComboDisplay(_combo);
@@ -225,7 +225,6 @@ namespace Game072v2_DrumKit
                 _beatTimer -= _beatInterval;
                 SpawnBeat(_beatCount);
                 _beatCount++;
-                _beatsProcessed++;
             }
 
             // Update ring animations
@@ -238,13 +237,13 @@ namespace Game072v2_DrumKit
             AutoMissNotes();
 
             // Stage complete check
-            if (_beatsProcessed >= _totalBeats && _activeNotes.Count == 0 && _isActive)
+            if (_beatCount >= _totalBeats && _activeNotes.Count == 0 && _isActive)
                 OnStageComplete();
         }
 
         void SpawnBeat(int beat)
         {
-            if (_beatsProcessed >= _totalBeats) return;
+            if (beat >= _totalBeats) return;
 
             // Basic beat: bass on 0,4,8... snare on 2,6,10...
             int primary = -1;
