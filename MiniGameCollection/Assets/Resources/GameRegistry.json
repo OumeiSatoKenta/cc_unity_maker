@@ -1537,7 +1537,7 @@
       "size": "S",
       "sceneName": "053v2_SlideBlitz",
       "description": "スライドパズルをいかに速く解けるかのタイムアタック",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
