@@ -1727,7 +1727,7 @@
       "size": "S",
       "sceneName": "072v2_DrumKit",
       "description": "画面上のドラムセットをタップして演奏する楽器ゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
