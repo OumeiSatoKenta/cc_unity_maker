@@ -1637,7 +1637,7 @@
       "size": "M",
       "sceneName": "063v2_StarMiner",
       "description": "星を採掘して宇宙船をアップグレードする放置ゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
