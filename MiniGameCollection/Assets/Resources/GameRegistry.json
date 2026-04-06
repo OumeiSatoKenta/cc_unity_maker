@@ -1677,7 +1677,7 @@
       "size": "M",
       "sceneName": "067v2_TapDojo",
       "description": "道場でひたすらタップ修行して武道家を最強へ育てる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
