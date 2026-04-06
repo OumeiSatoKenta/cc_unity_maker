@@ -1477,7 +1477,7 @@
       "size": "S",
       "sceneName": "047v2_SpinBalance",
       "description": "画面を回転させて端から落ちないようコマを保持し続ける",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
