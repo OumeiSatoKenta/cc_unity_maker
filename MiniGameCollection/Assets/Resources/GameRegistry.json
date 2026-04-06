@@ -1657,7 +1657,7 @@
       "size": "M",
       "sceneName": "065v2_SpellBrewery",
       "description": "魔法の材料を自動収集してポーションを醸造する",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
