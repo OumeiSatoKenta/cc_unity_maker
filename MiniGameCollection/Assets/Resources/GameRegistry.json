@@ -1557,7 +1557,7 @@
       "size": "S",
       "sceneName": "055v2_DustSweep",
       "description": "画面の砂埃をスワイプで一掃する爽快クリーニングゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
