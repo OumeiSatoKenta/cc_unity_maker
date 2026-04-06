@@ -11,6 +11,8 @@ TagManager:
   - Obstacle
   - Coin
   - ScoreTrigger
+  - Hole
+  - Goal
   layers:
   - Default
   - TransparentFX

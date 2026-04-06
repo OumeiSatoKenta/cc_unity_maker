@@ -1447,7 +1447,7 @@
       "size": "S",
       "sceneName": "044v2_TiltMaze",
       "description": "デバイスを傾けてボールを迷路の出口へ転がす",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
