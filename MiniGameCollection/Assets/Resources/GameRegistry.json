@@ -1507,7 +1507,7 @@
       "size": "S",
       "sceneName": "050v2_BubbleSort",
       "description": "浮かんでくる色バブルを色ごとに分けて並べる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
