@@ -494,6 +494,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/063v2_StarMiner.unity
     guid: d8ecbd5ec3452413da126461b24d5e34
+  - enabled: 1
+    path: Assets/Scenes/078v2_EchoBack.unity
+    guid: a44ea9787a3e14d2c804e255c37e58d2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
