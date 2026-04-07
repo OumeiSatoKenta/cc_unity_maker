@@ -1867,7 +1867,7 @@
       "size": "L",
       "sceneName": "086v2_CityBonsai",
       "description": "盆栽の中に小さな都市を育てる箱庭シミュレーション",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
