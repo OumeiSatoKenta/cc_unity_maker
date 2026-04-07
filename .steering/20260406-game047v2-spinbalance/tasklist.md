@@ -15,4 +15,8 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+- 実装完了日: 2026-04-06
+- StageConfig に stageNumber フィールドがないため、SetupStage シグネチャを `(config, stageNumber)` に変更して対応
+- スコアの二重乗算バグ（AddScore内部でScoreMultiplierを適用するのに呼び出し側でも乗算していた）を修正
+- BalanceManager._ui を毎フレームFindするのではなくAwakeでキャッシュするよう修正
+- 次回への改善: StageConfig に stageNumber を含めるか、設計書でその点を明示しておく

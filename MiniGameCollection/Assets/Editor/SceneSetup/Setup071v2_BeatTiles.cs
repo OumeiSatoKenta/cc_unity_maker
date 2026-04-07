@@ -85,17 +85,17 @@ public static class Setup071v2_BeatTiles
         // StageManager
         var smObj = new GameObject("StageManager");
         smObj.transform.SetParent(gmObj.transform);
-        var sm = smObj.AddComponent<Common.StageManager>();
+        var sm = smObj.AddComponent<StageManager>();
 
-        var stageConfigs = new Common.StageManager.StageConfig[]
+        var stageConfigs = new StageManager.StageConfig[]
         {
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.0f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.2f, complexityFactor = 0.3f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.5f, complexityFactor = 0.6f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.1f, countMultiplier = 1.8f, complexityFactor = 0.8f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.1f, countMultiplier = 2.0f, complexityFactor = 1.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.3f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.6f },
+            new StageManager.StageConfig { speedMultiplier = 1.1f, countMultiplier = 1, complexityFactor = 0.8f },
+            new StageManager.StageConfig { speedMultiplier = 1.1f, countMultiplier = 2, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // NoteManager
         var nmObj = new GameObject("NoteManager");
@@ -178,8 +178,7 @@ public static class Setup071v2_BeatTiles
         var backBtn = CB(canvasObj.transform, "BackButton", "メニュー", 34, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(170, 55), new Vector2(15, 15), new Color(0.2f, 0.2f, 0.3f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -228,8 +227,7 @@ public static class Setup071v2_BeatTiles
         var acBackBtn = CB(acPanel.transform, "ACBackButton", "メニューへ戻る", 40, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(380, 65), new Vector2(0, 45), new Color(0.2f, 0.5f, 0.3f));
-        acBackBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBackBtn.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === Game Over Panel ===
@@ -256,8 +254,7 @@ public static class Setup071v2_BeatTiles
         var goBackBtn = CB(goPanel.transform, "GOBackButton", "メニューへ戻る", 40, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(380, 65), new Vector2(0, 45), new Color(0.5f, 0.2f, 0.2f));
-        goBackBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goBackBtn.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // === InstructionPanel ===
@@ -278,7 +275,7 @@ public static class Setup071v2_BeatTiles
         var ipBgImg = ipBg.AddComponent<Image>();
         ipBgImg.color = new Color(0f, 0f, 0f, 0.92f);
 
-        var ip = ipBg.AddComponent<Common.InstructionPanel>();
+        var ip = ipBg.AddComponent<InstructionPanel>();
 
         var ipTitle  = CT(ipBg.transform, "TitleText", "BeatTiles", 72, jpFont,
             new Vector2(0.5f,0.7f), new Vector2(0.5f,0.7f), new Vector2(0.5f,0.5f),

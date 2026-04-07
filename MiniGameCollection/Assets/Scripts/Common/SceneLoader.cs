@@ -17,6 +17,7 @@ public static class SceneLoader
 
     /// <summary>
     /// 指定のゲームシーンへ遷移する。
+    /// InstructionPanel の表示フラグをリセットして毎回スタートボタンを表示する。
     /// </summary>
     public static void LoadGame(string sceneName)
     {

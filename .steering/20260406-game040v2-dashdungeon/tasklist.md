@@ -15,4 +15,18 @@
 - [x] implemented: true に変更（remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-06
+
+**計画と実績の差分**:
+- 計画通り4フェーズすべて完了
+- コードレビューで[必須]バグ4件を発見・修正: Camera.mainのnullガード、ClearGrid()でのStopAllCoroutines()、PlaceOneTile()のsentinel値(-1,-1)、HandleLanding()のwarp後再帰呼び出し
+
+**学んだこと**:
+- BFS最短手数計算はSimulateSlide()を再利用することで実装が簡潔になる
+- Warpのような転送ギミックは、着地後の再判定（再帰HandleLanding）が必要
+- Pillow生成時のy座標計算は2倍スケールとオフセットの組み合わせでバグが出やすい
+
+**次回への改善提案**:
+- PlaceOneTile()の失敗sentinel値はnullable Vector2Int?の方が意図が明確
+- ステージデータはScriptableObjectで外部化すると難易度調整が容易

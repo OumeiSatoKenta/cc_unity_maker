@@ -15,4 +15,14 @@
 - [x] implemented: true に変更（035 remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- **実装完了日**: 2026-04-06
+- **PR**: OumeiSatoKenta/cc_unity_maker#296（マージ済み）
+- **計画と実績の差分**:
+  - 「バランスゲージ」は実装複雑度を考慮してシンプルな「岩ヒット=ゲームオーバー」に簡略化（設計時に決定）
+  - コードレビューで4件の[必須]指摘（SceneLoader.LoadMenu()の誤呼び出し、ReturnToMenuメソッド欠落、_helpButtonワイヤリング欠落、_obstacleCountデクリメント欠落）を即修正
+- **学んだこと**:
+  - `StopAllCoroutines()` はトリックアニメ等を巻き込む恐れがあるため、専用コルーチン参照（`_slideLaneCo`）で管理する
+  - SceneSetup での `AddButtonOnClick` と InstructionPanel の `_helpButton` パターンは、`_helpButton` フィールドのワイヤリングのみで十分（Show()内で登録される）
+- **次回への改善提案**:
+  - `SceneLoader.LoadMenu()` ではなく `SceneLoader.BackToMenu()` を使うことをdevelopment-guidelines等に明記する

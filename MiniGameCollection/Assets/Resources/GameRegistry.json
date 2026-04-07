@@ -1597,7 +1597,7 @@
       "size": "S",
       "sceneName": "059v2_WaterJug",
       "description": "ジャグを傾けて指定量の水を正確に計る操作ゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {

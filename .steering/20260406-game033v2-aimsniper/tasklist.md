@@ -16,4 +16,18 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-06
+- PR: OumeiSatoKenta/cc_unity_maker#294（マージ済み）
+
+### 計画と実績の差分
+- SceneSetupでInstructionPanelのフィールド名が`_panel`ではなく`_panelRoot`だった（他のSetupを参照して修正）
+- `_helpButton`の配線がCreateInstructionPanel内になかったため、呼び出し元でipSOWireを使って追加配線
+- `AddButtonOnClick(startBtn, ip, "OnStartButtonPressed")`は不要（InstructionPanel.Start()内でAddListenerするため）削除
+
+### 学んだこと
+- InstructionPanelのシリアライズフィールド名は`_panelRoot`・`_helpButton`（他のSetupで確認必須）
+- CreateInstructionPanelヘルパーに渡せないGameObjectは、戻り値後に別SerializedObjectで配線する
+
+### 次回への改善提案
+- CreateInstructionPanelのシグネチャに`helpButton`パラメータを追加して内部で配線できるようにする

@@ -26,6 +26,14 @@ namespace Game057v2_CandyDrop
         [SerializeField] Button _backToMenuButton;
         [SerializeField] Button _backToMenuButton2;
 
+        public void Init(CandyDropGameManager gm)
+        {
+            if (_nextStageButton != null) _nextStageButton.onClick.AddListener(gm.OnNextStage);
+            if (_retryButton != null) _retryButton.onClick.AddListener(gm.OnRetry);
+            if (_backToMenuButton != null) _backToMenuButton.onClick.AddListener(gm.OnBackToMenu);
+            if (_backToMenuButton2 != null) _backToMenuButton2.onClick.AddListener(gm.OnBackToMenu);
+        }
+
         public void OnStageChanged(int stageNumber)
         {
             if (_stageText != null) _stageText.text = $"Stage {stageNumber} / 5";

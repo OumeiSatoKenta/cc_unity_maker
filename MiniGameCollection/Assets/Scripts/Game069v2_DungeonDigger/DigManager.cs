@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Common;
 
 namespace Game069v2_DungeonDigger
 {
@@ -83,7 +82,6 @@ namespace Game069v2_DungeonDigger
             _combo = 0;
             _lastTapTime = 0f;
             _autoTimer = 0f;
-            _monsterActive = false;
 
             // Stage parameters
             int[] depthTargets = { 50, 200, 500, 1000, 2000 };
@@ -428,10 +426,12 @@ namespace Game069v2_DungeonDigger
 
         IEnumerator ScalePulse(Transform t)
         {
+            if (t == null) yield break;
             Vector3 orig = t.localScale;
             float elapsed = 0f;
             while (elapsed < 0.1f)
             {
+                if (t == null) yield break;
                 t.localScale = orig * Mathf.Lerp(1f, 1.3f, elapsed / 0.1f);
                 elapsed += Time.deltaTime;
                 yield return null;
@@ -439,11 +439,12 @@ namespace Game069v2_DungeonDigger
             elapsed = 0f;
             while (elapsed < 0.1f)
             {
+                if (t == null) yield break;
                 t.localScale = orig * Mathf.Lerp(1.3f, 1f, elapsed / 0.1f);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
-            t.localScale = orig;
+            if (t != null) t.localScale = orig;
         }
 
         IEnumerator GoldFlash()

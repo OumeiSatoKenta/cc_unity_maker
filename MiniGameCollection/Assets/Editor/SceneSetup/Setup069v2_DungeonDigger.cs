@@ -59,18 +59,18 @@ public static class Setup069v2_DungeonDigger
         // StageManager (child of GameManager)
         var smObj = new GameObject("StageManager");
         smObj.transform.SetParent(gmObj.transform);
-        var sm = smObj.AddComponent<Common.StageManager>();
+        var sm = smObj.AddComponent<StageManager>();
 
         // Setup stage configs
-        var stageConfigs = new Common.StageManager.StageConfig[]
+        var stageConfigs = new StageManager.StageConfig[]
         {
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.0f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.2f, countMultiplier = 1.5f, complexityFactor = 0.3f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.5f, countMultiplier = 2.0f, complexityFactor = 0.6f },
-            new Common.StageManager.StageConfig { speedMultiplier = 2.0f, countMultiplier = 3.0f, complexityFactor = 0.8f },
-            new Common.StageManager.StageConfig { speedMultiplier = 2.5f, countMultiplier = 4.0f, complexityFactor = 1.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.2f, countMultiplier = 1, complexityFactor = 0.3f },
+            new StageManager.StageConfig { speedMultiplier = 1.5f, countMultiplier = 2, complexityFactor = 0.6f },
+            new StageManager.StageConfig { speedMultiplier = 2.0f, countMultiplier = 3, complexityFactor = 0.8f },
+            new StageManager.StageConfig { speedMultiplier = 2.5f, countMultiplier = 4, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // DigManager (child of GameManager)
         var digObj = new GameObject("DigManager");
@@ -136,7 +136,7 @@ public static class Setup069v2_DungeonDigger
         var backBtn = CB(canvasObj.transform, "BackToMenuButton", "メニュー", 34, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(200, 70), new Vector2(10, 15),
             new Color(0.2f, 0.2f, 0.35f));
-        backBtn.AddComponent<Common.BackToMenuButton>();
+        backBtn.AddComponent<BackToMenuButton>();
 
         var sellBtn = CB(canvasObj.transform, "SellButton", "売却", 36, jpFont,
             new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(180, 70), new Vector2(-10, 15),
@@ -208,7 +208,7 @@ public static class Setup069v2_DungeonDigger
         ipRT.offsetMin = ipRT.offsetMax = Vector2.zero;
         var ipImg = ipBg.AddComponent<Image>();
         ipImg.color = new Color(0.05f, 0.02f, 0.15f, 0.97f);
-        var ip = ipBg.AddComponent<Common.InstructionPanel>();
+        var ip = ipBg.AddComponent<InstructionPanel>();
 
         var ipTitle = CT(ipBg.transform, "TitleText", "DungeonDigger", 72, jpFont,
             new Vector2(0.5f, 0.78f), new Vector2(0.5f, 0.78f), new Vector2(0.5f, 0.5f), new Vector2(900, 100), Vector2.zero);

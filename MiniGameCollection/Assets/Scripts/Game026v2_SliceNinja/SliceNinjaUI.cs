@@ -57,7 +57,7 @@ namespace Game026v2_SliceNinja
             {
                 string hearts = "";
                 for (int i = 0; i < max; i++)
-                    hearts += (i < max - count) ? "♥ " : "✖ ";
+                    hearts += (i < max - count) ? "● " : "× ";
                 _missText.text = hearts.TrimEnd();
             }
         }

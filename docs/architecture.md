@@ -47,7 +47,10 @@ cc_unity_maker/
     │   │   ├── Common/                 ← 全ゲーム共通ロジック
     │   │   │   ├── SceneLoader.cs      ← シーン遷移管理（CurrentCollectionを保持）
     │   │   │   ├── GameRegistry.cs     ← ゲーム一覧データ管理
-    │   │   │   └── BackToMenuButton.cs ← 各ゲームから戻るボタン
+    │   │   │   ├── BackToMenuButton.cs ← 各ゲームから戻るボタン
+    │   │   │   ├── StageManager.cs     ← remake版5ステージ進行管理
+    │   │   │   ├── InstructionPanel.cs ← チュートリアル表示パネル
+    │   │   │   └── FavoriteManager.cs  ← お気に入り管理
     │   │   ├── CollectionSelect/
     │   │   │   └── CollectionSelectManager.cs ← コレクション選択画面制御
     │   │   ├── TopMenu/
@@ -239,7 +242,7 @@ TopMenuに自動でゲームカードが追加される。
 **collectionフィールドの設計方針**:
 - `classic`: 001〜101の全101本が `implemented: true`（v1オリジナル実装済み扱い）
 - `remake`: 001〜101の全101本が `implemented: false`（v2リメイク版、実装済みのみ `true`）
-  - 現在remake実装済み: 001, 002, 003
+  - remake実装済みゲームは随時増加中（GameRegistry.json の `implemented: true` エントリを参照）
 
 `implemented: false` のゲームはカードをグレーアウト表示し、タップ不可にする。
 TopMenuは `SceneLoader.CurrentCollection`（`classic` / `remake` / `favorites`）で絞り込み表示する。

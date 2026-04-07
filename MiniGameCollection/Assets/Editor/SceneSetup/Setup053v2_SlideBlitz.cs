@@ -99,7 +99,7 @@ public static class Setup053v2_SlideBlitz
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
             new Vector2(300f, 50f), new Vector2(20f, -20f), Color.white);
 
-        var timerObj = CreateText(canvasObj.transform, "TimerText", "⏱ 60", jpFont, 36,
+        var timerObj = CreateText(canvasObj.transform, "TimerText", "60", jpFont, 36,
             new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
             new Vector2(220f, 50f), new Vector2(-20f, -20f), Color.white);
 

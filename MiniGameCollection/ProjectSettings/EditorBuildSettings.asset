@@ -497,6 +497,69 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/078v2_EchoBack.unity
     guid: a44ea9787a3e14d2c804e255c37e58d2
+  - enabled: 1
+    path: Assets/Scenes/085v2_MechPet.unity
+    guid: ac03511728c414a98bbebbabde130b1d
+  - enabled: 1
+    path: Assets/Scenes/084v2_GardenZen.unity
+    guid: af3f306e73fa2486992e7c4315a6f360
+  - enabled: 1
+    path: Assets/Scenes/076v2_ChordCatch.unity
+    guid: 6c9b7c53ea4aa42cdb68c29d6c821dbe
+  - enabled: 1
+    path: Assets/Scenes/077v2_BeatRunner.unity
+    guid: 6fa9e9a2d0ca54921824e810c9f0306a
+  - enabled: 1
+    path: Assets/Scenes/079v2_SilentBeat.unity
+    guid: 2f92823e051e44d579f25fb570386f04
+  - enabled: 1
+    path: Assets/Scenes/081v2_PetBonsai.unity
+    guid: 47dfed2a9efeb4453be85309fd13bd6c
+  - enabled: 1
+    path: Assets/Scenes/082v2_AquaPet.unity
+    guid: 2ca6294a823324aeb93127190e59530e
+  - enabled: 1
+    path: Assets/Scenes/083v2_StarChef.unity
+    guid: e9fc0ceaec6094f9aa7dbc85e3febbcd
+  - enabled: 1
+    path: Assets/Scenes/080v2_FreqFight.unity
+    guid: c33a18bccf768412f8c6caaea4fa0a72
+  - enabled: 1
+    path: Assets/Scenes/064v2_AquaCity.unity
+    guid: ada378be8d40a421992fbce6f9314613
+  - enabled: 1
+    path: Assets/Scenes/065v2_SpellBrewery.unity
+    guid: 05838d1c7296143b1a18872559b8b925
+  - enabled: 1
+    path: Assets/Scenes/066v2_RoboFactory.unity
+    guid: 1907bb54e488149e7bec839f9e747c0d
+  - enabled: 1
+    path: Assets/Scenes/067v2_TapDojo.unity
+    guid: f6a73158604bb4ff6a1a75ab91d4e6f5
+  - enabled: 1
+    path: Assets/Scenes/068v2_CloudFarm.unity
+    guid: c74089979c032401e9d09d9819259bd2
+  - enabled: 1
+    path: Assets/Scenes/069v2_DungeonDigger.unity
+    guid: f09d9302fbaa940eaaf7a710d7895afb
+  - enabled: 1
+    path: Assets/Scenes/070v2_NanoLab.unity
+    guid: 21c2b8d669c494bc6bc186a099d74319
+  - enabled: 1
+    path: Assets/Scenes/071v2_BeatTiles.unity
+    guid: 74c4b300ccafb4c6b87b35aa229247ad
+  - enabled: 1
+    path: Assets/Scenes/072v2_DrumKit.unity
+    guid: 08d56568d80a74d58861aa56242adadc
+  - enabled: 1
+    path: Assets/Scenes/073v2_MelodyMaze.unity
+    guid: 06a4e2f1c59454cedaf0ce537c8b395f
+  - enabled: 1
+    path: Assets/Scenes/074v2_NoteRain.unity
+    guid: 6ca20674abccd4c7ba1b7c3d28fbca74
+  - enabled: 1
+    path: Assets/Scenes/075v2_SoundGarden.unity
+    guid: 5b3fd5cf71b054591b1ae5652403c327
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

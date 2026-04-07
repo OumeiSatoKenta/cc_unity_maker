@@ -340,6 +340,22 @@ claude
 
 詳細手順は `docs/GETTING_STARTED.md` を参照。
 
+### Unity Editor 推奨設定
+
+#### PlayMode 移行の高速化
+
+`Edit > Project Settings > Editor > Enter Play Mode Options` を開き、以下を設定する:
+
+| 設定項目 | 推奨値 | 備考 |
+|---------|--------|------|
+| Enter Play Mode Options | ON | このチェックを入れると個別設定が有効になる |
+| Reload Domain | OFF | 静的変数がリセットされないため注意（下記参照） |
+| Reload Scene | OFF | シーン再読み込みをスキップ |
+
+> **効果**: Domain Reload を OFF にすることで、PlayMode 移行が数秒→ほぼ即時になる。スクリプト数が多いほど効果大。
+
+> **注意**: `Reload Domain OFF` にすると `static` フィールドや `SceneLoader.CurrentCollection` のような静的プロパティが前のPlayModeの値を引き継ぐ。不審な挙動が出た場合は一時的に ON に戻して確認すること。
+
 ---
 
 ## Claude Code が守るべきコード生成ルール
@@ -354,6 +370,9 @@ claude
 6. **GameRegistry.json を必ず更新する**: classic実装時は classicエントリの `implemented: true` を確認（既に true）、remake実装時は remakeエントリの `implemented` を `true` に更新する
 7. **ゲーム間依存を作らない**: `using Game002_*` は絶対に書かない
 8. **コミットはゲーム単位で行う**: 複数ゲームを1コミットにまとめない
+9. **同一GameObjectにTMPとImageを共存させない**: `TextMeshProUGUI` が付いたGameObjectに `Image` コンポーネントを追加すると描画が競合する。背景が必要な場合は親子構造にし、親に `Image`、子に `TextMeshProUGUI` を配置する
+10. **NotoSansJP で絵文字を使わない**: `NotoSansJP-Regular SDF` は絵文字グリフを含まないため、絵文字文字（🎯等）をテキストに含めると警告が出る。テキスト代替（「★」「●」等）を使用する
+11. **コルーチン内のTransform参照にnullチェックを入れる**: 複数フレームにまたがるコルーチンで `Transform` を操作する場合、オブジェクトが途中で破棄される可能性がある。ループの先頭で `if (t == null) yield break;` を入れること
 
 ---
 

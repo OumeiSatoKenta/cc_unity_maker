@@ -29,6 +29,10 @@ namespace Game055v2_DustSweep
         [SerializeField] Button _menuButton;
 
         [SerializeField] DustSweepGameManager _gm;
+        [SerializeField] Button _brushSmallButton;
+        [SerializeField] Button _brushMedButton;
+        [SerializeField] Button _brushLargeButton;
+        [SerializeField] DustBoard _dustBoard;
 
         void Awake()
         {
@@ -38,7 +42,20 @@ namespace Game055v2_DustSweep
             if (_comboText != null) _comboText.gameObject.SetActive(false);
             if (_penaltyText != null) _penaltyText.gameObject.SetActive(false);
 
-            // Button listeners are wired via SceneSetup (AddPersistentListener) to avoid duplicates
+            if (_gm != null)
+            {
+                _nextStageButton?.onClick.AddListener(_gm.OnNextStage);
+                _retryButton?.onClick.AddListener(_gm.OnRetry);
+                _menuButton?.onClick.AddListener(_gm.OnBackToMenu);
+                _gameClearRetryButton?.onClick.AddListener(_gm.OnRetry);
+                _gameClearMenuButton?.onClick.AddListener(_gm.OnBackToMenu);
+            }
+            if (_dustBoard != null)
+            {
+                _brushSmallButton?.onClick.AddListener(() => _dustBoard.SetBrushSize(0));
+                _brushMedButton?.onClick.AddListener(() => _dustBoard.SetBrushSize(1));
+                _brushLargeButton?.onClick.AddListener(() => _dustBoard.SetBrushSize(2));
+            }
         }
 
         public void OnStageChanged(int stage)

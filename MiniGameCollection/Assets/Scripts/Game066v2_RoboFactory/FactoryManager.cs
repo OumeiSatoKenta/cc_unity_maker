@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Common;
 
 namespace Game066v2_RoboFactory
 {
@@ -98,7 +97,6 @@ namespace Game066v2_RoboFactory
 
         // Energy management
         float _energyCapacity = 100f;
-        float _energyDrain;
         bool _energyShortage;
 
         // Broken robot tracking
@@ -186,7 +184,6 @@ namespace Game066v2_RoboFactory
 
             // Energy
             _energyCapacity = _energyManagementEnabled ? 100f : float.MaxValue;
-            _energyDrain = 0f;
 
             _isActive = true;
 

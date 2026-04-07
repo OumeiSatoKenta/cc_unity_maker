@@ -114,7 +114,7 @@ public static class Setup008v2_IcePath
             new Vector2(200, 65), new Vector2(20, 75), new Color(0.3f, 0.35f, 0.5f, 0.9f));
 
         // Reset button (center-left)
-        var resetBtn = CB(canvasObj.transform, "ResetButton", "↺ リセット", 26, jpFont,
+        var resetBtn = CB(canvasObj.transform, "ResetButton", "リセット", 26, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(200, 65), new Vector2(-110, 75), new Color(0.4f, 0.3f, 0.3f, 0.9f));
 

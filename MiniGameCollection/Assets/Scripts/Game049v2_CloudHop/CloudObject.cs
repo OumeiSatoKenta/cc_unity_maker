@@ -18,7 +18,6 @@ namespace Game049v2_CloudHop
         private float _moveSpeed;
         private float _moveRange;
         private float _startX;
-        private bool _hasPlayer;
 
         private CloudHopGameManager _gameManager;
 
@@ -39,7 +38,6 @@ namespace Game049v2_CloudHop
             _startX = transform.position.x;
             IsAlive = true;
             _elapsed = 0f;
-            _hasPlayer = false;
 
             if (_isRandomFade && Random.value < 0.33f)
             {
@@ -113,7 +111,6 @@ namespace Game049v2_CloudHop
             {
                 if (contact.normal.y > 0.5f)
                 {
-                    _hasPlayer = true;
                     _gameManager?.OnCloudLanded(CloudType);
 
                     if (CloudType == CloudType.Spring)
@@ -123,11 +120,6 @@ namespace Game049v2_CloudHop
                     break;
                 }
             }
-        }
-
-        void OnCollisionExit2D(Collision2D collision)
-        {
-            if (collision.gameObject.CompareTag("Player")) _hasPlayer = false;
         }
 
         IEnumerator ScalePulse()

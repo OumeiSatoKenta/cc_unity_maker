@@ -1,7 +1,7 @@
 ---
 name: code-reviewer-secondary
 description: 欠陥・セキュリティ観点でコードレビューし、Codex MCPでセカンドオピニオンを取得するサブエージェント
-model: sonnet
+model: opus
 ---
 
 # 欠陥・セキュリティレビューエージェント

@@ -251,7 +251,7 @@ namespace Game057v2_CandyDrop
             float windDir = Mathf.Sin(Time.time * 0.5f);
             foreach (var rb in _allCandyBodies)
             {
-                if (rb != null && !rb.isKinematic)
+                if (rb != null && rb.bodyType != RigidbodyType2D.Kinematic)
                     rb.AddForce(new Vector2(windDir * _windForce * rb.mass * Time.fixedDeltaTime, 0));
             }
         }

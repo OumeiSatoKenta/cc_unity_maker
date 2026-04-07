@@ -32,8 +32,6 @@ namespace Game031v2_BounceKing
         int _comboCount;
         float _comboMultiplier = 1f;
         int _currentStage;
-        bool _isActive;
-
         List<BallController> _balls = new List<BallController>();
         float _currentSpeed = 5.0f;
 
@@ -59,7 +57,6 @@ namespace Game031v2_BounceKing
             _life = MaxLife;
             _comboCount = 0;
             _comboMultiplier = 1f;
-            _isActive = true;
             State = BounceKingState.WaitingLaunch;
 
             _blockManager.LoadSprites();
@@ -111,7 +108,6 @@ namespace Game031v2_BounceKing
         void OnAllStagesCleared()
         {
             State = BounceKingState.Clear;
-            _isActive = false;
             ClearBalls();
             _ui.ShowFinalClear(_score);
         }
@@ -222,7 +218,6 @@ namespace Game031v2_BounceKing
             if (State == BounceKingState.GameOver) return;
             if (_autoAdvanceCo != null) { StopCoroutine(_autoAdvanceCo); _autoAdvanceCo = null; }
             State = BounceKingState.GameOver;
-            _isActive = false;
             ClearBalls();
             _ui.ShowGameOver(_score);
         }

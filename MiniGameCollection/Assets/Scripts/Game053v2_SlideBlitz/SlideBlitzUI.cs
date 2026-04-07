@@ -36,7 +36,7 @@ namespace Game053v2_SlideBlitz
         {
             if (_timerText == null) return;
             int s = Mathf.CeilToInt(seconds);
-            _timerText.text = $"⏱ {s}";
+            _timerText.text = $"{s}";
             _timerText.color = seconds <= 10f ? new Color(1f, 0.3f, 0.3f) : Color.white;
         }
 

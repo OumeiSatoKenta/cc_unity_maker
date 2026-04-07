@@ -18,4 +18,12 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-06
+- PR: OumeiSatoKenta/cc_unity_maker#310
+- 計画との差分: 特になし。全タスク予定通り完了
+- 学んだこと:
+  - 縦スクロール型プラットフォーマーでは Trigger/Collision の一貫性が重要。CloudObject と CloudHopController 両方が同じ衝突タイプ（非Trigger）を使う必要がある
+  - HashSet による「接地中の雲」管理で複数雲同時接触のバグを防止
+  - StopAllCoroutines() をステージリセット時に必ず呼ぶことで、スタンコルーチンが残留するバグを防止
+- 次回への改善提案: コードレビューの [必須] 指摘（BonusTextAnim Coroutineフィールド化、SpawnerのSetActive on GameOver）は早期に対処できた。今後も同様の非同期状態管理には注意

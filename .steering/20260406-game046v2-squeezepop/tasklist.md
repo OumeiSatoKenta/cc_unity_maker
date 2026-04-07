@@ -15,4 +15,9 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-06
+- PR: #307 (マージ済み)
+- 主な差分: SceneLoader が static class であることを事前に確認せず `FindFirstObjectByType<SceneLoader>()` を記述してしまいコンパイルエラー。直接 `SceneManager.LoadScene("TopMenu")` で対処。
+- 学んだこと: SceneLoader の static 化は Common インフラの重要な前提。Setup スクリプト生成時に必ず確認する。
+- 次回改善: SceneSetup テンプレートの AddBackToMenuListener を最初から SceneManager 直呼び出しにする。

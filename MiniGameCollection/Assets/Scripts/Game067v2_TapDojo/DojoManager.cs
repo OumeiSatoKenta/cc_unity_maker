@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Common;
 using System.Collections;
 
 namespace Game067v2_TapDojo

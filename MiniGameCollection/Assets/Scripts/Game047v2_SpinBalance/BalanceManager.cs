@@ -69,7 +69,6 @@ namespace Game047v2_SpinBalance
         private SpinBalanceUI _ui;
 
         // Brake
-        private bool _brakeActive;
         private float _brakeCooldown;
         private const float BrakeDuration = 0.5f;
         private const float BrakeCooldownMax = 5f;
@@ -95,7 +94,6 @@ namespace Game047v2_SpinBalance
             _config = config;
             _stageNumber = stageNumber;
             _isActive = true;
-            _brakeActive = false;
             _brakeCooldown = 0f;
 
             // Clear existing coins
@@ -207,7 +205,6 @@ namespace Game047v2_SpinBalance
         {
             if (_brakeCooldown > 0f) return;
             _gameManager.NotifyBrakeUsed();
-            _brakeActive = true;
             _brakeCooldown = BrakeCooldownMax;
             StartCoroutine(BrakeEffect());
         }
@@ -237,7 +234,6 @@ namespace Game047v2_SpinBalance
                 if (c == null || c.Rb == null) continue;
                 c.Rb.constraints = RigidbodyConstraints2D.None;
             }
-            _brakeActive = false;
         }
 
         IEnumerator CameraShake(float duration, float magnitude)

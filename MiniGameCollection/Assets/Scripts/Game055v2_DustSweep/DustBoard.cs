@@ -107,7 +107,7 @@ namespace Game055v2_DustSweep
             float availH = camSize * 2f - topMargin - bottomMargin;
             float availW = camWidth * 2f - 0.4f;
             _boardSize = Mathf.Min(availH, availW);
-            transform.localScale = Vector3.one * (_boardSize / 256f * 256f / TEX_SIZE);
+            transform.localScale = Vector3.one * _boardSize;
             transform.position = new Vector3(0f, (camSize - topMargin - _boardSize / 2f - 0.2f) * -1f + (camSize - topMargin), 0f);
             // Center between top and bottom margins
             float centerY = camSize - topMargin - _boardSize / 2f;

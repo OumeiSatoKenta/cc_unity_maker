@@ -16,4 +16,19 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-07
+- PR: OumeiSatoKenta/cc_unity_maker#334（マージ済み）
+
+### 計画と実績の差分
+- 植物の動的生成（AddComponent）パターンにより`_spriteRenderer`がSerializeFieldでは機能せず、Awake()での自己取得に修正が必要だった
+- StopCoroutine(string)では動的生成コルーチンを停止できないため、Dictionaryでルーチン参照を管理する実装に変更
+- 成長計算のceil division問題（3 Perfect = 99 < 100）を発見・修正（34/22/11の固定値）
+
+### 学んだこと
+- AddComponentで生成したMonoBehaviourはSerializeFieldが機能しないため、Awake()での自己取得が必須
+- StartCoroutine(methodRef)はstring名では停止できない → 参照をDictionaryで保持する設計が重要
+- 整数除算の端数問題は「3回操作でゴール達成できるか」を検証する必要がある
+
+### 次回への改善提案
+- 動的生成コンポーネントを含む設計のレビューチェックリストにSerializeField/Awake確認を追加

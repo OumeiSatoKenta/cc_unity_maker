@@ -1,7 +1,7 @@
 ---
 name: code-reviewer-structural
 description: コードの構造・アーキテクチャ観点でレビューするサブエージェント
-model: sonnet
+model: opus
 ---
 
 # 構造・アーキテクチャレビューエージェント

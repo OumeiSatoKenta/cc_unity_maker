@@ -15,4 +15,13 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-07
+- PR: #326（マージ済み）
+- 計画との差分: ほぼ計画通り。MCP未接続のためSceneSetup/PlayMode検証はスキップ
+- 学んだこと:
+  - ビットマスクレシピシステムは8種類のポーションを辞書1つで管理でき拡張性が高い
+  - Random.Range(0, max) の最大値を含まない仕様に注意（OrderLoopのバグ修正で検出）
+  - アイドル系コルーチンチェーン（CameraShake等）はOnDestroyでStopAllCoroutinesするのが安全
+- 次回への改善提案:
+  - StageConfigにステージ固有パラメータを持たせてBreweryManagerのswitchを排除できる

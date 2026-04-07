@@ -19,4 +19,18 @@
 - [x] implemented: true に変更（remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-06
+
+**計画との差分**:
+- 計画通りの5フェーズ実装完了
+- SceneSetup実行前にWall/Paddleタグ・Blockレイヤーが未定義だったため、MCP経由で追加してから再実行した
+
+**学んだこと**:
+- SceneSetupでタグ/レイヤーを設定する前に、TagManager.assetにエントリが必要。今後はSceneSetup内でタグ追加ロジックを組み込むか、事前にMCPで追加する
+- 手動物理（Rigidbody2Dなし）でのブロック崩しは dominant axis 判定で安定した反射が実現できる
+- コードレビューで5件の[必須]指摘（ダブルスケーリング・ゼロ除算・コルーチン多重起動・ダブルコール・ボーナス未加算）を修正
+
+**次回への改善提案**:
+- SceneSetupスクリプトにタグ/レイヤーの自動登録ロジックを含める
+- BallControllerのCheckBlockCollisionはOverlapCircleAllにしてフレーム内複数ブロック貫通を防ぐ検討を

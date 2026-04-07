@@ -123,14 +123,21 @@ public static class Setup064v2_AquaCity
         comboText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.9f, 0.1f);
         comboText.SetActive(false);
 
-        // Shark Warning (center warning bar)
-        var sharkWarning = CT(canvasObj.transform, "SharkWarning", "🦈 サメ出現！タップして撃退！", 34, jpFont,
-            new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(800, 60), new Vector2(0, -260));
-        var swTMP = sharkWarning.GetComponent<TextMeshProUGUI>();
-        swTMP.alignment = TextAlignmentOptions.Center;
-        swTMP.color = new Color(1f, 0.3f, 0.2f);
+        // Shark Warning (center warning bar) - background + text as children
+        var sharkWarning = new GameObject("SharkWarning", typeof(RectTransform));
+        sharkWarning.transform.SetParent(canvasObj.transform, false);
+        var swRt = sharkWarning.GetComponent<RectTransform>();
+        swRt.anchorMin = new Vector2(0.5f, 1); swRt.anchorMax = new Vector2(0.5f, 1); swRt.pivot = new Vector2(0.5f, 1);
+        swRt.sizeDelta = new Vector2(800, 60); swRt.anchoredPosition = new Vector2(0, -260);
         var swBg = sharkWarning.AddComponent<Image>();
         swBg.color = new Color(0.5f, 0.05f, 0.05f, 0.85f);
+        var swText = CT(sharkWarning.transform, "Text", "サメ出現！タップして撃退！", 34, jpFont,
+            Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        var swTextRt = swText.GetComponent<RectTransform>();
+        swTextRt.offsetMin = Vector2.zero; swTextRt.offsetMax = Vector2.zero;
+        var swTMP = swText.GetComponent<TextMeshProUGUI>();
+        swTMP.alignment = TextAlignmentOptions.Center;
+        swTMP.color = new Color(1f, 0.3f, 0.2f);
         sharkWarning.SetActive(false);
 
         // === Bottom Shop Buttons (3 columns top row, 3 columns bottom row) ===

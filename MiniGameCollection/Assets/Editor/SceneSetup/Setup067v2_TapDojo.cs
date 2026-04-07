@@ -74,11 +74,11 @@ public static class Setup067v2_TapDojo
 
         var stages = new StageManager.StageConfig[]
         {
-            new StageManager.StageConfig { speedMultiplier = 0f,  countMultiplier = 1f, complexityFactor = 0.2f },
-            new StageManager.StageConfig { speedMultiplier = 1f,  countMultiplier = 2f, complexityFactor = 0.4f },
-            new StageManager.StageConfig { speedMultiplier = 2f,  countMultiplier = 3f, complexityFactor = 0.6f },
-            new StageManager.StageConfig { speedMultiplier = 3.5f, countMultiplier = 5f, complexityFactor = 0.8f },
-            new StageManager.StageConfig { speedMultiplier = 5f,  countMultiplier = 8f, complexityFactor = 1.0f },
+            new StageManager.StageConfig { speedMultiplier = 0f,  countMultiplier = 1, complexityFactor = 0.2f },
+            new StageManager.StageConfig { speedMultiplier = 1f,  countMultiplier = 2, complexityFactor = 0.4f },
+            new StageManager.StageConfig { speedMultiplier = 2f,  countMultiplier = 3, complexityFactor = 0.6f },
+            new StageManager.StageConfig { speedMultiplier = 3.5f, countMultiplier = 5, complexityFactor = 0.8f },
+            new StageManager.StageConfig { speedMultiplier = 5f,  countMultiplier = 8, complexityFactor = 1.0f },
         };
         sm.SetConfigs(stages);
 
@@ -160,7 +160,7 @@ public static class Setup067v2_TapDojo
             new Vector2(1f, 0), new Vector2(1f, 0), new Vector2(1f, 0), new Vector2(220, 65), new Vector2(-10, 15),
             new Color(0.2f, 0.2f, 0.2f, 0.85f));
         menuBtn.GetComponent<Button>().onClick.AddListener(() => { });
-        var backScript = menuBtn.AddComponent<Common.BackToMenuButton>();
+        var backScript = menuBtn.AddComponent<BackToMenuButton>();
 
         // === TRAINING TIMER PANEL ===
         var ttPanel = new GameObject("TrainingTimerPanel", typeof(RectTransform));
@@ -223,7 +223,7 @@ public static class Setup067v2_TapDojo
         var acMenuBtn = CB(acPanel.transform, "BackToMenuButton", "メニューへ", 36, jpFont,
             new Vector2(0.5f, 0.18f), new Vector2(0.5f, 0.18f), new Vector2(0.5f, 0.5f), new Vector2(300, 80), Vector2.zero,
             new Color(0.2f, 0.2f, 0.5f));
-        acMenuBtn.AddComponent<Common.BackToMenuButton>();
+        acMenuBtn.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === INSTRUCTION PANEL ===
