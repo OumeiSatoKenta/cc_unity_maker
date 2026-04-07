@@ -16,4 +16,8 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-06
+- **計画と実績の差分**: `using Common;` が他ゲームでは不要（同一アセンブリなので直接参照可能）な点を見落とし、コンパイルエラーが発生。`SceneLoader.LoadMenu()` → `SceneLoader.BackToMenu()` のメソッド名相違も修正。
+- **学んだこと**: Common名前空間のクラス（InstructionPanel, StageManager, SceneLoader）は `using Common;` 不要。Unityプロジェクト内のすべてのクラスはグローバルにアクセス可能。
+- **次回への改善提案**: Commonクラス使用時に `using Common;` を書かない。SceneLoaderは `BackToMenu()` メソッドを使用する。

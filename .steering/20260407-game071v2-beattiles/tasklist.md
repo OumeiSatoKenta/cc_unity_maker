@@ -15,4 +15,9 @@
 - [x] implemented: true に変更
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-07
+- PR: #330（マージ済み）
+- 計画との差分: ホールドノーツの長押し継続判定は未実装（NoteType.Holdを生成するが判定はNormalと同等）。コードレビューで指摘済み。
+- 学んだこと: `SetActive(bool active) => _isActive = false;` の引数無視バグは静的解析では見落としやすい。コードレビューが有効。
+- 改善提案: AutoMissNotes内でのコレクション変更中RegisterMiss呼び出し問題は、toMissリスト方式で解決した。

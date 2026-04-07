@@ -12,4 +12,16 @@
 - [x] Setup078v2_EchoBack.cs（InstructionPanel・StageManager配線・鍵盤UI構成含む）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-07
+- 差分:
+  - 計画通り3スクリプト + SceneSetup + スプライト8枚を実装完了
+  - [必須]修正: `_perfectCount`リセット漏れ、スコア累積バグ、Stage5テンポ変化のタイミング計算、`_patternTimes`未使用デッドコード、`TriggerGameOverDelay`の`_isActive`ガード漏れ
+  - `StopAllCoroutinesOn`プレースホルダーを`_pulseCoroutine`トラッキングに修正
+  - リプレイボタンの`↺`文字をフォント非対応のため`>>`に変更
+- 学んだこと:
+  - 手続き的AudioClipの生成はサイン波を直接書き込むことで音源ファイル不要
+  - リズム系ゲームのタイミング判定では、テンポ変化を`_patternTimes`に事前計算して埋め込む必要がある
+  - Canvas UI Buttonを鍵盤として使う設計はレスポンシブ配置と当たり判定の両立に有効
+- 次回への改善提案:
+  - 特殊文字（矢印記号等）はフォントの対応状況を事前に確認する

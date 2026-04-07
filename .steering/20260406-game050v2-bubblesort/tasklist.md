@@ -16,4 +16,18 @@
 - [ ] implemented: true に変更（remakeエントリー）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+**実装完了日**: 2026-04-06
+
+**計画と実績の差分**:
+- StageManagerの`_stages`フィールドがSerializedObjectで見えないことが判明。SetConfigs()をGameManager.StartGame()で呼ぶパターンに変更。
+- BubbleGridManager: isChainバグ（最初のマッチもchain扱い）を修正。
+- OnTimerBubbleExpiredに`_isProcessing`ガードを追加（スワップ中のタイマー期限切れ競合防止）。
+- SetColorIndex内の`_sr.color`nullチェック漏れを修正。
+
+**学んだこと**:
+- StageManagerの`_configs`はprivateでシリアライズ不可。SetConfigs()をGameManager側で呼ぶのが正しいパターン。
+- isChain判定は「現在のマッチ前に既にfoundAnyがtrueか」で判断する（`bool isChain = foundAny; foundAny = true;`の順序が重要）。
+
+**次回への改善提案**:
+- SceneSetup内でStageManagerをSerializedObjectで設定しようとする誤りは過去にも発生。design.mdにSetConfigs()パターンを明記する。
