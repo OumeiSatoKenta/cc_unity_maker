@@ -93,7 +93,7 @@ namespace Game081v2_PetBonsai
         float _fertilizeTimer;
         float _overgrownCheckTimer;
         float _pestSpawnTimer;
-        bool _isActive;
+        private bool _isActive;
         int _missCount;
         const int MAX_MISS = 3;
         int _totalScore;
@@ -169,35 +169,42 @@ namespace Game081v2_PetBonsai
 
             var cam = Camera.main;
             if (cam == null) { Debug.LogError("[PetBonsai] MainCamera not found"); return; }
+
+            for (int i = 0; i < _branchCount; i++)
+            {
+                CreateBranch(i, cam);
+            }
+        }
+
+        BranchObject CreateBranch(int index, Camera cam)
+        {
             float camSize = cam.orthographicSize;
             float camWidth = camSize * cam.aspect;
             float treeBaseY = -0.5f;
             float radius = Mathf.Min(camWidth * 0.5f, camSize * 0.45f);
 
-            for (int i = 0; i < _branchCount; i++)
-            {
-                float angle = Mathf.PI * (0.1f + 0.8f * i / Mathf.Max(1, _branchCount - 1));
-                float bx = Mathf.Cos(angle) * radius;
-                float by = treeBaseY + Mathf.Sin(angle) * radius * 0.8f;
+            float angle = Mathf.PI * (0.1f + 0.8f * index / Mathf.Max(1, _branchCount - 1));
+            float bx = Mathf.Cos(angle) * radius;
+            float by = treeBaseY + Mathf.Sin(angle) * radius * 0.8f;
 
-                var go = new GameObject($"Branch_{i}");
-                go.transform.SetParent(_branchRoot);
-                go.transform.position = new Vector3(bx, by, 0f);
-                go.transform.localScale = Vector3.one;
+            var go = new GameObject($"Branch_{index}");
+            go.transform.SetParent(_branchRoot);
+            go.transform.position = new Vector3(bx, by, 0f);
+            go.transform.localScale = Vector3.one;
 
-                var sr = go.AddComponent<SpriteRenderer>();
-                sr.sprite = _branchNormal;
-                sr.sortingOrder = 2;
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = _branchNormal;
+            sr.sortingOrder = 2;
 
-                var bc = go.AddComponent<BoxCollider2D>();
-                bc.size = new Vector2(1.2f, 0.5f);
+            var bc = go.AddComponent<BoxCollider2D>();
+            bc.size = new Vector2(1.2f, 0.5f);
 
-                var bo = go.AddComponent<BranchObject>();
-                bo.BranchIndex = i;
-                bo.State = BranchState.Normal;
+            var bo = go.AddComponent<BranchObject>();
+            bo.BranchIndex = index;
+            bo.State = BranchState.Normal;
 
-                _branches.Add(bo);
-            }
+            _branches.Add(bo);
+            return bo;
         }
 
         void ClearBranches()
@@ -286,34 +293,10 @@ namespace Game081v2_PetBonsai
 
             if (!_isActive || _branches.Count >= _branchCount) yield break;
 
-            var cam2 = Camera.main;
-            if (cam2 == null) yield break;
-            float camSize = cam2.orthographicSize;
-            float camWidth = camSize * cam2.aspect;
-            float treeBaseY = -0.5f;
-            float radius = Mathf.Min(camWidth * 0.5f, camSize * 0.45f);
+            var cam = Camera.main;
+            if (cam == null) yield break;
 
-            int i = _branches.Count;
-            float angle = Mathf.PI * (0.1f + 0.8f * i / Mathf.Max(1, _branchCount - 1));
-            float bx = Mathf.Cos(angle) * radius;
-            float by = treeBaseY + Mathf.Sin(angle) * radius * 0.8f;
-
-            var go = new GameObject($"Branch_{i}");
-            go.transform.SetParent(_branchRoot);
-            go.transform.position = new Vector3(bx, by, 0f);
-            go.transform.localScale = Vector3.one;
-
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = _branchNormal;
-            sr.sortingOrder = 2;
-
-            var bc = go.AddComponent<BoxCollider2D>();
-            bc.size = new Vector2(1.2f, 0.5f);
-
-            var bo = go.AddComponent<BranchObject>();
-            bo.BranchIndex = i;
-            bo.State = BranchState.Normal;
-            _branches.Add(bo);
+            CreateBranch(_branches.Count, cam);
         }
 
         int ComputeBalance()
