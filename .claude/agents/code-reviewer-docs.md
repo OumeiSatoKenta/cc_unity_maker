@@ -1,7 +1,7 @@
 ---
 name: code-reviewer-docs
 description: API使用の正確性と公式ドキュメント準拠をレビューするサブエージェント（Context7 + Serena）
-model: sonnet
+model: opus
 ---
 
 # API・ドキュメント準拠レビューエージェント
