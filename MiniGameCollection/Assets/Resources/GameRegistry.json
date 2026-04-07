@@ -1747,7 +1747,7 @@
       "size": "M",
       "sceneName": "074v2_NoteRain",
       "description": "降ってくる音符を正確にキャッチして演奏を完成させる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1757,7 +1757,7 @@
       "size": "M",
       "sceneName": "075v2_SoundGarden",
       "description": "植物をタップして育てると音楽が生まれるインタラクティブアート",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
