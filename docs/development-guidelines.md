@@ -370,6 +370,9 @@ claude
 6. **GameRegistry.json を必ず更新する**: classic実装時は classicエントリの `implemented: true` を確認（既に true）、remake実装時は remakeエントリの `implemented` を `true` に更新する
 7. **ゲーム間依存を作らない**: `using Game002_*` は絶対に書かない
 8. **コミットはゲーム単位で行う**: 複数ゲームを1コミットにまとめない
+9. **同一GameObjectにTMPとImageを共存させない**: `TextMeshProUGUI` が付いたGameObjectに `Image` コンポーネントを追加すると描画が競合する。背景が必要な場合は親子構造にし、親に `Image`、子に `TextMeshProUGUI` を配置する
+10. **NotoSansJP で絵文字を使わない**: `NotoSansJP-Regular SDF` は絵文字グリフを含まないため、絵文字文字（🎯等）をテキストに含めると警告が出る。テキスト代替（「★」「●」等）を使用する
+11. **コルーチン内のTransform参照にnullチェックを入れる**: 複数フレームにまたがるコルーチンで `Transform` を操作する場合、オブジェクトが途中で破棄される可能性がある。ループの先頭で `if (t == null) yield break;` を入れること
 
 ---
 
