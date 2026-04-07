@@ -1797,7 +1797,7 @@
       "size": "S",
       "sceneName": "079v2_SilentBeat",
       "description": "無音の画面でリズムを感じ取り正確なタイミングでタップ",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1807,7 +1807,7 @@
       "size": "L",
       "sceneName": "080v2_FreqFight",
       "description": "周波数（音程）を合わせると敵にダメージを与える音楽バトル",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1817,7 +1817,7 @@
       "size": "M",
       "sceneName": "081v2_PetBonsai",
       "description": "盆栽に水をやり枝を整えて美しい形に育てる和風育成",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1827,7 +1827,7 @@
       "size": "M",
       "sceneName": "082v2_AquaPet",
       "description": "水槽の魚を育てて鑑賞する仮想アクアリウム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1837,7 +1837,7 @@
       "size": "M",
       "sceneName": "083v2_StarChef",
       "description": "星を使って宇宙レシピの料理を作るお料理育成ゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
