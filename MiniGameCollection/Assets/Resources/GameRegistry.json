@@ -1767,7 +1767,7 @@
       "size": "M",
       "sceneName": "076v2_ChordCatch",
       "description": "和音を聞き取り対応するボタンを素早くタップする",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1777,7 +1777,7 @@
       "size": "M",
       "sceneName": "077v2_BeatRunner",
       "description": "BGMのビートに合わせてジャンプするリズムランゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1847,7 +1847,7 @@
       "size": "M",
       "sceneName": "084v2_GardenZen",
       "description": "禅の庭を自由にデザインし石と砂紋で癒やしの空間を作る",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1857,7 +1857,7 @@
       "size": "L",
       "sceneName": "085v2_MechPet",
       "description": "メカのパーツを組み合わせて独自のロボットペットを育てる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
