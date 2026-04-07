@@ -47,6 +47,7 @@ namespace Game080v2_FreqFight
         void Awake()
         {
             _gameManager = GetComponentInParent<FreqFightGameManager>();
+            if (_gameManager == null) Debug.LogError("[FreqFightManager] FreqFightGameManager not found in parent.");
         }
 
         public void ResetScore()
