@@ -175,9 +175,6 @@ Issue から取得した仕様を元に、以下を **すべて** 記述:
 ## フェーズ3: SceneSetup Editor スクリプト
 - [ ] Setup[ID]_[Title].cs（InstructionPanel・StageManager配線含む）
 
-## フェーズ4: GameRegistry.json 更新
-- [ ] implemented: true に変更
-
 ## 実装後の振り返り
 （実装完了後に記入）
 ```
@@ -394,7 +391,16 @@ img = img_2x.resize((w, h), Image.LANCZOS)
 4. タスクリストの更新:
    - 実行したタスクが完了したら、`Edit`ツールを使用して`tasklist.md`を更新し、該当タスクを `[ ]` から `[x]` に変更する。
 
-5. ループ継続:
+5. **C# スクリプト作成・編集後のコンパイル確認（必須）:**
+   - 実行したタスクが C# スクリプトの作成または編集を含む場合、**必ず** UnityMCP でコンパイルを確認する:
+     ```
+     mcp__coplaydev-mcp__refresh_unity(mode="force", scope="all", compile="request", wait_for_ready=true)
+     mcp__coplaydev-mcp__read_console(types=["error"], count=20)
+     ```
+   - **エラーがある場合**: 即座にスクリプトを修正し、再度リフレッシュ→コンソール確認を繰り返す。エラーが解消してからループ継続。
+   - **MCP 接続がない場合**: このステップをスキップしてループ継続。
+
+6. ループ継続:
    - **ステップ4の先頭 (1. タスクリストの読み込み) に戻り、処理を繰り返す。**
 
 ### 実装ループ内の例外処理ルール
@@ -413,6 +419,16 @@ img = img_2x.resize((w, h), Image.LANCZOS)
 ---
 
 ## ステップ5: 実装検証
+
+### 5-0. Unity MCP セッション確認（必須・最初に実行）
+
+`mcp__coplaydev-mcp__manage_editor(action="status")` を呼び出す。
+
+- **エラーが返った場合 → 5-3/5-4/5-5 をスキップしてステップ6へ進む:**
+  ```
+  ⚠️ Unity MCP セッションなし: コンパイル検証・SceneSetup・PlayMode 検証をスキップします。
+  ```
+- **正常に応答が返った場合 → 5-1 へ進む。**
 
 ### 5-1. ~~実装品質検証~~ → 5-2 に統合
 
@@ -435,34 +451,41 @@ implementation-validator は省略する。code-reviewer-structural が同等の
 1. `[必須]` の指摘があれば即修正する（再レビューは行わない）。
 2. 修正の正しさは 5-3 のコンパイル確認と 5-4 の SceneSetup 実行で検証する。
 
-### 5-3. コンパイル検証（Unity MCP）
+### 5-3. コンパイル検証
 
-MCP 接続がある場合:
+`/unity-compile-check [ID]` スキルを実行する。
 
-```
-mcp__coplaydev-mcp__refresh_unity(mode="force", scope="all", compile="request", wait_for_ready=true)
-mcp__coplaydev-mcp__read_console(types=["error"], count=20)
-```
-
-- **エラーがある場合**: スクリプトを修正して再度リフレッシュ。エラーが解消するまで繰り返す。
-- **エラーがない場合**: 次のステップへ。
+- エラーがあればスキル内で自動修正される。解消まで続ける。
+- 「✅ コンパイル成功」が返ったら次のステップへ。
 
 ### 5-4. SceneSetup メニューの自動実行
 
-MCP 接続がある場合、**まず Play Mode を停止してから実行する**:
+`/unity-scene-setup [ID]` スキルを実行する。
 
-```
-mcp__coplaydev-mcp__manage_editor(action="stop")
-mcp__coplaydev-mcp__execute_menu_item(menu_path="Assets/Setup/[ID] [Title]")
-mcp__coplaydev-mcp__read_console(types=["error"], count=20)
+- エラーがあればスキル内で修正・再実行される。
+- 「✅ SceneSetup 完了」が返ったら次のステップへ。
+
+### 5-5. PlayMode 起動とスクリーンショット検証
+
+`/unity-playmode-screenshot [ID]` スキルを実行する。
+
+- 「⚠️ 軽微な崩れ」の場合はステップ7の Issue コメントに記録して続行。
+- 「❌ 重大な崩れ」の場合は SceneSetup スクリプトを修正して 5-4 からやり直す。
+- 「✅ 問題なし」が返ったら次のステップへ。
+
+### 5-6. GameRegistry.json 更新（Unity MCP 検証完了後のみ）
+
+5-3/5-4/5-5 が全て成功した場合のみ実行する:
+
+```json
+"implemented": true
 ```
 
-- **エラーがある場合**: SceneSetup スクリプトを修正して再実行。
-- **エラーがない場合**: シーン構成完了。
+**Unity MCP セッションなし（5-0 でスキップした場合）は、このステップを実行しない。**
 
 ### 5-B. フォールバック（MCP 接続がない場合）
 
-コンパイル検証・SceneSetup 実行をスキップし、ステップ6へ進む。
+5-0 で検出済みのため、このセクションは参照不要。
 
 ---
 
@@ -545,6 +568,7 @@ gh issue comment [ISSUE_NUMBER] --body "## 実装完了
 - GameRegistry.json 更新: ✅
 - コンパイル検証: ✅
 - コードレビュー: ✅
+- PlayMode 画面検証: ✅
 - 5ステージ進行: ✅
 - チュートリアルパネル: ✅
 
@@ -562,6 +586,7 @@ Unity Editor で Assets > Setup > [ID] [Title] を実行してシーンを構成
 - ステップ4: `tasklist.md`の全てのタスクが完了状態（`[x]`または正当な理由でスキップ）になっている。
 - ステップ5-2: 2軸コードレビューで `[必須]` が0件（総合評価不問）。
 - ステップ5-3: コンパイル検証（Unity MCP）がエラーなく成功する（MCP接続時）。
+- ステップ5-5: PlayMode スクリーンショット取得が完了し、重大な表示崩れがない（MCP接続時）。
 - ステップ6: feature ブランチ作成・commit・push・PR作成・mainマージ完了。
 - ステップ7: `tasklist.md`に振り返りが記載され、GitHub Issue にコメント済み。
 
