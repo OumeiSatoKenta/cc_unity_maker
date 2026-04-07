@@ -56,8 +56,8 @@ namespace Game067v2_TapDojo
             else _comboText.color = Color.white;
             // Scale effect
             _comboText.transform.localScale = Vector3.one * 1.2f;
-            LeanTween.cancel(_comboText.gameObject);
-            LeanTween.scale(_comboText.gameObject, Vector3.one, 0.15f).setEaseOutBack();
+            _comboText.transform.localScale = Vector3.one * 1.2f;
+            StartCoroutine(ScaleBackToOne(_comboText.transform, 0.15f));
         }
 
         public void UpdateAutoRate(float rate)
@@ -144,6 +144,19 @@ namespace Game067v2_TapDojo
             if (n >= 1_000_000) return $"{n / 1_000_000.0:F1}M";
             if (n >= 1_000) return $"{n / 1_000.0:F1}K";
             return n.ToString();
+        }
+
+        System.Collections.IEnumerator ScaleBackToOne(Transform t, float duration)
+        {
+            Vector3 start = t.localScale;
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                t.localScale = Vector3.Lerp(start, Vector3.one, elapsed / duration);
+                yield return null;
+            }
+            t.localScale = Vector3.one;
         }
     }
 }

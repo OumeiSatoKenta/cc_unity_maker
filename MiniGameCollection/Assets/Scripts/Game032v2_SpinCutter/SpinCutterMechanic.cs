@@ -212,7 +212,7 @@ namespace Game032v2_SpinCutter
 
             var rb = go.AddComponent<Rigidbody2D>();
             rb.gravityScale = 0f;
-            rb.isKinematic = true;
+            rb.bodyType = RigidbodyType2D.Kinematic;
 
             var blade = go.AddComponent<BladeController>();
             blade.Initialize(Vector3.zero, radius, angularSpeed, _bladeDuration, this);

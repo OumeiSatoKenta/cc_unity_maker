@@ -1,5 +1,4 @@
 using UnityEngine;
-using Common;
 
 namespace Game067v2_TapDojo
 {
@@ -31,7 +30,7 @@ namespace Game067v2_TapDojo
 
         void OnStageChanged(int stageIndex)
         {
-            var config = _stageManager.GetCurrentConfig();
+            var config = _stageManager.GetCurrentStageConfig();
             _dojoManager.SetupStage(config, stageIndex);
             _ui.UpdateStage(stageIndex + 1, 5);
         }
@@ -49,7 +48,7 @@ namespace Game067v2_TapDojo
 
         public void NextStage()
         {
-            _stageManager.AdvanceStage();
+            _stageManager.CompleteCurrentStage();
         }
 
         public void UpdateMPDisplay(long mp, long target)

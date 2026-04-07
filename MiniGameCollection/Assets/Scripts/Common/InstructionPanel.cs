@@ -6,7 +6,6 @@ using System;
 /// <summary>
 /// ゲーム開始時にチュートリアルオーバーレイを表示する共通コンポーネント。
 /// タイトル・説明・操作方法・ゴールを表示し、「はじめる」で開始。
-/// 2回目以降はPlayerPrefsで自動スキップ（?ボタンで再表示可能）。
 /// </summary>
 public class InstructionPanel : MonoBehaviour
 {
@@ -18,7 +17,6 @@ public class InstructionPanel : MonoBehaviour
     [SerializeField, Tooltip("はじめるボタン")] private Button _startButton;
     [SerializeField, Tooltip("?ボタン（再表示用）")] private Button _helpButton;
 
-    private string _gameId;
     private string _title;
     private string _description;
     private string _controls;
@@ -27,14 +25,11 @@ public class InstructionPanel : MonoBehaviour
     /// <summary>パネルが閉じられたときに発火するイベント</summary>
     public event Action OnDismissed;
 
-    private string PrefsKey => $"instruction_seen_{_gameId}";
-
     /// <summary>
-    /// チュートリアルを表示する。初回のみ自動表示、2回目以降はスキップ。
+    /// チュートリアルを表示する。毎回スタートボタンを表示する。
     /// </summary>
     public void Show(string gameId, string title, string description, string controls, string goal)
     {
-        _gameId = gameId;
         _title = title;
         _description = description;
         _controls = controls;
@@ -45,17 +40,7 @@ public class InstructionPanel : MonoBehaviour
         if (_helpButton != null)
             _helpButton.onClick.AddListener(ShowPanel);
 
-        if (PlayerPrefs.GetInt(PrefsKey, 0) == 1)
-        {
-            // 2回目以降: スキップして即開始
-            if (_panelRoot != null) _panelRoot.SetActive(false);
-            if (_helpButton != null) _helpButton.gameObject.SetActive(true);
-            OnDismissed?.Invoke();
-        }
-        else
-        {
-            ShowPanel();
-        }
+        ShowPanel();
     }
 
     private void ShowPanel()
@@ -74,9 +59,6 @@ public class InstructionPanel : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
-        PlayerPrefs.SetInt(PrefsKey, 1);
-        PlayerPrefs.Save();
-
         if (_panelRoot != null) _panelRoot.SetActive(false);
         if (_helpButton != null) _helpButton.gameObject.SetActive(true);
 

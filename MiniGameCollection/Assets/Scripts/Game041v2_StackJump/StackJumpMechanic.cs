@@ -18,7 +18,6 @@ namespace Game041v2_StackJump
         bool _useAlternateAxis = false;
         bool _useAcceleration = false;
         bool _useCameraShake = false;
-        bool _useShrinkStart = false;
 
         // Game state
         bool _isActive = false;
@@ -126,7 +125,6 @@ namespace Game041v2_StackJump
                     _useAlternateAxis = false;
                     _useAcceleration = false;
                     _useCameraShake = false;
-                    _useShrinkStart = false;
                     _blockWidth = MaxWidth;
                     break;
                 case 1: // Stage 2
@@ -135,7 +133,6 @@ namespace Game041v2_StackJump
                     _useAlternateAxis = true;
                     _useAcceleration = false;
                     _useCameraShake = false;
-                    _useShrinkStart = false;
                     _blockWidth = MaxWidth;
                     break;
                 case 2: // Stage 3
@@ -144,7 +141,6 @@ namespace Game041v2_StackJump
                     _useAlternateAxis = true;
                     _useAcceleration = true;
                     _useCameraShake = false;
-                    _useShrinkStart = false;
                     _blockWidth = MaxWidth;
                     break;
                 case 3: // Stage 4
@@ -153,7 +149,6 @@ namespace Game041v2_StackJump
                     _useAlternateAxis = true;
                     _useAcceleration = true;
                     _useCameraShake = true;
-                    _useShrinkStart = false;
                     _blockWidth = MaxWidth;
                     break;
                 case 4: // Stage 5
@@ -162,7 +157,6 @@ namespace Game041v2_StackJump
                     _useAlternateAxis = true;
                     _useAcceleration = true;
                     _useCameraShake = true;
-                    _useShrinkStart = true;
                     _blockWidth = MaxWidth * 0.7f;
                     break;
                 default:

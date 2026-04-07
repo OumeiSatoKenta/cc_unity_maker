@@ -283,6 +283,10 @@ public static class Setup055v2_DustSweep
         uiSO.FindProperty("_retryButton").objectReferenceValue = goRetryBtn.GetComponent<Button>();
         uiSO.FindProperty("_menuButton").objectReferenceValue = goMenuBtn.GetComponent<Button>();
         uiSO.FindProperty("_gm").objectReferenceValue = gm;
+        uiSO.FindProperty("_brushSmallButton").objectReferenceValue = brushSmallBtn.GetComponent<Button>();
+        uiSO.FindProperty("_brushMedButton").objectReferenceValue = brushMedBtn.GetComponent<Button>();
+        uiSO.FindProperty("_brushLargeButton").objectReferenceValue = brushLargeBtn.GetComponent<Button>();
+        uiSO.FindProperty("_dustBoard").objectReferenceValue = db;
         uiSO.ApplyModifiedProperties();
 
         // Wire GameManager
@@ -293,18 +297,7 @@ public static class Setup055v2_DustSweep
         gmSO.FindProperty("_ui").objectReferenceValue = ui;
         gmSO.ApplyModifiedProperties();
 
-        // Brush button listeners
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(brushSmallBtn.GetComponent<Button>().onClick,
-            () => db.SetBrushSize(0));
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(brushMedBtn.GetComponent<Button>().onClick,
-            () => db.SetBrushSize(1));
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(brushLargeBtn.GetComponent<Button>().onClick,
-            () => db.SetBrushSize(2));
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(nextBtn.GetComponent<Button>().onClick, gm.OnNextStage);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(goRetryBtn.GetComponent<Button>().onClick, gm.OnRetry);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(goMenuBtn.GetComponent<Button>().onClick, gm.OnBackToMenu);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(gcRetryBtn.GetComponent<Button>().onClick, gm.OnRetry);
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(gcMenuBtn.GetComponent<Button>().onClick, gm.OnBackToMenu);
+        // Button listeners are wired at runtime via DustSweepUI.Init() and DustSweepGameManager.Start()
 
         // EventSystem
         if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)

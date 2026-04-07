@@ -24,7 +24,6 @@ namespace Game032v2_SpinCutter
 
         int _score;
         int _currentStage;
-        bool _isActive;
         Coroutine _autoAdvanceCo;
 
         void Start()
@@ -43,7 +42,6 @@ namespace Game032v2_SpinCutter
         void StartGame()
         {
             _score = 0;
-            _isActive = true;
             State = SpinCutterState.WaitingLaunch;
 
             _ui.Initialize(this);
@@ -70,7 +68,6 @@ namespace Game032v2_SpinCutter
             if (State == SpinCutterState.Clear) return;
             _currentStage = stageIndex + 1;
             State = SpinCutterState.WaitingLaunch;
-            _isActive = true;
 
             var config = _stageManager.GetCurrentStageConfig();
             _mechanic.SetupStage(config, stageIndex);
@@ -83,7 +80,6 @@ namespace Game032v2_SpinCutter
         void OnAllStagesCleared()
         {
             State = SpinCutterState.Clear;
-            _isActive = false;
             _ui.ShowFinalClear(_score);
         }
 
@@ -149,7 +145,6 @@ namespace Game032v2_SpinCutter
             if (State == SpinCutterState.GameOver) return;
             if (_autoAdvanceCo != null) { StopCoroutine(_autoAdvanceCo); _autoAdvanceCo = null; }
             State = SpinCutterState.GameOver;
-            _isActive = false;
             StartCoroutine(CameraShake(0.5f, 0.5f));
             _ui.ShowGameOver(_score);
         }

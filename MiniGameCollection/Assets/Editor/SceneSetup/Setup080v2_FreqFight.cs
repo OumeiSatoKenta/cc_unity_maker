@@ -68,7 +68,7 @@ public static class Setup080v2_FreqFight
             new StageManager.StageConfig { speedMultiplier = 2.0f,  countMultiplier = 2, complexityFactor = 0.75f },
             new StageManager.StageConfig { speedMultiplier = 2.33f, countMultiplier = 1, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // FreqFightManager
         var fmObj = new GameObject("FreqFightManager");
@@ -183,7 +183,7 @@ public static class Setup080v2_FreqFight
         // Freq Marker 1 (enemy indicator on slider)
         var freqMarker1Obj = new GameObject("EnemyFreqMarker1", typeof(RectTransform));
         freqMarker1Obj.transform.SetParent(canvasObj.transform, false);
-        var fm1RT = freqMarker1Obj.AddComponent<RectTransform>();
+        var fm1RT = freqMarker1Obj.GetComponent<RectTransform>();
         fm1RT.anchorMin = new Vector2(0.5f, 0f);
         fm1RT.anchorMax = new Vector2(0.5f, 0f);
         fm1RT.pivot = new Vector2(0.5f, 0f);
@@ -311,7 +311,7 @@ public static class Setup080v2_FreqFight
         // Freq Marker 2
         var freqMarker2Obj = new GameObject("EnemyFreqMarker2", typeof(RectTransform));
         freqMarker2Obj.transform.SetParent(canvasObj.transform, false);
-        var fm2RT = freqMarker2Obj.AddComponent<RectTransform>();
+        var fm2RT = freqMarker2Obj.GetComponent<RectTransform>();
         fm2RT.anchorMin = new Vector2(0.5f, 0f); fm2RT.anchorMax = new Vector2(0.5f, 0f);
         fm2RT.pivot = new Vector2(0.5f, 0f);
         fm2RT.sizeDelta = new Vector2(24, 48);
@@ -342,8 +342,7 @@ public static class Setup080v2_FreqFight
         var backBtn = CB(canvasObj.transform, "BackButton", "メニュー", 32, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(160, 55), new Vector2(20, 15), new Color(0.15f, 0.05f, 0.25f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -392,8 +391,7 @@ public static class Setup080v2_FreqFight
         var acBack = CB(acPanel.transform, "ACBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.15f, 0.05f, 0.25f));
-        acBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBack.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === Game Over Panel ===
@@ -421,8 +419,7 @@ public static class Setup080v2_FreqFight
         var goBack = CB(goPanel.transform, "GOBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.4f, 0.1f, 0.1f));
-        goBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goBack.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // === InstructionPanel ===

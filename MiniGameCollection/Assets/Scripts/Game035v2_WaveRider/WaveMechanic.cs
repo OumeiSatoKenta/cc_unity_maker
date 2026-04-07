@@ -60,7 +60,6 @@ namespace Game035v2_WaveRider
         bool _swipeHandled;
 
         bool _isActive;
-        bool _shieldActive;
 
         // Camera bounds
         float _camSize;
@@ -147,13 +146,11 @@ namespace Game035v2_WaveRider
 
         public void ActivateShield()
         {
-            _shieldActive = true;
             if (_shieldVisual != null) _shieldVisual.gameObject.SetActive(true);
         }
 
         public void DeactivateShield()
         {
-            _shieldActive = false;
             if (_shieldVisual != null) _shieldVisual.gameObject.SetActive(false);
         }
 

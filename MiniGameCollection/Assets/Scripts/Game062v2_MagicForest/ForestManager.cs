@@ -476,8 +476,6 @@ namespace Game062v2_MagicForest
             }
             if (hasOak && hasBirch && hasPine)
             {
-                // Find empty center cell for world tree
-                int center = (Rows / 2) * Cols + Cols / 2;
                 // Find closest empty cell
                 for (int r = 0; r < Rows; r++)
                 {

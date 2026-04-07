@@ -59,7 +59,7 @@ public static class Setup081v2_PetBonsai
             new StageManager.StageConfig { speedMultiplier = 1.2f,  countMultiplier = 1, complexityFactor = 0.75f },
             new StageManager.StageConfig { speedMultiplier = 1.2f,  countMultiplier = 2, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // PetBonsaiManager
         var bmObj = new GameObject("PetBonsaiManager");
@@ -399,10 +399,6 @@ public static class Setup081v2_PetBonsai
         waterBtn.GetComponent<Button>().onClick.AddListener(() => bm.DoWater());
         fertBtn.GetComponent<Button>().onClick.AddListener(() => bm.DoFertilize());
         showcaseBtn.GetComponent<Button>().onClick.AddListener(() => bm.DoShowcase());
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
-
-        // BackToMenu component
         backBtn.AddComponent<BackToMenuButton>();
 
         // EventSystem

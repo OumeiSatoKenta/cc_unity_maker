@@ -340,6 +340,22 @@ claude
 
 詳細手順は `docs/GETTING_STARTED.md` を参照。
 
+### Unity Editor 推奨設定
+
+#### PlayMode 移行の高速化
+
+`Edit > Project Settings > Editor > Enter Play Mode Options` を開き、以下を設定する:
+
+| 設定項目 | 推奨値 | 備考 |
+|---------|--------|------|
+| Enter Play Mode Options | ON | このチェックを入れると個別設定が有効になる |
+| Reload Domain | OFF | 静的変数がリセットされないため注意（下記参照） |
+| Reload Scene | OFF | シーン再読み込みをスキップ |
+
+> **効果**: Domain Reload を OFF にすることで、PlayMode 移行が数秒→ほぼ即時になる。スクリプト数が多いほど効果大。
+
+> **注意**: `Reload Domain OFF` にすると `static` フィールドや `SceneLoader.CurrentCollection` のような静的プロパティが前のPlayModeの値を引き継ぐ。不審な挙動が出た場合は一時的に ON に戻して確認すること。
+
 ---
 
 ## Claude Code が守るべきコード生成ルール

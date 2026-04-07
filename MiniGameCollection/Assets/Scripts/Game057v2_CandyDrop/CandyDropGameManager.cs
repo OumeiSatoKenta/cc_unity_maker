@@ -26,6 +26,7 @@ namespace Game057v2_CandyDrop
 
         void Start()
         {
+            _ui.Init(this);
             _instructionPanel.Show(
                 "057",
                 "CandyDrop",

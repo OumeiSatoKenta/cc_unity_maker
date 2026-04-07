@@ -110,7 +110,7 @@ public static class Setup065v2_SpellBrewery
         stageText.GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 0.7f, 1f);
 
         // HUD: Gold (top left)
-        var goldText = CT(canvasObj.transform, "GoldText", "💰 0G", 34, jpFont,
+        var goldText = CT(canvasObj.transform, "GoldText", "0G", 34, jpFont,
             new Vector2(0f, 1), new Vector2(0f, 1), new Vector2(0f, 1), new Vector2(420, 55), new Vector2(15, -90));
         goldText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Left;
         goldText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.9f, 0.4f);
@@ -122,7 +122,7 @@ public static class Setup065v2_SpellBrewery
         targetText.GetComponent<TextMeshProUGUI>().color = new Color(0.7f, 1f, 0.8f);
 
         // Combo text
-        var comboText = CT(canvasObj.transform, "ComboText", "🔥 COMBO x2!", 44, jpFont,
+        var comboText = CT(canvasObj.transform, "ComboText", "COMBO x2!", 44, jpFont,
             new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(600, 65), new Vector2(0, -155));
         comboText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         comboText.SetActive(false);
@@ -141,30 +141,30 @@ public static class Setup065v2_SpellBrewery
         cauldronSlotsText.GetComponent<TextMeshProUGUI>().color = Color.white;
 
         // Brewing indicator
-        var brewingIndicator = CT(canvasObj.transform, "BrewingIndicator", "✨ 醸造中...", 36, jpFont,
+        var brewingIndicator = CT(canvasObj.transform, "BrewingIndicator", "醸造中...", 36, jpFont,
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(500, 60), new Vector2(0, 130));
         brewingIndicator.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         brewingIndicator.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.8f, 0.2f);
         brewingIndicator.SetActive(false);
 
         // Brew button
-        var brewBtn = CB(canvasObj.transform, "BrewButton", "🧪 醸造", 32, jpFont,
+        var brewBtn = CB(canvasObj.transform, "BrewButton", "醸造", 32, jpFont,
             new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(220, 75), new Vector2(-130, 850),
             new Color(0.4f, 0.2f, 0.7f));
         brewBtn.SetActive(false);
 
         // Clear cauldron button
-        var clearBtn = CB(canvasObj.transform, "ClearCauldronButton", "🗑 クリア", 30, jpFont,
+        var clearBtn = CB(canvasObj.transform, "ClearCauldronButton", "クリア", 30, jpFont,
             new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(180, 75), new Vector2(110, 850),
             new Color(0.5f, 0.2f, 0.2f));
 
         // Sell all button
-        var sellAllBtn = CB(canvasObj.transform, "SellAllButton", "💰 全て販売", 30, jpFont,
+        var sellAllBtn = CB(canvasObj.transform, "SellAllButton", "全て販売", 30, jpFont,
             new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(250, 75), new Vector2(0, 760),
             new Color(0.2f, 0.5f, 0.2f));
 
         // Ingredient buttons (5, bottom row)
-        string[] ingLabels = { "🔥\nFire", "💧\nWater", "🌿\nEarth", "💨\nAir", "✨\nLight" };
+        string[] ingLabels = { "Fire", "Water", "Earth", "Air", "Light" };
         Color[] ingColors = {
             new Color(0.7f, 0.2f, 0.1f),
             new Color(0.1f, 0.3f, 0.7f),
@@ -203,8 +203,8 @@ public static class Setup065v2_SpellBrewery
         ingredientButtons[4].SetActive(false);
 
         // Potion inventory (8 slots, 2 rows of 4)
-        string[] potionLabels = { "🔥Fire\n×0", "💧Water\n×0", "🌿Earth\n×0", "💨Air\n×0",
-                                  "✨Light\n×0", "⚡Storm\n×0", "🍃Nature\n×0", "🌟Legend\n×0" };
+        string[] potionLabels = { "Fire\n×0", "Water\n×0", "Earth\n×0", "Air\n×0",
+                                  "Light\n×0", "Storm\n×0", "Nature\n×0", "Legend\n×0" };
         Color[] potionColors = {
             new Color(0.6f,0.15f,0.1f), new Color(0.1f,0.25f,0.6f), new Color(0.15f,0.4f,0.1f), new Color(0.2f,0.5f,0.6f),
             new Color(0.5f,0.4f,0.1f), new Color(0.3f,0.1f,0.6f), new Color(0.1f,0.45f,0.25f), new Color(0.4f,0.1f,0.4f)
@@ -237,7 +237,7 @@ public static class Setup065v2_SpellBrewery
         var opImg = orderPanel.AddComponent<Image>();
         opImg.color = new Color(0.4f, 0.25f, 0.0f, 0.9f);
 
-        var orderText = CT(orderPanel.transform, "OrderText", "📜 注文: Fire Potion", 30, jpFont,
+        var orderText = CT(orderPanel.transform, "OrderText", "注文: Fire Potion", 30, jpFont,
             new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.5f), new Vector2(700, 50), Vector2.zero);
         orderText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         orderText.GetComponent<TextMeshProUGUI>().color = new Color(1f, 0.85f, 0.4f);
@@ -296,7 +296,7 @@ public static class Setup065v2_SpellBrewery
         var acpImg = acPanel.AddComponent<Image>();
         acpImg.color = new Color(0.05f, 0.02f, 0.15f, 0.97f);
 
-        var acText = CT(acPanel.transform, "AllClearText", "✨ SpellBrewery 完全制覇！", 42, jpFont,
+        var acText = CT(acPanel.transform, "AllClearText", "SpellBrewery 完全制覇！", 42, jpFont,
             new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.5f), new Vector2(900, 100), Vector2.zero);
         acText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         acText.GetComponent<TextMeshProUGUI>().color = Color.yellow;

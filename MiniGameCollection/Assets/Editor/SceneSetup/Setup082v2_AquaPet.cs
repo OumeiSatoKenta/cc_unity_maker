@@ -79,7 +79,7 @@ public static class Setup082v2_AquaPet
             new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 4, complexityFactor = 0.75f },
             new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 5, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // AquariumManager
         var amObj = new GameObject("AquariumManager");
@@ -173,19 +173,19 @@ public static class Setup082v2_AquaPet
 
         // === Buttons (bottom area, horizontal layout) ===
         // Feed button
-        var feedBtn = CB(canvasObj.transform, "FeedButton", "🐟 餌やり", 42, jpFont,
+        var feedBtn = CB(canvasObj.transform, "FeedButton", "餌やり", 42, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(280, 80), new Vector2(30, 200), new Color(0.1f, 0.35f, 0.6f));
         feedBtn.GetComponent<Button>().onClick.AddListener(() => am.OnFeedPressed());
 
         // Clean button
-        var cleanBtn = CB(canvasObj.transform, "CleanButton", "🧹 掃除", 42, jpFont,
+        var cleanBtn = CB(canvasObj.transform, "CleanButton", "掃除", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(240, 80), new Vector2(0, 200), new Color(0.05f, 0.35f, 0.3f));
         cleanBtn.GetComponent<Button>().onClick.AddListener(() => am.OnCleanPressed());
 
         // Breed button
-        var breedBtn = CB(canvasObj.transform, "BreedButton", "💕 繁殖", 42, jpFont,
+        var breedBtn = CB(canvasObj.transform, "BreedButton", "繁殖", 42, jpFont,
             new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f),
             new Vector2(240, 80), new Vector2(-30, 200), new Color(0.4f, 0.1f, 0.5f));
         breedBtn.GetComponent<Button>().onClick.AddListener(() => am.OnBreedPressed());
@@ -194,8 +194,7 @@ public static class Setup082v2_AquaPet
         var backBtn = CB(canvasObj.transform, "BackButton", "メニューへ", 38, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(260, 60), new Vector2(0, 15), new Color(0.08f, 0.12f, 0.2f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -245,8 +244,7 @@ public static class Setup082v2_AquaPet
         var acBack = CB(acPanel.transform, "ACBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.1f, 0.2f, 0.1f));
-        acBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBack.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === Game Over Panel ===
@@ -274,8 +272,7 @@ public static class Setup082v2_AquaPet
         var goBack = CB(goPanel.transform, "GOBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.4f, 0.1f, 0.1f));
-        goBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goBack.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // === InstructionPanel ===

@@ -138,9 +138,7 @@ public static class Setup050v2_BubbleSort
         var menuBtnObj = CreateButton(canvasTransform, "MenuButton", "メニュー", jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(180f, 60f), new Vector2(100f, 35f),
             new Color(0.2f, 0.2f, 0.3f, 0.9f));
-        menuBtnObj.GetComponent<Button>().onClick.AddListener(() => {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
-        });
+        menuBtnObj.AddComponent<BackToMenuButton>();
 
         // Undo button (bottom right)
         var undoBtnObj = CreateButton(canvasTransform, "UndoButton", "Undo", jpFont,
@@ -170,7 +168,7 @@ public static class Setup050v2_BubbleSort
         var acMenuBtnObj = CreateButton(acPanel.transform, "MenuButton", "メニューへ", jpFont,
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(200f, 60f), new Vector2(130f, -100f),
             new Color(0.3f, 0.3f, 0.4f));
-        AddBackToMenuListener(acMenuBtnObj.GetComponent<Button>());
+        acMenuBtnObj.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // --- Game Over Panel ---
@@ -185,7 +183,7 @@ public static class Setup050v2_BubbleSort
         var goMenuBtnObj = CreateButton(goPanel.transform, "MenuButton", "メニューへ", jpFont,
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(200f, 60f), new Vector2(130f, -90f),
             new Color(0.3f, 0.3f, 0.4f));
-        AddBackToMenuListener(goMenuBtnObj.GetComponent<Button>());
+        goMenuBtnObj.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // --- InstructionPanel ---
@@ -395,14 +393,6 @@ public static class Setup050v2_BubbleSort
         var img = obj.AddComponent<Image>();
         img.color = bgColor;
         return obj;
-    }
-
-    static void AddBackToMenuListener(Button btn)
-    {
-        if (btn == null) return;
-        btn.onClick.AddListener(() => {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
-        });
     }
 
     static void EnsureSpriteImport(string path)

@@ -34,6 +34,8 @@ namespace Game029v2_MeteorShield
             _isDestroying = false;
             IsDeflected = false;
 
+            if (_sr == null) _sr = GetComponent<SpriteRenderer>();
+
             HP = (type == MeteorType.Large) ? 2 : 1;
             _speedMultiplier = speed;
             _velocity = direction.normalized * speed;

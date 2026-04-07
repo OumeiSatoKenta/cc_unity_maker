@@ -43,7 +43,6 @@ namespace Game064v2_AquaCity
         bool _autoCollectEnabled = false;
         bool _adjacencyBonusEnabled = false;
         bool _sharkEnabled = false;
-        bool _deepSeaEnabled = false;
         bool _isActive = false;
         int _currentStage = 1;
 
@@ -98,14 +97,12 @@ namespace Game064v2_AquaCity
                     _autoCollectEnabled = false;
                     _adjacencyBonusEnabled = false;
                     _sharkEnabled = false;
-                    _deepSeaEnabled = false;
                     break;
                 case 2:
                     _targetPopulation = 200;
                     _autoCollectEnabled = true;
                     _adjacencyBonusEnabled = false;
                     _sharkEnabled = false;
-                    _deepSeaEnabled = false;
                     _ui.ShowDecoUnlocked();
                     break;
                 case 3:
@@ -113,7 +110,6 @@ namespace Game064v2_AquaCity
                     _autoCollectEnabled = true;
                     _adjacencyBonusEnabled = true;
                     _sharkEnabled = false;
-                    _deepSeaEnabled = false;
                     _ui.ShowAdjacencyUnlocked();
                     break;
                 case 4:
@@ -121,14 +117,12 @@ namespace Game064v2_AquaCity
                     _autoCollectEnabled = true;
                     _adjacencyBonusEnabled = true;
                     _sharkEnabled = true;
-                    _deepSeaEnabled = false;
                     break;
                 case 5:
                     _targetPopulation = 20000;
                     _autoCollectEnabled = true;
                     _adjacencyBonusEnabled = true;
                     _sharkEnabled = true;
-                    _deepSeaEnabled = true;
                     _ui.ShowDeepSeaUnlocked();
                     break;
             }

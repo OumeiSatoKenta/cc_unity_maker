@@ -40,7 +40,7 @@ namespace Game042v2_ColorDrop
             {
                 string hearts = "";
                 for (int i = 0; i < 3; i++)
-                    hearts += i < lives ? "❤" : "♡";
+                    hearts += i < lives ? "★" : "☆";
                 _livesText.text = hearts;
             }
         }

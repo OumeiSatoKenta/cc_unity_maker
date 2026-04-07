@@ -64,7 +64,7 @@ public static class Setup078v2_EchoBack
             new StageManager.StageConfig { speedMultiplier = 1.86f, countMultiplier = 1, complexityFactor = 0.75f },
             new StageManager.StageConfig { speedMultiplier = 2.14f, countMultiplier = 1, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // EchoManager
         var emObj = new GameObject("EchoManager");
@@ -217,8 +217,7 @@ public static class Setup078v2_EchoBack
         var backBtn = CB(canvasObj.transform, "BackButton", "メニューへ", 38, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(260, 60), new Vector2(0, 15), new Color(0.12f, 0.08f, 0.2f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -268,8 +267,7 @@ public static class Setup078v2_EchoBack
         var acBack = CB(acPanel.transform, "ACBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.1f, 0.2f, 0.1f));
-        acBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBack.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === Game Over Panel ===
@@ -297,8 +295,7 @@ public static class Setup078v2_EchoBack
         var goBack = CB(goPanel.transform, "GOBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.4f, 0.1f, 0.1f));
-        goBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goBack.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // === InstructionPanel ===

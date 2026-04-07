@@ -1,5 +1,4 @@
 using UnityEngine;
-using Common;
 
 namespace Game066v2_RoboFactory
 {
@@ -31,7 +30,7 @@ namespace Game066v2_RoboFactory
 
         void OnStageChanged(int stageIndex)
         {
-            var config = _stageManager.GetCurrentConfig();
+            var config = _stageManager.GetCurrentStageConfig();
             _factoryManager.SetupStage(config, stageIndex);
             _ui.UpdateStage(stageIndex + 1, 5);
         }
@@ -49,7 +48,7 @@ namespace Game066v2_RoboFactory
 
         public void NextStage()
         {
-            _stageManager.AdvanceStage();
+            _stageManager.CompleteCurrentStage();
         }
 
         public void AddScore(int delta)

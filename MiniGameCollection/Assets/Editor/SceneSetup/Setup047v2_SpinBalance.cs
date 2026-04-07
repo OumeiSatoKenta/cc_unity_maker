@@ -266,10 +266,10 @@ public static class Setup047v2_SpinBalance
 
         // Button events
         scNextBtn.GetComponent<Button>().onClick.AddListener(() => ui.OnNextStageClicked());
-        AddBackToMenuListener(menuBtn.GetComponent<Button>());
-        AddBackToMenuListener(scMenuBtn.GetComponent<Button>());
-        AddBackToMenuListener(acMenu.GetComponent<Button>());
-        AddBackToMenuListener(goMenu.GetComponent<Button>());
+        menuBtn.AddComponent<BackToMenuButton>();
+        scMenuBtn.AddComponent<BackToMenuButton>();
+        acMenu.AddComponent<BackToMenuButton>();
+        goMenu.AddComponent<BackToMenuButton>();
         goRetry.GetComponent<Button>().onClick.AddListener(() => ui.OnRestartClicked());
 
         // Save scene
@@ -497,14 +497,6 @@ public static class Setup047v2_SpinBalance
         var img = obj.AddComponent<Image>();
         img.color = bgColor;
         return obj;
-    }
-
-    static void AddBackToMenuListener(Button btn)
-    {
-        if (btn == null) return;
-        btn.onClick.AddListener(() => {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
-        });
     }
 
     static void AddSceneToBuildSettings(string scenePath)

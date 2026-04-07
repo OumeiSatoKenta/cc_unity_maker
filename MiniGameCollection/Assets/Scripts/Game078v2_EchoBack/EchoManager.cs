@@ -21,7 +21,6 @@ namespace Game078v2_EchoBack
         int _patternLengthMin = 3;
         int _patternLengthMax = 4;
         bool _hasRests = false;
-        bool _hasChords = false;
         bool _hasReverse = false;
         bool _hasTempoChange = false;
         int _stageIndex = 0;
@@ -39,7 +38,6 @@ namespace Game078v2_EchoBack
         float _patternStartTime;
         float _beatInterval;
         bool _isListening = false;
-        bool _isInputting = false;
         bool _awaitingInput = false;
         int _perfectCount = 0;
         int _levelInStage = 0;
@@ -47,7 +45,6 @@ namespace Game078v2_EchoBack
         Color[] _keyColors;
         Color[] _defaultKeyColors;
         Coroutine _listenCoroutine;
-        bool _isPatternComplete = false;
 
         // Procedural audio: sine wave clips per key
         AudioClip[] _noteClips;
@@ -89,22 +86,20 @@ namespace Game078v2_EchoBack
             _stageIndex = stageIndex;
             _isActive = true;
             _isListening = false;
-            _isInputting = false;
             _awaitingInput = false;
             // _totalScore is cumulative across stages - do NOT reset here
             _combo = 0;
             _missCount = 0;
             _levelInStage = 0;
-            _isPatternComplete = false;
 
             // Map stageIndex to parameters
             switch (stageIndex)
             {
-                case 0: _bpm = 70; _keyCount = 4; _replayMax = -1; _patternLengthMin = 3; _patternLengthMax = 4; _hasRests = false; _hasChords = false; _hasReverse = false; _hasTempoChange = false; _maxLevels = 3; break;
-                case 1: _bpm = 90; _keyCount = 5; _replayMax = 3; _patternLengthMin = 4; _patternLengthMax = 6; _hasRests = true; _hasChords = false; _hasReverse = false; _hasTempoChange = false; _maxLevels = 4; break;
-                case 2: _bpm = 110; _keyCount = 7; _replayMax = 2; _patternLengthMin = 5; _patternLengthMax = 8; _hasRests = false; _hasChords = true; _hasReverse = false; _hasTempoChange = false; _maxLevels = 4; break;
-                case 3: _bpm = 130; _keyCount = 7; _replayMax = 1; _patternLengthMin = 6; _patternLengthMax = 10; _hasRests = false; _hasChords = false; _hasReverse = true; _hasTempoChange = false; _maxLevels = 5; break;
-                case 4: _bpm = 150; _keyCount = 7; _replayMax = 0; _patternLengthMin = 8; _patternLengthMax = 12; _hasRests = false; _hasChords = false; _hasReverse = false; _hasTempoChange = true; _maxLevels = 5; break;
+                case 0: _bpm = 70; _keyCount = 4; _replayMax = -1; _patternLengthMin = 3; _patternLengthMax = 4; _hasRests = false; _hasReverse = false; _hasTempoChange = false; _maxLevels = 3; break;
+                case 1: _bpm = 90; _keyCount = 5; _replayMax = 3; _patternLengthMin = 4; _patternLengthMax = 6; _hasRests = true; _hasReverse = false; _hasTempoChange = false; _maxLevels = 4; break;
+                case 2: _bpm = 110; _keyCount = 7; _replayMax = 2; _patternLengthMin = 5; _patternLengthMax = 8; _hasRests = false; _hasReverse = false; _hasTempoChange = false; _maxLevels = 4; break;
+                case 3: _bpm = 130; _keyCount = 7; _replayMax = 1; _patternLengthMin = 6; _patternLengthMax = 10; _hasRests = false; _hasReverse = true; _hasTempoChange = false; _maxLevels = 5; break;
+                case 4: _bpm = 150; _keyCount = 7; _replayMax = 0; _patternLengthMin = 8; _patternLengthMax = 12; _hasRests = false; _hasReverse = false; _hasTempoChange = true; _maxLevels = 5; break;
             }
             _replayCount = _replayMax;
             _beatInterval = 60f / _bpm;
@@ -149,7 +144,6 @@ namespace Game078v2_EchoBack
             _missCount = 0;
             _inputIndex = 0;
             _perfectCount = 0;
-            _isPatternComplete = false;
             GeneratePattern();
             _gameManager.UpdateProgressDots(0, _pattern.Count);
             if (_listenCoroutine != null) StopCoroutine(_listenCoroutine);
@@ -184,7 +178,6 @@ namespace Game078v2_EchoBack
         IEnumerator PlayPatternCoroutine(bool isReplay)
         {
             _isListening = true;
-            _isInputting = false;
             _awaitingInput = false;
             _gameManager.UpdatePhase(isReplay ? "リプレイ中..." : "聴取中...");
 
@@ -224,7 +217,6 @@ namespace Game078v2_EchoBack
         {
             if (!_isActive) return;
             _isListening = false;
-            _isInputting = true;
             _awaitingInput = true;
             _inputIndex = 0;
             _patternStartTime = Time.time;
@@ -364,7 +356,6 @@ namespace Game078v2_EchoBack
             if (_levelInStage >= _maxLevels)
             {
                 _isActive = false;
-                _isInputting = false;
                 _gameManager.OnStageClear();
             }
             else
@@ -380,7 +371,6 @@ namespace Game078v2_EchoBack
             if (_isActive)
             {
                 _isActive = false;
-                _isInputting = false;
                 _gameManager.OnGameOver();
             }
         }
@@ -393,7 +383,6 @@ namespace Game078v2_EchoBack
             if (_replayMax >= 0) _replayCount--;
             _gameManager.UpdateReplayCount(_replayCount);
             _inputIndex = 0;
-            _isInputting = false;
             _awaitingInput = false;
             if (_listenCoroutine != null) StopCoroutine(_listenCoroutine);
             _listenCoroutine = StartCoroutine(PlayPatternCoroutine(true));
@@ -467,7 +456,6 @@ namespace Game078v2_EchoBack
             {
                 if (_listenCoroutine != null) StopCoroutine(_listenCoroutine);
                 _isListening = false;
-                _isInputting = false;
                 _awaitingInput = false;
             }
         }

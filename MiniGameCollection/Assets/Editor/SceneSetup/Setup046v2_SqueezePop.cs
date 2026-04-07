@@ -216,10 +216,10 @@ public static class Setup046v2_SqueezePop
 
         // Button events
         scNextBtn.GetComponent<Button>().onClick.AddListener(() => ui.OnNextStageButton());
-        AddBackToMenuListener(menuBtn.GetComponent<Button>());
-        AddBackToMenuListener(scMenuBtn.GetComponent<Button>());
-        AddBackToMenuListener(acMenu.GetComponent<Button>());
-        AddBackToMenuListener(goMenu.GetComponent<Button>());
+        menuBtn.AddComponent<BackToMenuButton>();
+        scMenuBtn.AddComponent<BackToMenuButton>();
+        acMenu.AddComponent<BackToMenuButton>();
+        goMenu.AddComponent<BackToMenuButton>();
         goRetry.GetComponent<Button>().onClick.AddListener(() => {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
@@ -456,14 +456,6 @@ public static class Setup046v2_SqueezePop
         var img = obj.AddComponent<Image>();
         img.color = bgColor;
         return obj;
-    }
-
-    static void AddBackToMenuListener(Button btn)
-    {
-        if (btn == null) return;
-        btn.onClick.AddListener(() => {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
-        });
     }
 
     static void AddSceneToBuildSettings(string scenePath)

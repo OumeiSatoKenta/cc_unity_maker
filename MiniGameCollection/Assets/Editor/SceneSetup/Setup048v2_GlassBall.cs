@@ -307,7 +307,7 @@ public static class Setup048v2_GlassBall
         var menuBtnObj = CB(canvasUIObj.transform, "MenuButton", "メニューへ", jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(160, 55), new Vector2(0, 15), new Color(0.3f, 0.3f, 0.4f, 0.9f));
-        AddBackToMenuListener(menuBtnObj.GetComponent<Button>());
+        menuBtnObj.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = CreatePanel(canvasUIObj.transform, "StageClearPanel", new Color(0f, 0.1f, 0.3f, 0.88f), new Vector2(700, 500));
@@ -336,7 +336,7 @@ public static class Setup048v2_GlassBall
         var acMenuBtn = CB(acPanel.transform, "MenuButton", "メニューへ", jpFont,
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
             new Vector2(220, 65), new Vector2(0, -60), new Color(0.3f, 0.3f, 0.5f));
-        AddBackToMenuListener(acMenuBtn.GetComponent<Button>());
+        acMenuBtn.AddComponent<BackToMenuButton>();
 
         // === Game Over Panel ===
         var goPanel = CreatePanel(canvasUIObj.transform, "GameOverPanel", new Color(0.2f, 0f, 0f, 0.92f), new Vector2(700, 500));
@@ -354,7 +354,7 @@ public static class Setup048v2_GlassBall
         var goMenuBtn2 = CB(goPanel.transform, "MenuButton", "メニューへ", jpFont,
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
             new Vector2(180, 65), new Vector2(100, -60), new Color(0.3f, 0.3f, 0.5f));
-        AddBackToMenuListener(goMenuBtn2.GetComponent<Button>());
+        goMenuBtn2.AddComponent<BackToMenuButton>();
 
         // === Wire GlassBallUI ===
         var uiSO = new SerializedObject(uiComp);
@@ -408,7 +408,7 @@ public static class Setup048v2_GlassBall
 
         // === StageManager: 5 stages ===
         var stageSO = new SerializedObject(stageMgr);
-        var stagesProp = stageSO.FindProperty("_stages");
+        var stagesProp = stageSO.FindProperty("_configs");
         stagesProp.arraySize = 5;
         // Stage 1: basic
         SetStage(stagesProp.GetArrayElementAtIndex(0), 1.0f, 1.0f, 1.0f, 30f);
@@ -662,14 +662,6 @@ public static class Setup048v2_GlassBall
         var img = obj.AddComponent<Image>();
         img.color = bgColor;
         return obj;
-    }
-
-    static void AddBackToMenuListener(Button btn)
-    {
-        if (btn == null) return;
-        btn.onClick.AddListener(() => {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu");
-        });
     }
 
     static void EnsureSpriteImport(string path)

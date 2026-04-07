@@ -89,7 +89,7 @@ public static class Setup057v2_CandyDrop
         var smObj = new GameObject("StageManager");
         smObj.transform.SetParent(gmObj.transform);
         var sm = smObj.AddComponent<StageManager>();
-        ConfigureStageManager(sm);
+        // StageManager uses _totalStages (default 5) and auto-initializes configs in Awake.
 
         // TowerChecker
         var tcObj = new GameObject("TowerChecker");
@@ -351,26 +351,6 @@ public static class Setup057v2_CandyDrop
         EditorSceneManager.SaveScene(scene, scenePath);
         AddSceneToBuildSettings(scenePath);
         Debug.Log("[Setup057v2] Scene created: " + scenePath);
-    }
-
-    static void ConfigureStageManager(StageManager sm)
-    {
-        var so = new SerializedObject(sm);
-        var stagesProp = so.FindProperty("_stages");
-        stagesProp.arraySize = 5;
-
-        float[] speeds = { 0.8f, 0.9f, 1.0f, 1.0f, 1.1f };
-        int[] counts = { 1, 1, 1, 1, 1 };
-        float[] complexities = { 0.0f, 0.3f, 0.6f, 0.8f, 1.0f };
-
-        for (int i = 0; i < 5; i++)
-        {
-            var stage = stagesProp.GetArrayElementAtIndex(i);
-            stage.FindPropertyRelative("speedMultiplier").floatValue = speeds[i];
-            stage.FindPropertyRelative("countMultiplier").intValue = counts[i];
-            stage.FindPropertyRelative("complexityFactor").floatValue = complexities[i];
-        }
-        so.ApplyModifiedProperties();
     }
 
     static void CreateWall(string name, Vector3 pos, Vector2 size)

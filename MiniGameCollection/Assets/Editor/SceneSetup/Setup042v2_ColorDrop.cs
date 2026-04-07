@@ -123,7 +123,7 @@ public static class Setup042v2_ColorDrop
         scoreText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Right;
         scoreText.GetComponent<TextMeshProUGUI>().color = Color.white;
 
-        var livesText = CT(canvasObj.transform, "LivesText", "❤❤❤", 36, jpFont,
+        var livesText = CT(canvasObj.transform, "LivesText", "★★★", 36, jpFont,
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
             new Vector2(300, 50), new Vector2(0, -20));
         livesText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;

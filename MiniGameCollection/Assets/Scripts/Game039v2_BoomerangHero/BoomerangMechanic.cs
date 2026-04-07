@@ -191,8 +191,6 @@ namespace Game039v2_BoomerangHero
         {
             float maxTime = 5f;
             float elapsed = 0f;
-            int maxBounces = 4;
-
             while (elapsed < maxTime && _boomerangObj != null && _boomerangObj.activeSelf)
             {
                 elapsed += Time.deltaTime;

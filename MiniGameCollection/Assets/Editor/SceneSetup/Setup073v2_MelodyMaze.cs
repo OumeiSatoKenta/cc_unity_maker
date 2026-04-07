@@ -55,17 +55,17 @@ public static class Setup073v2_MelodyMaze
         // StageManager
         var smObj = new GameObject("StageManager");
         smObj.transform.SetParent(gmObj.transform);
-        var sm = smObj.AddComponent<Common.StageManager>();
+        var sm = smObj.AddComponent<StageManager>();
 
-        var stageConfigs = new Common.StageManager.StageConfig[]
+        var stageConfigs = new StageManager.StageConfig[]
         {
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.0f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.25f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.5f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.75f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 1.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.25f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.5f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.75f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // MazeManager
         var mmObj = new GameObject("MazeManager");
@@ -110,7 +110,7 @@ public static class Setup073v2_MelodyMaze
         timerText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         timerText.GetComponent<TextMeshProUGUI>().color = Color.white;
 
-        var previewText = CT(canvasObj.transform, "PreviewText", "♪ お手本", 36, jpFont,
+        var previewText = CT(canvasObj.transform, "PreviewText", "お手本", 36, jpFont,
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
             new Vector2(280, 50), new Vector2(15, -90));
         previewText.GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 0.5f, 1f);
@@ -128,7 +128,7 @@ public static class Setup073v2_MelodyMaze
         judgementText.gameObject.SetActive(false);
 
         // Preview button (bottom-left area)
-        var previewBtn = CB(canvasObj.transform, "PreviewButton", "♪ お手本再生", 36, jpFont,
+        var previewBtn = CB(canvasObj.transform, "PreviewButton", "お手本再生", 36, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(280, 65), new Vector2(15, 80), new Color(0.2f, 0.1f, 0.4f, 0.9f));
 
@@ -136,8 +136,7 @@ public static class Setup073v2_MelodyMaze
         var backBtn = CB(canvasObj.transform, "BackButton", "メニュー", 34, jpFont,
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(170, 55), new Vector2(15, 15), new Color(0.2f, 0.2f, 0.3f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -186,8 +185,7 @@ public static class Setup073v2_MelodyMaze
         var acBack = CB(acPanel.transform, "ACBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.1f, 0.4f, 0.1f));
-        acBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBack.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === Game Over Panel ===
@@ -215,8 +213,7 @@ public static class Setup073v2_MelodyMaze
         var goBack = CB(goPanel.transform, "GOBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.4f, 0.1f, 0.1f));
-        goBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goBack.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // === InstructionPanel ===
@@ -237,7 +234,7 @@ public static class Setup073v2_MelodyMaze
         var ipBgImg = ipBg.AddComponent<Image>();
         ipBgImg.color = new Color(0f, 0f, 0f, 0.92f);
 
-        var ip = ipBg.AddComponent<Common.InstructionPanel>();
+        var ip = ipBg.AddComponent<InstructionPanel>();
 
         var ipTitle = CT(ipBg.transform, "TitleText", "MelodyMaze", 72, jpFont,
             new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.5f),

@@ -61,7 +61,7 @@ namespace Game011v2_FoldPaper
             if (_timerText)
             {
                 int s = Mathf.CeilToInt(seconds);
-                _timerText.text = seconds > 0 ? $"⏱ {s}s" : "";
+                _timerText.text = seconds > 0 ? $"{s}s" : "";
                 _timerText.color = seconds <= 10f ? new Color(1f, 0.3f, 0.3f) : Color.white;
             }
         }

@@ -163,8 +163,7 @@ public static class Setup084v2_GardenZen
         var backBtn = CB(canvasObj.transform, "BackButton", "メニューへ", 38, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(260, 60), new Vector2(0, 15), new Color(0.25f, 0.18f, 0.1f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -220,8 +219,7 @@ public static class Setup084v2_GardenZen
         var acBack = CB(acPanel.transform, "ACBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.35f, 0.22f, 0.08f));
-        acBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBack.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === InstructionPanel ===

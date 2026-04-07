@@ -51,17 +51,17 @@ public static class Setup075v2_SoundGarden
         // StageManager
         var smObj = new GameObject("StageManager");
         smObj.transform.SetParent(gmObj.transform);
-        var sm = smObj.AddComponent<Common.StageManager>();
+        var sm = smObj.AddComponent<StageManager>();
 
-        var stageConfigs = new Common.StageManager.StageConfig[]
+        var stageConfigs = new StageManager.StageConfig[]
         {
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.0f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.25f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.5f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 0.75f },
-            new Common.StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1.0f, complexityFactor = 1.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.0f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.25f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.5f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 0.75f },
+            new StageManager.StageConfig { speedMultiplier = 1.0f, countMultiplier = 1, complexityFactor = 1.0f },
         };
-        SetField(sm, "_stages", stageConfigs);
+        SetField(sm, "_configs", stageConfigs);
 
         // GardenController
         var gcObj = new GameObject("GardenController");
@@ -116,8 +116,7 @@ public static class Setup075v2_SoundGarden
         var backBtn = CB(canvasObj.transform, "BackButton", "メニューへ戻る", 36, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(280, 55), new Vector2(0, 15), new Color(0.1f, 0.15f, 0.1f, 0.9f));
-        backBtn.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        backBtn.AddComponent<BackToMenuButton>();
 
         // === Stage Clear Panel ===
         var scPanel = new GameObject("StageClearPanel", typeof(RectTransform));
@@ -167,8 +166,7 @@ public static class Setup075v2_SoundGarden
         var acBack = CB(acPanel.transform, "ACBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.1f, 0.4f, 0.1f));
-        acBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        acBack.AddComponent<BackToMenuButton>();
         acPanel.SetActive(false);
 
         // === Game Over Panel ===
@@ -196,8 +194,7 @@ public static class Setup075v2_SoundGarden
         var goBack = CB(goPanel.transform, "GOBackButton", "メニューへ", 42, jpFont,
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(340, 65), new Vector2(0, 50), new Color(0.4f, 0.1f, 0.1f));
-        goBack.GetComponent<Button>().onClick.AddListener(() =>
-            UnityEngine.SceneManagement.SceneManager.LoadScene("TopMenu"));
+        goBack.AddComponent<BackToMenuButton>();
         goPanel.SetActive(false);
 
         // === InstructionPanel ===
@@ -218,7 +215,7 @@ public static class Setup075v2_SoundGarden
         var ipBgImg = ipBg.AddComponent<Image>();
         ipBgImg.color = new Color(0f, 0.05f, 0f, 0.93f);
 
-        var ip = ipBg.AddComponent<Common.InstructionPanel>();
+        var ip = ipBg.AddComponent<InstructionPanel>();
 
         var ipTitle = CT(ipBg.transform, "TitleText", "SoundGarden", 72, jpFont,
             new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.7f), new Vector2(0.5f, 0.5f),
