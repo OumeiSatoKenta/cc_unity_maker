@@ -560,6 +560,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/075v2_SoundGarden.unity
     guid: 5b3fd5cf71b054591b1ae5652403c327
+  - enabled: 1
+    path: Assets/Scenes/086v2_CityBonsai.unity
+    guid: 75405fffea7cc455f8ef5661ee94808b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
