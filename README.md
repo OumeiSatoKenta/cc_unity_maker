@@ -70,33 +70,6 @@ MiniGameCollection/Assets/
 | `doc-coauthoring` | ドキュメントの共同執筆を構造化されたワークフローで支援 |
 | `internal-comms` | ステータスレポート・社内ニュースレターなど社内向けコミュニケーションを作成 |
 
-### フロントエンド / Web
-
-| スキル | 説明 |
-|---|---|
-| `frontend-design` | プロダクション品質のフロントエンド UI を高いデザイン品質で作成 |
-| `web-artifacts-builder` | React・Tailwind CSS・shadcn/ui を使った複雑なアーティファクトを構築 |
-| `theme-factory` | スライド・レポート・HTML ページにテーマを適用 |
-| `webapp-testing` | Playwright を使ってローカル Web アプリを操作・テスト |
-
-### Zenn 記事
-
-| スキル | 説明 |
-|---|---|
-| `zenn-article` | Zenn 技術記事を作成・執筆 |
-| `zenn-review` | Zenn 記事を 6 軸でレビュー（AI 臭さ・技術的正確性・フォーマット等） |
-| `zenn-publish` | 記事を zenn-satoken リポジトリにコピー・コミット・push して下書き公開 |
-
-### TiDB
-
-| スキル | 説明 |
-|---|---|
-| `tidb-cloud` | TiDB Cloud のクラスタ作成・削除・管理（ticloud CLI） |
-| `tidb-serverless-driver` | サーバーレス/エッジ環境向け HTTP ドライバーのセットアップ |
-| `tidb-kysely` | Kysely ORM と TiDB Cloud の統合パターン |
-| `tidb-python` | Python (pytidb) による CRUD・ベクター検索・AI 機能の実装 |
-| `tidb-sql` | TiDB 向け SQL 作成・MySQL 互換性対応・パフォーマンス診断 |
-
 ### その他
 
 | スキル | 説明 |

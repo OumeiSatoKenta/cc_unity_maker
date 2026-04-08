@@ -14,18 +14,9 @@
       "Skill(development-guidelines)",
       "Skill(glossary-creation)",
       "Skill(doc-coauthoring)",
-      "Skill(frontend-design)",
       "Skill(internal-comms)",
       "Skill(skill-creator)",
-      "Skill(theme-factory)",
-      "Skill(web-artifacts-builder)",
-      "Skill(webapp-testing)",
-      "Skill(ship-pr)",
-      "Skill(tidb-cloud)",
-      "Skill(tidb-serverless-driver)",
-      "Skill(tidb-kysely)",
-      "Skill(tidb-python)",
-      "Skill(tidb-sql)"
+      "Skill(ship-pr)"
     ],
     "deny": [
       "Read(.env)",
