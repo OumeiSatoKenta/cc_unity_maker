@@ -20,7 +20,7 @@ START=2 END=10 ./scripts/run-features.sh  # 環境変数での指定も可
 ### 手動で1本ずつ実行
 
 ```
-/implement-game 014
+/add-feature 014
 ```
 
 ## プロジェクト構成
@@ -37,8 +37,8 @@ MiniGameCollection/Assets/
 
 | コマンド | 説明 |
 |---|---|
-| `/implement-game [ID]` | ゲームを1本実装する（v2: 5ステージ・チュートリアル・高品質スプライト対応） |
-| `/add-feature [機能]` | Unity ミニゲームに機能を追加する |
+| `/add-feature [ID]` | **現行版 (v2)** - ゲームを1本実装する（5ステージ・チュートリアル・高品質スプライト対応） |
+| `/implement-game [ID]` | 旧版 (v1) - 基本的なゲーム実装のみ。`/add-feature` を使用してください |
 | `/setup-project` | 初回セットアップ: 6つの永続ドキュメントを対話的に作成する |
 | `/unity-scene-setup [ゲームID]` | SceneSetup メニューを自動実行してシーンを構成する |
 | `/unity-compile-check` | コンパイル状態を確認し、エラーがあれば自動修正する |
