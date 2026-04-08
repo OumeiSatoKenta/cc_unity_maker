@@ -40,6 +40,11 @@ coverage/
 # yarn.lock
 
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
+.claude/game_schedule_state.json
+
+# Personal memory (contains user profile info)
+memory/
 
 # AWS CLI installer
 AWSCLIV2.pkg
