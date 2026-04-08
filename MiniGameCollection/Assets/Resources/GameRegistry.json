@@ -1897,7 +1897,7 @@
       "size": "M",
       "sceneName": "089v2_IslandHop",
       "description": "孤島を次々と開拓してリゾートアイランドを完成させる",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
