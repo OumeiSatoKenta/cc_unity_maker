@@ -1987,7 +1987,7 @@
       "size": "L",
       "sceneName": "098v2_InfiniteLoop",
       "description": "同じループを繰り返す世界に気づき脱出するメタゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
