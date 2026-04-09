@@ -12,4 +12,11 @@
 - [x] Setup094v2_GravityPainter.cs（全配線・InstructionPanel・StageManager・重力ボタン・パレット含む）
 
 ## 実装後の振り返り
-（実装完了後に記入）
+
+- 実装完了日: 2026-04-09
+- スプライト・スクリプトは前セッションで実装済み。今回はSceneSetupスクリプト作成とバグ修正が主作業
+- コードレビューで発見された重要バグ: `UpdateMatchRate` が `ApplyGravity` から呼ばれる際に `_remainingPaint <= 0` でゲームオーバーになる問題 → `checkGameOver` フラグで修正
+- コルーチン安全性（PulseCell・FlashMovedCells）・Camera.main null チェック・配列境界チェックも追加
+- `StopAllCoroutines()` をSetupStage冒頭に追加してステージ切替時の安全性を確保
+- コンパイル成功・SceneSetup実行成功・PlayModeランタイムエラー0件
+- PR: https://github.com/OumeiSatoKenta/cc_unity_maker/pull/354
