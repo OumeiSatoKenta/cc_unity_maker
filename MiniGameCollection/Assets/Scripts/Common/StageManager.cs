@@ -17,6 +17,8 @@ public class StageManager : MonoBehaviour
         public int countMultiplier;
         public float complexityFactor;
         public string stageName;
+        /// <summary>ゲーム固有の追加設定を文字列で渡す（オプション）</summary>
+        public string customData;
     }
 
     private int _currentStage;
