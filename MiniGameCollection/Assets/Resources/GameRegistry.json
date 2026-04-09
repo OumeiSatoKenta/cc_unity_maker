@@ -1967,7 +1967,7 @@
       "size": "M",
       "sceneName": "096v2_DualControl",
       "description": "2つのキャラを同時に別々に操作する二刀流アクション",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
