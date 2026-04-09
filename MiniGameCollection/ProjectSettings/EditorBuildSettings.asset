@@ -563,6 +563,21 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/086v2_CityBonsai.unity
     guid: 75405fffea7cc455f8ef5661ee94808b
+  - enabled: 1
+    path: Assets/Scenes/089v2_IslandHop.unity
+    guid: d64d34e8b63744556b207923b7a42ce9
+  - enabled: 1
+    path: Assets/Scenes/088v2_AlchemyPet.unity
+    guid: 1f58e8612b4b148b7a68586cf73a70a1
+  - enabled: 1
+    path: Assets/Scenes/090v2_StarshipCrew.unity
+    guid: a538c13652b664fc1912502521e30e15
+  - enabled: 1
+    path: Assets/Scenes/091v2_TimeBlender.unity
+    guid: 7144e6d0f5d5a4617a2d30d6f339cc81
+  - enabled: 1
+    path: Assets/Scenes/092v2_MirrorWorld.unity
+    guid: 4813c445ee73f4cbe8615e6a1783a039
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

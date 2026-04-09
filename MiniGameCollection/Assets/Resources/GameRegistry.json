@@ -1937,7 +1937,7 @@
       "size": "M",
       "sceneName": "093v2_ColorPerception",
       "description": "色覚の違いをテーマにした視点切替パズル",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
