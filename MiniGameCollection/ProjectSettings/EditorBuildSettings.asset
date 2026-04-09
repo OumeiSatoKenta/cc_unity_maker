@@ -578,6 +578,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/092v2_MirrorWorld.unity
     guid: 4813c445ee73f4cbe8615e6a1783a039
+  - enabled: 1
+    path: Assets/Scenes/093v2_ColorPerception.unity
+    guid: e5a5dd44fc09c4b439f1d03615f81114
+  - enabled: 1
+    path: Assets/Scenes/094v2_GravityPainter.unity
+    guid: da8b8498f792144f9ada4a98f5dd690f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
