@@ -30,3 +30,9 @@
 - 視点切替パズルは `_viewMasks[r, c, viewIndex]` の3次元配列設計が明快
 - 色変化ゾーンと周期変化の組み合わせは Stage 5 に適したギミック
 - 移動ボタン配置は十字パッドより横一列の方が指の届きが良い可能性あり
+
+### 事後検証（2026-04-09）
+- ✅ コンパイル: エラーなし（0件）
+- ✅ SceneSetup: Assets/Setup/093v2 ColorPerception 実行成功
+- ✅ PlayMode: ランタイムエラーなし、背景・スプライト表示確認済み
+- ✅ GameRegistry.json: implemented: true に更新完了

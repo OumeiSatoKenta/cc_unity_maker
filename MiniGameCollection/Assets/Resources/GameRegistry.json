@@ -1907,7 +1907,7 @@
       "size": "L",
       "sceneName": "090v2_StarshipCrew",
       "description": "宇宙船クルーを育成して銀河探検ミッションをこなす",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1927,7 +1927,7 @@
       "size": "M",
       "sceneName": "092v2_MirrorWorld",
       "description": "画面上下が鏡像になっており逆向きに操作するギミックゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1957,7 +1957,7 @@
       "size": "L",
       "sceneName": "095v2_SilentWorld",
       "description": "音が存在しない世界で視覚だけを頼りに進む実験的アドベンチャー",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1977,7 +1977,7 @@
       "size": "L",
       "sceneName": "097v2_PixelEvolution",
       "description": "ピクセルが世代を経るごとに進化して複雑な生命体になるシム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {
@@ -1997,7 +1997,7 @@
       "size": "S",
       "sceneName": "099v2_TouchMemory",
       "description": "タッチした順番を記憶して同じパターンを再現するメモリーゲーム",
-      "implemented": false,
+      "implemented": true,
       "collection": "remake"
     },
     {

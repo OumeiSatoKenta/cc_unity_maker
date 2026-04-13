@@ -587,6 +587,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/096v2_DualControl.unity
     guid: 0127baf7c5a864883a971b7ab656b95e
+  - enabled: 1
+    path: Assets/Scenes/098v2_InfiniteLoop.unity
+    guid: 4ec92b56e1a984b63b7b3e1734f53d29
+  - enabled: 1
+    path: Assets/Scenes/095v2_SilentWorld.unity
+    guid: d33e616a788ac431bbf310a5db445858
+  - enabled: 1
+    path: Assets/Scenes/097v2_PixelEvolution.unity
+    guid: 69fbc6dd3de714007a41e847a1f145cf
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
